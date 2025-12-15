@@ -1,0 +1,16 @@
+@layer theme, base, antd, components, utilities;
+
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import './theme.css' layer(theme);
+
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground text-sm;
+  }
+}
