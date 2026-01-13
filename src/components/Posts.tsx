@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import CommentTree from '@/components/CommentTree';
 import ModelComment from '@/components/ModelComment';
 import ModelReaction from '@/components/ModelReaction';
 import Post from '@/components/Post';

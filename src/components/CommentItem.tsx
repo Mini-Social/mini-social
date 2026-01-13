@@ -1,5 +1,4 @@
-import SendIcon from '@mui/icons-material/Send';
-import React, { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 import angry from '@/assets/icons/angry.svg';
 import haha from '@/assets/icons/haha.svg';
@@ -11,7 +10,6 @@ import ReactionsBar from '@/components/ReactionsBar';
 import { reactionStyle } from '@/types/type';
 import type { ReactionType, CommentType } from '@/types/type';
 import { countAllReplies } from '@/utils/countAllReplies ';
-import { FormatDate } from '@/utils/formatDate';
 import { translateCount } from '@/utils/translateReaction';
 import { COMMENT_LAYOUT } from '@/utils/variable';
 

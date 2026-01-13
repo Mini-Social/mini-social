@@ -1,6 +1,5 @@
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import CheckIcon from '@mui/icons-material/Check';
-import React, { act, useState } from 'react';
+import React, { useState } from 'react';
 
 import angry from '@/assets/icons/angry.svg';
 import haha from '@/assets/icons/haha.svg';

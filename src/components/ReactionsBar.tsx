@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 import angry from '@/assets/icons/angry.svg';
 import haha from '@/assets/icons/haha.svg';
 import like from '@/assets/icons/like.svg';
