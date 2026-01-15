@@ -6,7 +6,7 @@ interface Props {
   lastMessageAt: string
 }
 
-const Conversation = ({avatar, groupName, lastMessage, lastMessageAt}: Props) => (
+const Conversation = ({avatar}: Props) => (
     <div className='p-2 flex items-center'>
         <div className="p-1.5 w-14 h-14 rounded-[50%] overflow-hidden">
             <img src={avatar} alt="" className="w-full h-full"/>
