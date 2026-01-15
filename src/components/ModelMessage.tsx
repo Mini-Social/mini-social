@@ -16,7 +16,7 @@ import Messages from '@/components/Messages';
 interface Props {
   setOpenModelMessage: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const ModelMessage = ({setOpenModelMessage}: Props) => {
+const ModelMessage = ({ setOpenModelMessage }: Props) => {
   const [isOpenEmoj, setIsOpenEmoj] = useState<boolean>(false);
   const [content, setContent] = useState<string>('');
   const [preview, setPreview] = useState<string[]>([]);
@@ -39,14 +39,14 @@ const ModelMessage = ({setOpenModelMessage}: Props) => {
     console.dir(selectedImage);
   };
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if(preview.length > 0){
-        handleAddFile(e)
-      }
-    else if (e.target.files) {const files = Array.from(e.target.files);
+    if (preview.length > 0) {
+      handleAddFile(e);
+    } else if (e.target.files) {
+      const files = Array.from(e.target.files);
       setSelectedImages(files);
       const urls = files.map(url => URL.createObjectURL(url));
       setPreview(urls);
-      }
+    }
   };
   const handleRemoveImage = (indexToRemove: number) => {
     URL.revokeObjectURL(preview[indexToRemove]);
@@ -87,13 +87,13 @@ const ModelMessage = ({setOpenModelMessage}: Props) => {
           {/* Header */}
           <div className="flex flex-1 items-center justify-between border-b p-1.5">
             <div className="flex items-center gap-2.5">
-              <div className='relative h-8 w-8 rounded-[50%]'>
-                  <img
-                className="w-full h-full rounded-[50%]"
-                src="https://scontent.fhph4-1.fna.fbcdn.net/v/t1.30497-1/453178253_471506465671661_2781666950760530985_n.png?stp=dst-png_s100x100&_nc_cat=1&ccb=1-7&_nc_sid=136b72&_nc_ohc=hXJ7wx4on2cQ7kNvwE0K8Ul&_nc_oc=Adleuo5_OpV0fcQZuFvhMG1onEE2hUwJegMc60PhCJfCbDFWYe6MkMyRt2jCkoUeBOT4cnoRP9rFAYVL1jFNh-Y3&_nc_ad=z-m&_nc_cid=0&_nc_zt=24&_nc_ht=scontent.fhph4-1.fna&oh=00_AfrGca5s9GroWK2H2h6J8QfNp6UitSFoc5wi_UNTo-C8HQ&oe=698EAE7A"
-                alt=""
-              />
-             <div className="absolute right-0 bottom-0 h-3 w-3 rounded-[50%] border-2 border-white bg-[#24832c]"></div>
+              <div className="relative h-8 w-8 rounded-[50%]">
+                <img
+                  className="h-full w-full rounded-[50%]"
+                  src="https://scontent.fhph4-1.fna.fbcdn.net/v/t1.30497-1/453178253_471506465671661_2781666950760530985_n.png?stp=dst-png_s100x100&_nc_cat=1&ccb=1-7&_nc_sid=136b72&_nc_ohc=hXJ7wx4on2cQ7kNvwE0K8Ul&_nc_oc=Adleuo5_OpV0fcQZuFvhMG1onEE2hUwJegMc60PhCJfCbDFWYe6MkMyRt2jCkoUeBOT4cnoRP9rFAYVL1jFNh-Y3&_nc_ad=z-m&_nc_cid=0&_nc_zt=24&_nc_ht=scontent.fhph4-1.fna&oh=00_AfrGca5s9GroWK2H2h6J8QfNp6UitSFoc5wi_UNTo-C8HQ&oe=698EAE7A"
+                  alt=""
+                />
+                <div className="absolute right-0 bottom-0 h-3 w-3 rounded-[50%] border-2 border-white bg-[#24832c]"></div>
               </div>
               <span className="font-medium">Nguyễn Công Hiệp</span>
             </div>
@@ -122,7 +122,10 @@ const ModelMessage = ({setOpenModelMessage}: Props) => {
                   }}
                 />
               </div>
-              <div className="cursor-pointer rounded-[50%] p-1 hover:bg-gray-200" onClick={() => setOpenModelMessage(false)}>
+              <div
+                className="cursor-pointer rounded-[50%] p-1 hover:bg-gray-200"
+                onClick={() => setOpenModelMessage(false)}
+              >
                 <CloseIcon
                   style={{
                     color: '#C261F2',

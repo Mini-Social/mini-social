@@ -6,6 +6,8 @@ import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNone
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
+import ModelConversation from '@/components/ModelConversation';
+
 const Navbar = () => (
   <div className="sticky top-0 z-99 border-b border-b-[#d3d3d3] bg-white px-5 py-2.5">
     <div className="flex h-12.5 items-center justify-between">
@@ -29,7 +31,10 @@ const Navbar = () => (
       {/* Right */}
       <div className="flex items-center gap-5">
         <PersonOutlineOutlinedIcon className="cursor-pointer" />
-        <EmailOutlinedIcon className="cursor-pointer" />
+        <div className="relative">
+          <EmailOutlinedIcon className="cursor-pointer" />
+          <ModelConversation />
+        </div>
         <NotificationsNoneOutlinedIcon className="cursor-pointer" />
         <div className="flex items-center gap-2.5">
           <div className="h-7.5 w-7.5 cursor-pointer overflow-hidden rounded-[50%]">

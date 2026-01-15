@@ -1,10 +1,15 @@
-
 const TypingIndicaptor = () => (
-    <div className="w-12 h-7 bg-gray-200 rounded-full flex items-center justify-center gap-1 ml-4">
-      <div className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-wave" />
-      <div className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-wave" style={{ animationDelay: '100ms' }} />
-      <div className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-wave" style={{ animationDelay: '200ms' }} />
-      </div>
-  )
+  <div className="ml-4 flex h-7 w-12 items-center justify-center gap-1 rounded-full bg-gray-200">
+    <div className="animate-wave h-1.5 w-1.5 rounded-full bg-gray-500" />
+    <div
+      className="animate-wave h-1.5 w-1.5 rounded-full bg-gray-500"
+      style={{ animationDelay: '100ms' }}
+    />
+    <div
+      className="animate-wave h-1.5 w-1.5 rounded-full bg-gray-500"
+      style={{ animationDelay: '200ms' }}
+    />
+  </div>
+);
 
-export default TypingIndicaptor
+export default TypingIndicaptor;
