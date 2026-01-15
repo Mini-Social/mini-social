@@ -90,3 +90,13 @@ export interface CommentType {
   createdAt: string;
   replies: CommentType[];
 }
+export interface Message {
+  _id: string;
+  conversationId: string;
+  sender: string;
+  content: string;
+  readBy: string[];
+  images: string[];
+  createdAt: string;
+  updatedAt: string;
+}

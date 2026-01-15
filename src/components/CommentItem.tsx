@@ -60,7 +60,7 @@ const CommentItem = ({
         <img
           src={comment.user.avatar}
           alt=""
-          className="relative z-[9999] h-full w-full rounded-[50%]"
+          className="relative z-9999 h-full w-full rounded-[50%]"
           style={{
             width: avatarSize,
             height: avatarSize,

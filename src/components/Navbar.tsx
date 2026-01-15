@@ -7,7 +7,7 @@ import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
 const Navbar = () => (
-  <div className="sticky top-0 z-50 border-b border-b-[#d3d3d3] bg-white px-5 py-2.5">
+  <div className="sticky top-0 z-99 border-b border-b-[#d3d3d3] bg-white px-5 py-2.5">
     <div className="flex h-12.5 items-center justify-between">
       {/* Left */}
       <div className="flex items-center gap-7.5">

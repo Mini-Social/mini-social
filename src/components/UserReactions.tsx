@@ -1,4 +1,4 @@
-import UserReaction from "@/components/UserReaction"
+import UserReaction from '@/components/UserReaction';
 
 const MOCK_REACTIONS = [
   {
@@ -48,19 +48,31 @@ const MOCK_REACTIONS = [
     lastName: 'Phạm',
     react: 'angry',
     isFriend: false,
-  }
+  },
 ];
 type ReactionType = 'like' | 'love' | 'haha' | 'wow' | 'sad' | 'angry';
 interface Props {
-  active: string
+  active: string;
 }
-const UserReactions = ({active}: Props) => {
-  const filteredReactions =  active === 'all' ? MOCK_REACTIONS : MOCK_REACTIONS.filter((user) =>  user.react === active )
-  return <ul className='mt-2.5 overflow-y-auto h-full flex-1 custom-scrollbar'>
-        {
-          filteredReactions.map((user) => <UserReaction key={user.id} avatar={user.avatar} firstName={user.firstName} lastName={user.lastName} react={user.react as ReactionType} isFriend={user.isFriend}/>)
-        }
-      </ul>
-}
+const UserReactions = ({ active }: Props) => {
+  const filteredReactions =
+    active === 'all'
+      ? MOCK_REACTIONS
+      : MOCK_REACTIONS.filter(user => user.react === active);
+  return (
+    <ul className="custom-scrollbar mt-2.5 h-full flex-1 overflow-y-auto">
+      {filteredReactions.map(user => (
+        <UserReaction
+          key={user.id}
+          avatar={user.avatar}
+          firstName={user.firstName}
+          lastName={user.lastName}
+          react={user.react as ReactionType}
+          isFriend={user.isFriend}
+        />
+      ))}
+    </ul>
+  );
+};
 
-export default UserReactions
+export default UserReactions;

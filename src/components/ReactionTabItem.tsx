@@ -17,13 +17,13 @@ const ReactionFilterItem = ({
   state,
   active,
   setActive,
-  setIsOpenMore
+  setIsOpenMore,
 }: ReactionFilterItemProps) => (
   <li
     className="relative flex cursor-pointer items-center justify-center gap-1.5 px-4 text-[1rem] font-medium text-[#606366] hover:bg-gray-100"
     onClick={() => {
-      setActive(state)
-      setIsOpenMore(false)
+      setActive(state);
+      setIsOpenMore(false);
     }}
   >
     {src && <img src={src} alt="" className="h-5 w-5 rounded-[50%]" />}

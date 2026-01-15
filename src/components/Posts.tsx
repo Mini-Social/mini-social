@@ -10,7 +10,7 @@ const posts = [
     firstName: 'Nguyễn',
     lastName: 'Công Hiệp',
     avatar:
-      'https://scontent.fhph4-1.fna.fbcdn.net/v/t39.30808-1/513851649_1268726824695790_4766704651740185785_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=101&ccb=1-7&_nc_sid=e99d92&_nc_ohc=m-6ktscyxl8Q7kNvwEFTlzs&_nc_oc=Admy3CPyUYx9zO-5UU8OY8YT-LMzOTPl_GtZjqBbx9BeQMUYmIzgumvdsVepMKznF-9LzvYgJdLuGDS7J2tUIcRp&_nc_zt=24&_nc_ht=scontent.fhph4-1.fna&_nc_gid=3ulkjThCxTPxZ2in6b6KYw&oh=00_AfpcNH9dCaL3U0KMtn4LaxKHVJHACvLIFRmxILiwI8YL8g&oe=695EFC80',
+      'https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg',
     createdAt: '2025-12-22T16:02:53.252+00:00',
     content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit',
     images: [
@@ -37,7 +37,7 @@ const posts = [
     firstName: 'Nguyễn',
     lastName: 'Công Hiệp',
     avatar:
-      'https://scontent.fhph4-1.fna.fbcdn.net/v/t39.30808-1/513851649_1268726824695790_4766704651740185785_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=101&ccb=1-7&_nc_sid=e99d92&_nc_ohc=m-6ktscyxl8Q7kNvwEFTlzs&_nc_oc=Admy3CPyUYx9zO-5UU8OY8YT-LMzOTPl_GtZjqBbx9BeQMUYmIzgumvdsVepMKznF-9LzvYgJdLuGDS7J2tUIcRp&_nc_zt=24&_nc_ht=scontent.fhph4-1.fna&_nc_gid=3ulkjThCxTPxZ2in6b6KYw&oh=00_AfpcNH9dCaL3U0KMtn4LaxKHVJHACvLIFRmxILiwI8YL8g&oe=695EFC80',
+      'https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg',
     createdAt: '2025-12-22T16:02:53.252+00:00',
     content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit',
     images: [
