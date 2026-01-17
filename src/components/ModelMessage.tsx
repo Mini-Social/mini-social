@@ -10,9 +10,212 @@ import EmojiPicker from 'emoji-picker-react';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
+import noAvatar from '@/assets/avatars/noavatar.png';
 import SendIcon from '@/assets/icons/send-message.png';
 import Messages from '@/components/Messages';
+import { FormatDate } from '@/utils/formatDate';
 
+const user =
+  {
+    _id: '65a8ef88e9b1a12f9c000111',
+    firstName: 'Khiêm',
+    lastName: 'Ngô Gia',
+    userName: 'khiemngo99',
+    email: 'khiem.ngo@example.com',
+    password: 'hashed_password_123', // Thực tế sẽ là chuỗi đã mã hóa
+    avatar: 'https://i.pravatar.cc/150?img=60',
+    bio: 'Đam mê lập trình và chơi bóng rổ 🏀',
+    gender: 'Male',
+    phone: '0901234567',
+    birthDate: '1999-05-20T00:00:00.000Z',
+    role: 'User',
+    friends: ['65a8ef99e9b1a12f9c000222', '65a8ef66e9b1a12f9c000444'],
+    isOnline: true,
+    lastOnline: '2026-01-17T17:30:00.000',
+    deleted: false,
+    createdAt: '2025-10-01T08:00:00.000Z',
+    updatedAt: '2026-01-17T17:30:00.000Z'
+  }
+  // {
+  //   _id: '65a8ef99e9b1a12f9c000222',
+  //   firstName: 'Anh',
+  //   lastName: 'Nguyễn Văn',
+  //   userName: 'anhnguyen_dev',
+  //   email: 'anh.nguyen@example.com',
+  //   password: 'hashed_password_456',
+  //   avatar: 'https://i.pravatar.cc/150?img=1',
+  //   bio: 'React & Node.js Developer',
+  //   gender: 'Male',
+  //   phone: '0912345678',
+  //   birthDate: '1995-12-10T00:00:00.000Z',
+  //   role: 'User',
+  //   friends: ['65a8ef88e9b1a12f9c000111', '65a8ef77e9b1a12f9c000333'],
+  //   isOnline: false,
+  //   lastOnline: '2026-01-17T15:00:00.000Z',
+  //   deleted: false,
+  //   createdAt: '2025-11-15T09:00:00.000Z',
+  //   updatedAt: '2026-01-17T15:00:00.000Z'
+  // },
+  // {
+  //   _id: '65a8ef66e9b1a12f9c000444',
+  //   firstName: 'Bảo',
+  //   lastName: 'Trần Thị',
+  //   userName: 'baotran_96',
+  //   email: 'bao.tran@example.com',
+  //   password: 'hashed_password_789',
+  //   avatar: 'https://i.pravatar.cc/150?img=5',
+  //   bio: 'Yêu màu hồng, ghét sự giả dối ✨',
+  //   gender: 'Female',
+  //   phone: '0922334455',
+  //   birthDate: '1996-03-08T00:00:00.000Z',
+  //   role: 'User',
+  //   friends: ['65a8ef88e9b1a12f9c000111'],
+  //   isOnline: true,
+  //   lastOnline: '2026-01-17T17:34:00.000Z',
+  //   deleted: false,
+  //   createdAt: '2025-12-01T10:00:00.000Z',
+  //   updatedAt: '2026-01-17T17:34:00.000Z'
+  // },
+  // {
+  //   _id: '65a8ef77e9b1a12f9c000333',
+  //   firstName: 'Cường',
+  //   lastName: 'Lê Hoàng',
+  //   userName: 'cuongle_admin',
+  //   email: 'admin.cuong@example.com',
+  //   password: 'hashed_password_admin',
+  //   avatar: 'https://i.pravatar.cc/150?img=8',
+  //   bio: 'System Administrator',
+  //   gender: 'Male',
+  //   phone: '0988887777',
+  //   birthDate: '1990-01-01T00:00:00.000Z',
+  //   role: 'Admin',
+  //   friends: ['65a8ef99e9b1a12f9c000222', '65a8ef55e9b1a12f9c000555'],
+  //   isOnline: false,
+  //   lastOnline: '2026-01-16T23:00:00.000Z',
+  //   deleted: false,
+  //   createdAt: '2025-01-01T00:00:00.000Z',
+  //   updatedAt: '2026-01-16T23:00:00.000Z'
+  // },
+  // {
+  //   _id: '65a8ef55e9b1a12f9c000555',
+  //   firstName: 'Dũng',
+  //   lastName: 'Phạm Minh',
+  //   userName: 'dungpham_minh',
+  //   email: 'dung.pham@example.com',
+  //   password: 'hashed_password_abc',
+  //   avatar: 'https://i.pravatar.cc/150?img=12',
+  //   bio: 'Traveler & Blogger ✈️',
+  //   gender: 'Male',
+  //   phone: '0944556677',
+  //   birthDate: '1998-07-15T00:00:00.000Z',
+  //   role: 'User',
+  //   friends: ['65a8ef77e9b1a12f9c000333'],
+  //   isOnline: true,
+  //   lastOnline: '2026-01-17T16:45:00.000Z',
+  //   deleted: false,
+  //   createdAt: '2025-05-10T14:20:00.000Z',
+  //   updatedAt: '2026-01-17T16:45:00.000Z'
+  // },
+  // {
+  //   _id: '65a8ef22e9b1a12f9c000888',
+  //   firstName: 'Em',
+  //   lastName: 'Hoàng Anh',
+  //   userName: 'emhoang_anh',
+  //   email: 'em.hoang@example.com',
+  //   password: 'hashed_password_xyz',
+  //   avatar: '', // Không có avatar
+  //   bio: '',
+  //   gender: 'Female',
+  //   phone: '',
+  //   birthDate: null,
+  //   role: 'User',
+  //   friends: [],
+  //   isOnline: true,
+  //   lastOnline: '2026-01-17T17:10:00.000Z',
+  //   deleted: false,
+  //   createdAt: '2026-01-10T09:15:00.000Z',
+  //   updatedAt: '2026-01-17T17:10:00.000Z'
+  // },
+  // {
+  //   _id: '65a8ef11e9b1a12f9c000999',
+  //   firstName: 'Phương',
+  //   lastName: 'Võ Thị',
+  //   userName: 'phuongvo_cute',
+  //   email: 'phuong.vo@example.com',
+  //   password: 'hashed_password_p1',
+  //   avatar: 'https://i.pravatar.cc/150?img=16',
+  //   bio: 'Designer tại TP.HCM',
+  //   gender: 'Female',
+  //   phone: '0977112233',
+  //   birthDate: '2000-02-28T00:00:00.000Z',
+  //   role: 'User',
+  //   friends: ['65a8ef00e9b1a12f9c001010'],
+  //   isOnline: false,
+  //   lastOnline: '2026-01-15T08:30:00.000Z',
+  //   deleted: false,
+  //   createdAt: '2025-08-20T11:00:00.000Z',
+  //   updatedAt: '2026-01-15T08:30:00.000Z'
+  // },
+  // {
+  //   _id: '65a8ef00e9b1a12f9c001010',
+  //   firstName: 'Huy',
+  //   lastName: 'Đặng Quốc',
+  //   userName: 'huy_dang_97',
+  //   email: 'huy.dang@example.com',
+  //   password: 'hashed_password_h1',
+  //   avatar: 'https://i.pravatar.cc/150?img=11',
+  //   bio: 'Thích xem phim hành động 🍿',
+  //   gender: 'Male',
+  //   phone: '0966554433',
+  //   birthDate: '1997-11-11T00:00:00.000Z',
+  //   role: 'User',
+  //   friends: ['65a8ef11e9b1a12f9c000999', '65a8ef44e9b1a12f9c000666'],
+  //   isOnline: true,
+  //   lastOnline: '2026-01-17T17:25:00.000Z',
+  //   deleted: false,
+  //   createdAt: '2025-09-12T16:40:00.000Z',
+  //   updatedAt: '2026-01-17T17:25:00.000Z'
+  // },
+  // {
+  //   _id: '65a8ef33e9b1a12f9c000777',
+  //   firstName: 'Mai',
+  //   lastName: 'Bùi Tuyết',
+  //   userName: 'maibui_tuyet',
+  //   email: 'mai.bui@example.com',
+  //   password: 'hashed_password_m1',
+  //   avatar: 'https://i.pravatar.cc/150?img=23',
+  //   bio: 'Kế toán viên chăm chỉ',
+  //   gender: 'Female',
+  //   phone: '0933442211',
+  //   birthDate: '1994-10-25T00:00:00.000Z',
+  //   role: 'User',
+  //   friends: [],
+  //   isOnline: false,
+  //   lastOnline: '2026-01-14T10:00:00.000Z',
+  //   deleted: false,
+  //   createdAt: '2025-06-25T07:30:00.000Z',
+  //   updatedAt: '2026-01-14T10:00:00.000Z'
+  // },
+  // {
+  //   _id: '65a8ef44e9b1a12f9c000666',
+  //   firstName: 'Tùng',
+  //   lastName: 'Lý Thanh',
+  //   userName: 'tungly_thanh',
+  //   email: 'tung.ly@example.com',
+  //   password: 'hashed_password_t1',
+  //   avatar: 'https://i.pravatar.cc/150?img=13',
+  //   bio: 'Gamer chuyên nghiệp 🎮',
+  //   gender: 'Male',
+  //   phone: '0900998877',
+  //   birthDate: '2002-04-30T00:00:00.000Z',
+  //   role: 'User',
+  //   friends: ['65a8ef00e9b1a12f9c001010'],
+  //   isOnline: true,
+  //   lastOnline: '2026-01-17T17:34:30.000Z',
+  //   deleted: false,
+  //   createdAt: '2025-12-20T22:00:00.000Z',
+  //   updatedAt: '2026-01-17T17:34:30.000Z'
+  // }
 interface Props {
   setOpenModelMessage: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -81,21 +284,24 @@ const ModelMessage = ({ setOpenModelMessage }: Props) => {
     moveCursorToEnd();
   }, [content]);
   return (
-    <div className="fixed right-40 bottom-0 z-99">
+    <div className="fixed right-40 bottom-0 z-90">
       <div className="h-113 w-82 rounded-tl-[12px] rounded-tr-[12px] bg-white">
         <div className="flex h-full flex-col">
           {/* Header */}
           <div className="flex flex-1 items-center justify-between border-b p-1.5">
             <div className="flex items-center gap-2.5">
-              <div className="relative h-8 w-8 rounded-[50%]">
+              <div className="relative h-8 w-8 rounded-[50%] shrink-0">
                 <img
                   className="h-full w-full rounded-[50%]"
-                  src="https://scontent.fhph4-1.fna.fbcdn.net/v/t1.30497-1/453178253_471506465671661_2781666950760530985_n.png?stp=dst-png_s100x100&_nc_cat=1&ccb=1-7&_nc_sid=136b72&_nc_ohc=hXJ7wx4on2cQ7kNvwE0K8Ul&_nc_oc=Adleuo5_OpV0fcQZuFvhMG1onEE2hUwJegMc60PhCJfCbDFWYe6MkMyRt2jCkoUeBOT4cnoRP9rFAYVL1jFNh-Y3&_nc_ad=z-m&_nc_cid=0&_nc_zt=24&_nc_ht=scontent.fhph4-1.fna&oh=00_AfrGca5s9GroWK2H2h6J8QfNp6UitSFoc5wi_UNTo-C8HQ&oe=698EAE7A"
+                  src={user.avatar || noAvatar}
                   alt=""
                 />
-                <div className="absolute right-0 bottom-0 h-3 w-3 rounded-[50%] border-2 border-white bg-[#24832c]"></div>
+                {user.isOnline && <div className="absolute right-0 bottom-0 h-3 w-3 rounded-[50%] border-2 border-white bg-[#24832c]"></div>}
               </div>
-              <span className="font-medium">Nguyễn Công Hiệp</span>
+             <div className="flex flex-col h-full">
+              <span className="font-medium">{user.firstName} {user.lastName}</span>
+              <span className='text-xs text-gray-500'>{user.isOnline ? 'Online' : `Hoạt động ${FormatDate(user.lastOnline,true)}`}</span>
+             </div>
             </div>
 
             <div className="flex items-center">

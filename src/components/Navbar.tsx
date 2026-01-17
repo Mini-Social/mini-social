@@ -5,11 +5,14 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import { useState } from 'react';
 
 import ModelConversation from '@/components/ModelConversation';
 
-const Navbar = () => (
-  <div className="sticky top-0 z-99 border-b border-b-[#d3d3d3] bg-white px-5 py-2.5">
+const Navbar = () => {
+  const [open, setOpen] = useState<string>('')
+
+  return <div className="sticky top-0 z-99 border-b border-b-[#d3d3d3] bg-white px-5 py-2.5">
     <div className="flex h-12.5 items-center justify-between">
       {/* Left */}
       <div className="flex items-center gap-7.5">
@@ -32,8 +35,8 @@ const Navbar = () => (
       <div className="flex items-center gap-5">
         <PersonOutlineOutlinedIcon className="cursor-pointer" />
         <div className="relative">
-          <EmailOutlinedIcon className="cursor-pointer" />
-          <ModelConversation />
+          <EmailOutlinedIcon className="cursor-pointer" style={{color: open === 'conversation' ? 'blue' : '#000000'}} onClick={() => setOpen((pre) => pre === 'conversation' ? '' : 'conversation')}/>
+          {open === 'conversation' && <ModelConversation />}
         </div>
         <NotificationsNoneOutlinedIcon className="cursor-pointer" />
         <div className="flex items-center gap-2.5">
@@ -51,6 +54,6 @@ const Navbar = () => (
       </div>
     </div>
   </div>
-);
+}
 
 export default Navbar;
