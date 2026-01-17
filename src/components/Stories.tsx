@@ -1,12 +1,31 @@
-const Stories = () => (
-  <div>
-    <div className="mb-5 flex h-full max-h-50 w-full gap-2 rounded-[10px]">
-      <div className="h-full flex-1 cursor-pointer overflow-hidden rounded-[10px] shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)] hover:opacity-90">
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { useEffect, useRef, useState } from 'react';
+
+const Stories = () => {
+  const [translateX, setTranslateX] = useState<number>(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const [maxTranslateX, setMaxTranslateX] = useState<number>(0);
+  useEffect(() => {
+   if(ref.current){
+     const maxTranslateX = ref.current.scrollWidth - ref.current.offsetWidth;
+     setMaxTranslateX(maxTranslateX);
+    if (Math.abs(translateX) > maxTranslateX) {
+      setTranslateX(-maxTranslateX);
+    }
+   }
+  }, [translateX, maxTranslateX])
+  return <div className='relative overflow-hidden mb-5'>
+        { translateX < 0 && <div className="absolute top-[50%] left-[20px] translate-y-[-50%] flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)] z-10 cursor-pointer">
+        <ArrowBackIosNewIcon fontSize="small" onClick={() => setTranslateX(Math.min(0, translateX + 400))}/>
+      </div>}
+      <div ref={ref} className='relative flex min-w-0 h-full max-h-50 w-full gap-2 rounded-[10px] transition-all duration-300 ease-in-out' style={{transform: `translateX(${translateX}px)`}}>
+      <div className="h-full w-[120px] shrink-0 cursor-pointer overflow-hidden rounded-[10px] shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)] hover:opacity-90">
         <div className="relative h-37.5">
           <img
             src="https://images.pexels.com/photos/3228727/pexels-photo-3228727.jpeg?auto=compress&cs=tinysrgb&w=1600"
             alt=""
-            className="h-full w-full flex-1 cursor-pointer bg-cover object-cover"
+            className="h-full w-[120px] shrink-0 cursor-pointer bg-cover object-cover"
           />
         </div>
         <div className="relative h-12.5 w-full bg-white px-4 pt-7 pb-3 text-center text-[11px] font-medium">
@@ -17,7 +36,7 @@ const Stories = () => (
         </div>
         <div></div>
       </div>
-      <div className="relative flex-1 cursor-pointer hover:opacity-90">
+      <div className="relative w-[120px] shrink-0 cursor-pointer hover:opacity-90">
         <div className="h-full w-full">
           <div className="absolute top-2.5 left-2.5 h-10 w-10 overflow-hidden rounded-[50%] border-4 border-[#0866ff]">
             <img
@@ -36,7 +55,7 @@ const Stories = () => (
           </span>
         </div>
       </div>
-      <div className="relative flex-1 cursor-pointer hover:opacity-90">
+      <div className="relative w-[120px] shrink-0 cursor-pointer hover:opacity-90">
         <div className="h-full w-full">
           <div className="absolute top-2.5 left-2.5 h-10 w-10 overflow-hidden rounded-[50%] border-4 border-[#0866ff]">
             <img
@@ -55,7 +74,7 @@ const Stories = () => (
           </span>
         </div>
       </div>
-      <div className="relative flex-1 cursor-pointer hover:opacity-90">
+      <div className="relative w-[120px] shrink-0 cursor-pointer hover:opacity-90">
         <div className="h-full w-full">
           <div className="absolute top-2.5 left-2.5 h-10 w-10 overflow-hidden rounded-[50%] border-4 border-[#0866ff]">
             <img
@@ -74,7 +93,7 @@ const Stories = () => (
           </span>
         </div>
       </div>
-      <div className="relative flex-1 cursor-pointer hover:opacity-90">
+      <div className="relative w-[120px] shrink-0 cursor-pointer hover:opacity-90">
         <div className="h-full w-full">
           <div className="absolute top-2.5 left-2.5 h-10 w-10 overflow-hidden rounded-[50%] border-4 border-[#0866ff]">
             <img
@@ -93,8 +112,184 @@ const Stories = () => (
           </span>
         </div>
       </div>
-    </div>
+      <div className="relative w-[120px] shrink-0 cursor-pointer hover:opacity-90">
+        <div className="h-full w-full">
+          <div className="absolute top-2.5 left-2.5 h-10 w-10 overflow-hidden rounded-[50%] border-4 border-[#0866ff]">
+            <img
+              src="https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg"
+              alt=""
+              className="object-cover"
+            />
+          </div>
+          <img
+            src="https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+            alt=""
+            className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
+          />
+          <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
+            Nguyễn Công Hiệp
+          </span>
+        </div>
+      </div>
+      <div className="relative w-[120px] shrink-0 cursor-pointer hover:opacity-90">
+        <div className="h-full w-full">
+          <div className="absolute top-2.5 left-2.5 h-10 w-10 overflow-hidden rounded-[50%] border-4 border-[#0866ff]">
+            <img
+              src="https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg"
+              alt=""
+              className="object-cover"
+            />
+          </div>
+          <img
+            src="https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+            alt=""
+            className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
+          />
+          <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
+            Nguyễn Công Hiệp
+          </span>
+        </div>
+      </div>
+      <div className="relative w-[120px] shrink-0 cursor-pointer hover:opacity-90">
+        <div className="h-full w-full">
+          <div className="absolute top-2.5 left-2.5 h-10 w-10 overflow-hidden rounded-[50%] border-4 border-[#0866ff]">
+            <img
+              src="https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg"
+              alt=""
+              className="object-cover"
+            />
+          </div>
+          <img
+            src="https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+            alt=""
+            className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
+          />
+          <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
+            Nguyễn Công Hiệp
+          </span>
+        </div>
+      </div>
+      <div className="relative w-[120px] shrink-0 cursor-pointer hover:opacity-90">
+        <div className="h-full w-full">
+          <div className="absolute top-2.5 left-2.5 h-10 w-10 overflow-hidden rounded-[50%] border-4 border-[#0866ff]">
+            <img
+              src="https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg"
+              alt=""
+              className="object-cover"
+            />
+          </div>
+          <img
+            src="https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+            alt=""
+            className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
+          />
+          <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
+            Nguyễn Công Hiệp
+          </span>
+        </div>
+      </div>
+      <div className="relative w-[120px] shrink-0 cursor-pointer hover:opacity-90">
+        <div className="h-full w-full">
+          <div className="absolute top-2.5 left-2.5 h-10 w-10 overflow-hidden rounded-[50%] border-4 border-[#0866ff]">
+            <img
+              src="https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg"
+              alt=""
+              className="object-cover"
+            />
+          </div>
+          <img
+            src="https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+            alt=""
+            className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
+          />
+          <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
+            Nguyễn Công Hiệp
+          </span>
+        </div>
+      </div>
+      <div className="relative w-[120px] shrink-0 cursor-pointer hover:opacity-90">
+        <div className="h-full w-full">
+          <div className="absolute top-2.5 left-2.5 h-10 w-10 overflow-hidden rounded-[50%] border-4 border-[#0866ff]">
+            <img
+              src="https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg"
+              alt=""
+              className="object-cover"
+            />
+          </div>
+          <img
+            src="https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+            alt=""
+            className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
+          />
+          <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
+            Nguyễn Công Hiệp
+          </span>
+        </div>
+      </div>
+      <div className="relative w-[120px] shrink-0 cursor-pointer hover:opacity-90">
+        <div className="h-full w-full">
+          <div className="absolute top-2.5 left-2.5 h-10 w-10 overflow-hidden rounded-[50%] border-4 border-[#0866ff]">
+            <img
+              src="https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg"
+              alt=""
+              className="object-cover"
+            />
+          </div>
+          <img
+            src="https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+            alt=""
+            className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
+          />
+          <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
+            Nguyễn Công Hiệp
+          </span>
+        </div>
+      </div>
+      <div className="relative w-[120px] shrink-0 cursor-pointer hover:opacity-90">
+        <div className="h-full w-full">
+          <div className="absolute top-2.5 left-2.5 h-10 w-10 overflow-hidden rounded-[50%] border-4 border-[#0866ff]">
+            <img
+              src="https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg"
+              alt=""
+              className="object-cover"
+            />
+          </div>
+          <img
+            src="https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+            alt=""
+            className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
+          />
+          <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
+            Nguyễn Công Hiệp
+          </span>
+        </div>
+      </div>
+      <div className="relative w-[120px] shrink-0 cursor-pointer hover:opacity-90">
+        <div className="h-full w-full">
+          <div className="absolute top-2.5 left-2.5 h-10 w-10 overflow-hidden rounded-[50%] border-4 border-[#0866ff]">
+            <img
+              src="https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg"
+              alt=""
+              className="object-cover"
+            />
+          </div>
+          <img
+            src="https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+            alt=""
+            className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
+          />
+          <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
+            Nguyễn Công Hiệp
+          </span>
+        </div>
+      </div>
+      </div>
+       {
+        translateX > -maxTranslateX && <div className="absolute top-[50%] right-[20px] translate-y-[-50%] flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)] z-10 cursor-pointer">
+        <ArrowForwardIosIcon fontSize="small" onClick={() => setTranslateX(translateX - 400)}/>
+      </div>
+       }
   </div>
-);
+}
 
 export default Stories;

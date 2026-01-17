@@ -284,8 +284,8 @@ const ModelMessage = ({ setOpenModelMessage }: Props) => {
     moveCursorToEnd();
   }, [content]);
   return (
-    <div className="fixed right-40 bottom-0 z-90">
-      <div className="h-113 w-82 rounded-tl-[12px] rounded-tr-[12px] bg-white">
+    <div className="fixed lg:right-40 bottom-0 z-90">
+      <div className="lg:h-113 lg:w-82 h-[calc(100vh-4rem)] w-screen rounded-tl-[12px] rounded-tr-[12px] bg-white">
         <div className="flex h-full flex-col">
           {/* Header */}
           <div className="flex flex-1 items-center justify-between border-b p-1.5">
@@ -348,7 +348,7 @@ const ModelMessage = ({ setOpenModelMessage }: Props) => {
           {/* Footer */}
           {isOpenEmoj && (
             <div
-              className="absolute bottom-18 -left-22 z-50"
+              className="absolute bottom-22 lg:bottom-18 right-15 lg:-left-22 z-50"
               onMouseDown={e => e.preventDefault()}
               ref={ref}
             >

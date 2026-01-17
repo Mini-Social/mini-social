@@ -15,7 +15,7 @@ const ModelReaction = ({ setActiveReaction }: ModelReactionProps) => {
   return (
     <div className="pointer-events-auto fixed inset-0 z-100 bg-gray-500/50 shadow-[0px_0px_1px_1px_rgba(0_0_0/0.2)]">
       <div className="flex h-full w-full items-center justify-center">
-        <div className="relative flex h-[90vh] w-[50%] flex-col rounded-2xl bg-white p-2">
+        <div className="relative flex h-screen w-full lg:h-[90vh] lg:w-[50%] flex-col rounded-2xl bg-white p-2">
           <div className="flex justify-between">
             <ReactionFilterBar active={active} setActive={setActive} />
             <div

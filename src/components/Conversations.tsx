@@ -122,7 +122,7 @@ const Conversations = ({active}: {active: string}) => {
     else if(active === 'Group') {return convo.type === 'group'}
   })
   return  <>
-    <div className="flex flex-col flex-1 overflow-y-auto custom-scrollbar">
+    <div className="flex flex-col flex-1 overflow-y-auto xs:no-scrollbar custom-scrollbar">
     {filterConversations.map((convo) => <Conversation key={convo._id} avatar={convo.avatar} groupName={convo.groupName} lastMessage={convo.lastMessage} lastMessageAt={convo.lastMessageAt} lastSenderId={convo.lastSenderId === myId ? 'You' : convo.lastSenderId} unReadCount = {convo.unReadCount.find((item) => item.userId === myId)?.count || 0} />)}
     </div>
     </>

@@ -87,7 +87,7 @@ const CommentItem = ({
             <span>⋯</span>
           </div>
         </div>
-        <div className="ml-2 flex items-center gap-4 pt-0.75 text-[11px] font-medium text-[#65686c]">
+        <div className="ml-2 flex items-center gap-2.5 lg:gap-4 pt-0.75 text-[11px] font-medium text-[#65686c]">
           <span className="cursor-pointer hover:underline">
             {comment.createdAt}
           </span>

@@ -158,7 +158,7 @@ const ModelComment = ({
   return (
     <div className="pointer-events-auto fixed inset-0 z-100 bg-gray-500/50 shadow-[0px_0px_1px_1px_rgba(0_0_0/0.2)]">
       <div className="flex h-full w-full items-center justify-center">
-        <div className="relative flex h-[90vh] w-[50%] flex-col rounded-2xl bg-white p-2">
+        <div className="relative flex h-screen w-full md:w-[80%] md:h-[95vh] lg:w-[50%] flex-col rounded-2xl bg-white p-2">
           <div className="flex h-15 w-full items-center justify-between border-b border-b-[#cecece] bg-white p-2">
             <span></span>
             <span className="text-[1rem] font-bold text-[#080809]">
@@ -171,7 +171,7 @@ const ModelComment = ({
               <CloseIcon fontSize="small" className="cursor-pointer" />
             </div>
           </div>
-          <div className="custom-scrollbar h-full w-full flex-1 overflow-y-auto">
+          <div className="no-scrollbar h-full w-full flex-1 overflow-y-auto overflow-x-hidden">
             <Post
               post={post}
               setIsVisible={setIsVisible}

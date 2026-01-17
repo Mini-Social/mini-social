@@ -42,7 +42,7 @@ const onlineFriends = [
 ];
 
 const RightBar = () => (
-  <div className="no-scrollbar sticky top-17.5 h-[calc(100vh-70px)] flex-3 shrink-0 overflow-auto p-5">
+  <div className="no-scrollbar sticky top-17.5 hidden h-[calc(100vh-70px)] flex-3 shrink-0 overflow-auto p-5 lg:block">
     <div>
       <div className="mb-5 bg-white shadow-[0px_0px_35px_0px_rgba(0_0_0/0.1)]">
         <span className="mb-4.5 block px-5 pt-5 text-xs text-[#808080]">

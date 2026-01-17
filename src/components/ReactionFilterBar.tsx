@@ -54,7 +54,7 @@ const ReactionFilterBar = ({ active, setActive }: Props) => {
       {/* <ReactionFilterItem src={sad} count={10000} active = {active === 'sad'} state='sad' setActive={setActive}/>
     <ReactionFilterItem src={angry} count={10000} active = {active === 'angry'} state='angry' setActive={setActive}/> */}
       <li
-        className="relative flex cursor-pointer items-center justify-center gap-1 px-4 text-[1rem] font-medium text-[#606366] hover:bg-gray-100"
+        className="relative flex cursor-pointer items-center justify-center gap-1 px-4 text-[14px] lg:text-[1rem] font-medium text-[#606366] hover:bg-gray-100"
         onClick={() => setIsOpenMore(pre => !pre)}
       >
         <span className={`${isActive && 'text-[#0806ff]'}`}>Xem Thêm</span>

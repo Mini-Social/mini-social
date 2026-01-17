@@ -12,7 +12,7 @@ const ModelConversation = () => {
   const [active, setActive] = useState<string>('All')
   const [showContacts, setShowContacts] = useState<boolean>(false)
   const [search, setSearch] = useState<string>('')
-  return <div className="absolute right-0 bottom-0 h-140 min-w-90 translate-x-[20%] translate-y-[104%] rounded-[12px] bg-white shadow-[0px_0px_1px_1px_rgba(0,0,0,0.1)] z-99">
+  return <div className="fixed md:right-20 top-17 z-9999 md:h-140 w-screen h-[calc(100vh-4rem)] md:w-[380px] rounded-[12px] bg-white shadow-[0px_0px_1px_1px_rgba(0,0,0,0.1)]">
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between px-3 pt-4 pb-1">
       <h1 className="text-2xl! font-bold!">Đoạn chat</h1>

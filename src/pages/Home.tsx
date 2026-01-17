@@ -10,8 +10,8 @@ const Home = () => {
 
   return (
     <>
-      <div className="flex-6 shrink-0">
-        <div className="px-17.5 py-5">
+      <div className="xl:flex-6 min-w-0 md:flex-5">
+        <div className="xl:px-17.5 xl:py-5 lg:px-5 lg:py-2.5 md:px-5 py-2.5">
           <Stories />
           <Share />
           <Posts />

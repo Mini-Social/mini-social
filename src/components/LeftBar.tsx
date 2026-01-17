@@ -14,7 +14,7 @@ import watch from '@/assets/icons/watch.png';
 import LeftBarItem from '@/components/LeftBarItem';
 
 const LeftBar = () => (
-  <div className="no-scrollbar sticky top-17.5 h-[calc(100vh-70px)] flex-2 shrink-0 overflow-auto bg-white">
+  <div className="no-scrollbar sticky top-17.5 hidden h-[calc(100vh-70px)] flex-2 shrink-0 overflow-auto bg-white lg:block">
     <div className="">
       <div className="mt-2.5 flex flex-col">
         <LeftBarItem
