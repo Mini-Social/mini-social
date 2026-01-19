@@ -44,7 +44,7 @@ export interface ReactionDetail {
 export const reactionStyle: Record<ReactionType, ReactionDetail> = {
   default: {
     text: 'Likes',
-    color: 'text-[#65676B]',
+    color: 'text-(--textColor2)',
     icon: like,
   },
   like: {

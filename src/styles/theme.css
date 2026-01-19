@@ -39,6 +39,13 @@
 :root {
   --radius: 0.65rem;
   --background: oklch(1 0 0);
+  --background-primary: #f6f3f3;
+  --logoColor: #00008b;
+  --textColor: #000000;
+  --textColor2: #65686c;
+  --closeColor: #d3d6da;
+  --hoverColor: #f3f4f6;
+  --typingColor: #d3d6da;
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
@@ -72,7 +79,14 @@
 }
 
 .dark {
-  --background: oklch(0.141 0.005 285.823);
+  --background: #222222;
+  --background-primary: #333333;
+  --logoColor: #ffffff;
+  --textColor: #ffffff;
+  --textColor2: #ffffff;
+  --closeColor: #333333;
+  --hoverColor: #333333;
+  --typingColor: #333333;
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.21 0.006 285.885);
   --card-foreground: oklch(0.985 0 0);

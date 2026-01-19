@@ -79,15 +79,15 @@ const CommentItem = ({
 
       <div className="flex flex-col">
         <div className="flex items-center gap-2.5">
-          <div className="flex flex-col rounded-[12px] bg-[#F0F2F5] px-3 py-2 text-[13px]">
+          <div className="flex flex-col rounded-[12px] bg-(--background-primary) px-3 py-2 text-[13px]">
             <span className="font-medium">{comment.user.name}</span>
             <span>{comment.content}</span>
           </div>
-          <div className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-[50%] text-[1rem] hover:bg-[#F0F2F5]">
+          <div className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-[50%] text-[1rem] hover:bg-(--background-secondary)">
             <span>⋯</span>
           </div>
         </div>
-        <div className="ml-2 flex items-center gap-2.5 lg:gap-4 pt-0.75 text-[11px] font-medium text-[#65686c]">
+        <div className="ml-2 flex items-center gap-2.5 pt-0.75 text-[11px] font-medium text-[#65686c] lg:gap-4">
           <span className="cursor-pointer hover:underline">
             {comment.createdAt}
           </span>

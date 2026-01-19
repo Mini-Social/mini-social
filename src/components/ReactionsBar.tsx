@@ -26,7 +26,7 @@ const ReactionsBar = ({
   isVisible,
 }: ReactionBarProps) => (
   <div
-    className={`absolute -top-8 left-0 flex items-center gap-2 rounded-4xl border bg-white p-1 transition-all delay-200 duration-200 ${isVisible ? 'pointer-events-auto visible group-hover:-translate-y-3 group-hover:opacity-100' : 'pointer-events-none invisible opacity-0'}`}
+    className={`bg-background absolute -top-8 left-0 flex items-center gap-2 rounded-4xl border p-1 transition-all delay-200 duration-200 ${isVisible ? 'pointer-events-auto visible group-hover:-translate-y-3 group-hover:opacity-100' : 'pointer-events-none invisible opacity-0'}`}
   >
     {Object.entries(reactions).map(([name, url], index) => (
       <div

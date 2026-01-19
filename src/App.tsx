@@ -1,5 +1,8 @@
+import { DarkmodeContextProvider } from '@/contexts/DarkmodeProvider';
 import AppRouter from '@/routes';
 
-const App = () => <AppRouter />;
+const App = () => <DarkmodeContextProvider>
+    <AppRouter />
+</DarkmodeContextProvider>;
 
 export default App;

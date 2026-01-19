@@ -5,67 +5,70 @@ const PostImages = ({ images }: { images: string[] }) => {
   const lengthImage = images.length;
   return (
     <div
-      className={`grid gap-0.5 border-t border-t-gray-300 ${lengthImage === 1 ? 'grid-cols-1' : 'grid-cols-2'} ${lengthImage === 3 ? 'grid-cols-[2fr_1fr]' : ''}`}
+      className={`border-t-border grid gap-0.5 border-t ${lengthImage === 1 ? 'grid-cols-1' : 'grid-cols-2'} ${lengthImage === 3 ? 'grid-cols-[2fr_1fr]' : ''}`}
     >
       {lengthImage === 1 && (
         <PhotoProvider>
           <PhotoView src={images[0]}>
-           <Link to={'/'}>
-          <img
-            src={images[0]}
-            alt=""
-            className="max-h-140 w-full object-cover"
-          />
-
-        </Link>
-        </PhotoView>
+            <Link to={'/'}>
+              <img
+                src={images[0]}
+                alt=""
+                className="max-h-140 w-full object-cover"
+              />
+            </Link>
+          </PhotoView>
         </PhotoProvider>
-
       )}
       {lengthImage === 2 &&
         images.map((image, index) => (
           <PhotoProvider key={index}>
-            <PhotoView src={image}><Link to={'/'}>
-            <img src={image} alt="" className="max-h-125 w-full object-cover" />
-          </Link></PhotoView>
-
+            <PhotoView src={image}>
+              <Link to={'/'}>
+                <img
+                  src={image}
+                  alt=""
+                  className="max-h-125 w-full object-cover"
+                />
+              </Link>
+            </PhotoView>
           </PhotoProvider>
         ))}
       {
         lengthImage === 3 && (
           <>
             <PhotoProvider>
-            <PhotoView src={images[0]}>
-            <Link to={'/'} className="row-span-2 block h-full w-full">
-              <img
-                src={images[0]}
-                alt=""
-                className="h-full w-full object-cover"
-              />
-              </Link>
-            </PhotoView>
+              <PhotoView src={images[0]}>
+                <Link to={'/'} className="row-span-2 block h-full w-full">
+                  <img
+                    src={images[0]}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                </Link>
+              </PhotoView>
             </PhotoProvider>
             <PhotoProvider>
-            <PhotoView src={images[1]}>
-            <Link to={'/'} className="block h-full w-full">
-              <img
-                src={images[1]}
-                alt=""
-                className="h-full w-full object-cover"
-              />
-            </Link>
-            </PhotoView>
+              <PhotoView src={images[1]}>
+                <Link to={'/'} className="block h-full w-full">
+                  <img
+                    src={images[1]}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                </Link>
+              </PhotoView>
             </PhotoProvider>
             <PhotoProvider>
-            <PhotoView src={images[2]}>
-            <Link to={'/'} className="block h-full w-full">
-              <img
-                src={images[2]}
-                alt=""
-                className="h-full w-full object-cover"
-              />
-            </Link>
-            </PhotoView>
+              <PhotoView src={images[2]}>
+                <Link to={'/'} className="block h-full w-full">
+                  <img
+                    src={images[2]}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                </Link>
+              </PhotoView>
             </PhotoProvider>
           </>
         )
@@ -78,40 +81,40 @@ const PostImages = ({ images }: { images: string[] }) => {
       {lengthImage === 4 &&
         images.map((image, index) => (
           <PhotoProvider key={index}>
-          <PhotoView src={image}>
-          <Link key={index} to={'/'}>
-            <img
-              src={image}
-              alt=""
-              className="aspect-square max-h-125 w-full object-cover"
-            />
-          </Link>
-          </PhotoView>
+            <PhotoView src={image}>
+              <Link key={index} to={'/'}>
+                <img
+                  src={image}
+                  alt=""
+                  className="aspect-square max-h-125 w-full object-cover"
+                />
+              </Link>
+            </PhotoView>
           </PhotoProvider>
         ))}
       {lengthImage >= 5 && (
         <>
           <PhotoProvider>
-          <PhotoView src={images[0]}>
-          <Link to={'/'} className="block aspect-square h-full w-full">
-            <img
-              src={images[0]}
-              alt=""
-              className="h-full w-full object-cover"
-            />
-          </Link>
-          </PhotoView>
+            <PhotoView src={images[0]}>
+              <Link to={'/'} className="block aspect-square h-full w-full">
+                <img
+                  src={images[0]}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
+              </Link>
+            </PhotoView>
           </PhotoProvider>
           <PhotoProvider>
-          <PhotoView src={images[1]}>
-          <Link to={'/'} className="block aspect-square h-full w-full">
-            <img
-              src={images[1]}
-              alt=""
-              className="h-full w-full object-cover"
-            />
-          </Link>
-          </PhotoView>
+            <PhotoView src={images[1]}>
+              <Link to={'/'} className="block aspect-square h-full w-full">
+                <img
+                  src={images[1]}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
+              </Link>
+            </PhotoView>
           </PhotoProvider>
           <div className="col-span-2 grid grid-cols-3 gap-0.5">
             {images.map(
@@ -119,19 +122,19 @@ const PostImages = ({ images }: { images: string[] }) => {
                 index > 1 &&
                 index < 5 && (
                   <PhotoProvider key={index}>
-                  <PhotoView src={image}>
-                  <Link
-                    key={index}
-                    to={'/'}
-                    className="block aspect-square h-full w-full"
-                  >
-                    <img
-                      src={image}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  </Link>
-                  </PhotoView>
+                    <PhotoView src={image}>
+                      <Link
+                        key={index}
+                        to={'/'}
+                        className="block aspect-square h-full w-full"
+                      >
+                        <img
+                          src={image}
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
+                      </Link>
+                    </PhotoView>
                   </PhotoProvider>
                 ),
             )}

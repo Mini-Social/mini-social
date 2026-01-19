@@ -37,7 +37,7 @@ const MessageItem = ({
       )}
       {content && (
         <div
-          className={`mr-2 max-w-[70%] rounded-[20px] px-3 py-2 ${isOwn ? 'bg-[#4244F9] text-white' : 'bg-[#F0F2F5] text-black'}`}
+          className={`mr-2 max-w-[70%] rounded-[20px] px-3 py-2 ${isOwn ? 'bg-[#4244F9] text-white' : 'bg-(--background-primary) text-(--textColor)'}`}
         >
           <p className="wrap-break-word break-all whitespace-pre-wrap">
             {content}

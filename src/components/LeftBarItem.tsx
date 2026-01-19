@@ -10,7 +10,7 @@ interface Props {
 const LeftBarItem = ({ src, text, link, isUser }: Props) => (
   <Link
     to={link}
-    className="px-5 py-2.5 font-normal! text-[#000000]! hover:bg-gray-200"
+    className="hover:bg-accent px-5 py-2.5 font-normal! text-(--textColor)!"
   >
     <div className="flex items-center gap-2.5">
       <img

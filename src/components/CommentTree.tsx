@@ -130,12 +130,12 @@ const CommentTree = ({
                   }}
                 />
                 <div
-                  className="flex w-full items-center justify-between rounded-[12px] bg-[#F0F2F5] px-2 py-1.5"
+                  className="flex w-full items-center justify-between rounded-[12px] bg-(--background-primary) px-2 py-1.5"
                   style={{}}
                 >
                   <div
                     contentEditable="true"
-                    className="h-auto w-full text-[13px] leading-5 break-all outline-none"
+                    className="h-auto w-full text-[16px] leading-5 break-all outline-none lg:text-[13px]"
                   >
                     <span
                       contentEditable="false"

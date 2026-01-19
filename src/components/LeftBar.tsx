@@ -14,7 +14,7 @@ import watch from '@/assets/icons/watch.png';
 import LeftBarItem from '@/components/LeftBarItem';
 
 const LeftBar = () => (
-  <div className="no-scrollbar sticky top-17.5 hidden h-[calc(100vh-70px)] flex-2 shrink-0 overflow-auto bg-white lg:block">
+  <div className="no-scrollbar bg-background sticky top-17.5 hidden h-[calc(100vh-70px)] flex-2 shrink-0 overflow-auto lg:block">
     <div className="">
       <div className="mt-2.5 flex flex-col">
         <LeftBarItem
@@ -32,7 +32,7 @@ const LeftBar = () => (
         <LeftBarItem src={memories} text="Memories" link="/" />
       </div>
       <div className="px-5">
-        <hr className="my-2.5 h-[0.5px] border-none bg-[#d3d3d3]" />
+        <hr className="bg-border my-2.5 h-[0.5px] border-none" />
       </div>
       {/* Your shortcuts */}
       <div className="flex flex-col">
@@ -44,7 +44,7 @@ const LeftBar = () => (
         <LeftBarItem src={messages} text="Messages" link="/" />
       </div>
       <div className="px-5">
-        <hr className="my-2.5 h-[0.5px] border-none bg-[#d3d3d3]" />
+        <hr className="bg-border my-2.5 h-[0.5px] border-none" />
       </div>
       <div className="flex flex-col">
         <span className="my-2.5 px-5 text-xs">Others</span>

@@ -7,7 +7,7 @@ import RightBar from '@/components/RightBar';
 const MainLayout = () => (
   <>
     <Navbar />
-    <div className="flex justify-between bg-[#f6f3f3]">
+    <div className="flex justify-between bg-(--background-primary)">
       <LeftBar />
       <Outlet />
       <RightBar />

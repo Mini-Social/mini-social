@@ -156,22 +156,22 @@ const ModelComment = ({
     };
   }, [isVisible]);
   return (
-    <div className="pointer-events-auto fixed inset-0 z-100 bg-gray-500/50 shadow-[0px_0px_1px_1px_rgba(0_0_0/0.2)]">
+    <div className="pointer-events-auto fixed inset-0 z-9999 bg-gray-500/50 shadow-[0px_0px_1px_1px_rgba(0_0_0/0.2)]">
       <div className="flex h-full w-full items-center justify-center">
-        <div className="relative flex h-screen w-full md:w-[80%] md:h-[95vh] lg:w-[50%] flex-col rounded-2xl bg-white p-2">
-          <div className="flex h-15 w-full items-center justify-between border-b border-b-[#cecece] bg-white p-2">
+        <div className="bg-background relative flex h-dvh w-full flex-col rounded-2xl p-2 md:h-[95vh] md:w-[80%] lg:w-[50%]">
+          <div className="border-b--border bg-background flex h-15 w-full items-center justify-between border-b p-2">
             <span></span>
-            <span className="text-[1rem] font-bold text-[#080809]">
+            <span className="text-[1rem] font-bold text-(--textColor2)">
               Bài viết của {`${post.firstName + ' ' + post.lastName}`}
             </span>
             <div
-              className="flex h-9 w-9 items-center justify-center rounded-[50%] bg-[#D3D6DA] hover:bg-[#cecece]"
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-[50%] bg-(--closeColor) hover:opacity-80"
               onClick={() => setIsVisible(false)}
             >
               <CloseIcon fontSize="small" className="cursor-pointer" />
             </div>
           </div>
-          <div className="no-scrollbar h-full w-full flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="no-scrollbar h-full w-full flex-1 overflow-x-hidden overflow-y-auto">
             <Post
               post={post}
               setIsVisible={setIsVisible}
@@ -195,10 +195,10 @@ const ModelComment = ({
                 alt=""
                 className="z-100 h-8 w-8 cursor-pointer rounded-[50%]"
               />
-              <div className="flex w-full items-center justify-between rounded-[12px] bg-[#F0F2F5] px-2 py-1.5">
+              <div className="flex w-full items-center justify-between rounded-[12px] bg-(--background-primary) px-2 py-1.5">
                 <textarea
                   contentEditable={false}
-                  className="no-scrollbar relative h-auto w-full resize-none text-[13px] leading-5 break-all outline-none"
+                  className="no-scrollbar relative h-auto w-full resize-none bg-(--background-primary) text-[16px] leading-5 break-all outline-none placeholder:text-[13px] placeholder:text-[#808080] lg:text-[13px]"
                   placeholder="Viết bình luận...."
                 ></textarea>
                 <img

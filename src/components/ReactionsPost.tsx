@@ -40,7 +40,7 @@ const ReacionsPost = ({ count, setIsVisible, setActiveReaction }: Props) => (
           ))}
       </div>
       <span
-        className="cursor-pointer text-[#65686c] hover:underline"
+        className="cursor-pointer text-(--textColor2) hover:underline"
         onClick={() => {
           setActiveReaction('reaction-model');
         }}
@@ -48,7 +48,7 @@ const ReacionsPost = ({ count, setIsVisible, setActiveReaction }: Props) => (
         {translateCount(count)}
       </span>
     </div>
-    <div className="flex items-center gap-4 text-[#65686c]">
+    <div className="flex items-center gap-4 text-(--textColor2)">
       <span
         className="cursor-pointer hover:underline"
         onClick={() => setIsVisible(true)}

@@ -13,6 +13,11 @@ export default defineConfig(({ mode }) => ({
     },
   },
   server: {
+    host: true,
+    hmr: {
+      host: '192.168.1.6', // IP máy tính
+      protocol: 'ws',
+    },
     port: 3000,
     open: mode === 'development',
   },

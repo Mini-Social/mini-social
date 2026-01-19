@@ -16,7 +16,11 @@ interface Props {
 }
 const ReactionFilterBar = ({ active, setActive }: Props) => {
   const [isOpenMore, setIsOpenMore] = useState<boolean>(false);
-  const isActive = active === 'wow' || active === 'sad' || active === 'angry';
+  const isActive =
+    active === 'haha' ||
+    active === 'wow' ||
+    active === 'sad' ||
+    active === 'angry';
   return (
     <ul className="flex h-15">
       <ReactionFilterItem
@@ -42,19 +46,19 @@ const ReactionFilterBar = ({ active, setActive }: Props) => {
         setIsOpenMore={setIsOpenMore}
         setActive={setActive}
       />
-      <ReactionFilterItem
+      {/* <ReactionFilterItem
         src={haha}
         count={10000}
         active={active === 'haha'}
         state="haha"
         setIsOpenMore={setIsOpenMore}
         setActive={setActive}
-      />
+      /> */}
       {/* <ReactionFilterItem src={wow} count={10000} active = {active === 'wow'} state='wow' setActive={setActive}/> */}
       {/* <ReactionFilterItem src={sad} count={10000} active = {active === 'sad'} state='sad' setActive={setActive}/>
     <ReactionFilterItem src={angry} count={10000} active = {active === 'angry'} state='angry' setActive={setActive}/> */}
       <li
-        className="relative flex cursor-pointer items-center justify-center gap-1 px-4 text-[14px] lg:text-[1rem] font-medium text-[#606366] hover:bg-gray-100"
+        className="relative flex cursor-pointer items-center justify-center gap-1 px-4 text-[14px] font-medium text-[#606366] hover:bg-(--hoverColor) lg:text-[1rem]"
         onClick={() => setIsOpenMore(pre => !pre)}
       >
         <span className={`${isActive && 'text-[#0806ff]'}`}>Xem Thêm</span>
@@ -70,10 +74,17 @@ const ReactionFilterBar = ({ active, setActive }: Props) => {
         )}
         {isOpenMore && (
           <div
-            className="absolute bottom-0 left-0 w-full translate-y-full rounded-[12px] bg-white shadow-[0px_0px_10px_1px_rgba(0_0_0/0.2)]"
+            className="absolute bottom-0 left-0 w-full translate-y-full overflow-hidden rounded-[12px] bg-(--background) shadow-[0px_0px_10px_1px_rgba(0_0_0/0.2)]"
             onMouseEnter={(e: React.MouseEvent) => e.stopPropagation()}
           >
             <ul>
+              <ModelMoreReaction
+                src={haha}
+                count={10}
+                state="haha"
+                active={active === 'haha'}
+                setActive={setActive}
+              />
               <ModelMoreReaction
                 src={wow}
                 count={10}

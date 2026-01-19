@@ -10,15 +10,18 @@ const Home = () => {
 
   return (
     <>
-      <div className="xl:flex-6 min-w-0 md:flex-5">
-        <div className="xl:px-17.5 xl:py-5 lg:px-5 lg:py-2.5 md:px-5 py-2.5">
+      <div className="min-w-0 md:flex-5 xl:flex-6">
+        <div className="py-2.5 md:px-5 lg:px-5 lg:py-2.5 xl:px-17.5 xl:py-5">
           <Stories />
           <Share />
           <Posts />
         </div>
       </div>
       {openModelMessage && (
-        <ModelMessage setOpenModelMessage={setOpenModelMessage} />
+        <ModelMessage
+          openModelMessage={openModelMessage}
+          setOpenModelMessage={setOpenModelMessage}
+        />
       )}
     </>
   );

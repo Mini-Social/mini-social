@@ -49,7 +49,7 @@ const UserReaction = ({
         <span className="text-[15px] font-medium">{`${firstName} ${lastName}`}</span>
       </div>
       <div>
-        <button className="flex items-center gap-2.5 bg-gray-200! hover:border-transparent! hover:bg-[#D6D9DD]!">
+        <button className="flex items-center gap-2.5 bg-(--closeColor)! hover:border-transparent! hover:opacity-80!">
           {!isFriend && (
             <>
               <PersonAddIcon fontSize="small" />
