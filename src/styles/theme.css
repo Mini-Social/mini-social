@@ -45,7 +45,10 @@
   --textColor2: #65686c;
   --closeColor: #d3d6da;
   --hoverColor: #f3f4f6;
+  --buttonColor: #d6d9dd;
   --typingColor: #d3d6da;
+  --buttonColor2: #d6d9dd;
+  --gray200: #d6d9dd;
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
@@ -87,6 +90,9 @@
   --closeColor: #333333;
   --hoverColor: #333333;
   --typingColor: #333333;
+  --buttonColor: #333333;
+  --buttonColor2: #222222;
+  --gray200: #333333;
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.21 0.006 285.885);
   --card-foreground: oklch(0.985 0 0);

@@ -1,10 +1,17 @@
-const LikeButton = ({...props}) => <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
- width="512.000000pt" height="512.000000pt" viewBox="0 0 512.000000 512.000000"
- preserveAspectRatio="xMidYMid meet" {...props} fill="currentColor">
-
-<g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
->
-<path d="M2701 5109 c-86 -26 -153 -94 -190 -194 -29 -77 -44 -206 -36 -311
+const LikeButton = ({ ...props }) => (
+  <svg
+    version="1.0"
+    xmlns="http://www.w3.org/2000/svg"
+    width="512.000000pt"
+    height="512.000000pt"
+    viewBox="0 0 512.000000 512.000000"
+    preserveAspectRatio="xMidYMid meet"
+    {...props}
+    fill="currentColor"
+  >
+    <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)">
+      <path
+        d="M2701 5109 c-86 -26 -153 -94 -190 -194 -29 -77 -44 -206 -36 -311
 l6 -92 -59 -148 c-197 -492 -440 -963 -625 -1210 -41 -55 -113 -136 -160 -181
 -97 -93 -143 -151 -211 -269 l-47 -80 -67 23 c-65 22 -77 22 -463 23 -421 0
 -445 -2 -542 -52 -86 -43 -173 -147 -213 -253 -18 -48 -19 -95 -22 -965 -2
@@ -28,7 +35,9 @@ l6 -92 -59 -148 c-197 -492 -440 -963 -625 -1210 -41 -55 -113 -136 -160 -181
 97 -21z m-1663 -2451 c18 -13 43 -36 54 -51 21 -28 21 -31 21 -946 l0 -917
 -27 -41 c-48 -72 -60 -74 -475 -71 -347 3 -363 4 -389 24 -15 11 -37 33 -48
 48 -21 27 -21 36 -24 940 l-2 912 23 44 c42 80 40 80 463 80 368 0 371 0 404
--22z"/>
-</g>
-</svg>
-export default LikeButton
+-22z"
+      />
+    </g>
+  </svg>
+);
+export default LikeButton;

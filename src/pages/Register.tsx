@@ -1,7 +1,41 @@
-import { Link } from 'react-router-dom';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, type FieldErrors } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { z } from 'zod';
 
-const Register = () => (
-  <div className="flex h-screen w-screen items-center justify-center bg-linear-to-t from-sky-500 to-indigo-500">
+import { signUpThunk } from '@/features/auth.api.slice';
+import { UseAppDispatch } from '@/store';
+import { type errorResponseType, formSchema } from '@/types/auth.type';
+
+const Register = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { isLoading },
+  } = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+  });
+  const dispatch = UseAppDispatch();
+  const navigate = useNavigate();
+  const handleSubmitForm = async (data: z.infer<typeof formSchema>) => {
+    try {
+      await dispatch(signUpThunk(data)).unwrap();
+      navigate('/');
+      toast.success('Register successfully!');
+    } catch (error: unknown) {
+      console.log(error);
+      const typeError = error as errorResponseType;
+      toast.error(typeError.message);
+    }
+  };
+  const onInvalid = (errors: FieldErrors<z.infer<typeof formSchema>>) => {
+    const fieldError = Object.values(errors)[0];
+    if (fieldError?.message) {
+      toast.error(fieldError.message);
+    }
+  };
+  return (
     <div className="flex min-h-150 w-[90%] flex-row-reverse overflow-hidden rounded-[10px] md:w-[80%] xl:w-[60%]">
       {/* Left */}
       <div className="hidden flex-1 flex-col gap-7.5 bg-[linear-gradient(rgba(14,165,233,0.4),rgba(79,70,229,0.4)),url(https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600)] bg-cover bg-center p-7.5 text-white md:flex xl:p-12.5">
@@ -21,39 +55,53 @@ const Register = () => (
         </Link>
       </div>
       {/* Right */}
-      <div className="flex flex-1 flex-col justify-center gap-12.5 bg-white p-12.5 md:p-7.5">
+      <div className="flex flex-1 flex-col justify-center gap-5 bg-white p-12.5 md:p-7.5">
         <h2 className="text-[2rem] font-bold text-[#555555]">Register</h2>
 
-        <form action="">
+        <form action="" onSubmit={handleSubmit(handleSubmitForm, onInvalid)}>
           <div className="flex flex-col gap-7.5">
             <div className="flex gap-5">
               <input
                 type="text"
                 placeholder="Firstname"
                 className="w-full border-b border-b-gray-300 px-2.5 py-5"
+                {...register('firstName')}
               />
               <input
                 type="text"
                 placeholder="Lastname"
                 className="w-full border-b border-b-gray-300 px-2.5 py-5"
+                {...register('lastName')}
               />
             </div>
             <input
               type="text"
               placeholder="Username"
               className="w-full border-b border-b-gray-300 px-2.5 py-5"
+              {...register('userName')}
             />
             <input
               type="email"
               placeholder="Email"
               className="w-full border-b border-b-gray-300 px-2.5 py-5"
+              {...register('email')}
             />
             <input
               type="password"
               placeholder="Password"
               className="w-full border-b border-b-gray-300 px-2.5 py-5"
+              {...register('password')}
             />
-            <button className="w-full rounded-none! bg-[#725dfd]! font-bold! text-white! outline-none! md:w-[50%]">
+            <input
+              type="password"
+              placeholder="Confirm password"
+              className="w-full border-b border-b-gray-300 px-2.5 py-5"
+              {...register('passwordConfirm')}
+            />
+            <button
+              className={`w-full rounded-none! bg-[#725dfd]! font-bold! text-white! outline-none! md:w-[50%] ${isLoading ? 'cursor-not-allowed! opacity-50' : ''}`}
+              disabled={isLoading}
+            >
               Register
             </button>
           </div>
@@ -65,7 +113,7 @@ const Register = () => (
         </form>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default Register;

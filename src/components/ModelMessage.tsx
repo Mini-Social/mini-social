@@ -221,7 +221,7 @@ interface Props {
   setOpenModelMessage: React.Dispatch<React.SetStateAction<boolean>>;
   openModelMessage: boolean;
 }
-const ModelMessage = ({ setOpenModelMessage, openModelMessage }: Props) => {
+const ModelMessage = ({ setOpenModelMessage }: Props) => {
   const [isOpenEmoj, setIsOpenEmoj] = useState<boolean>(false);
   const [content, setContent] = useState<string>('');
   const [preview, setPreview] = useState<string[]>([]);
@@ -249,22 +249,22 @@ const ModelMessage = ({ setOpenModelMessage, openModelMessage }: Props) => {
   useEffect(() => {
     moveCursorToEnd();
   }, [content]);
-  useEffect(() => {
-    if (openModelMessage) {
-      const isMobile = window.matchMedia('(max-width: 768px)').matches;
-      if (!isMobile) {
-        document.body.style.paddingRight = '15px';
-      }
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-      document.body.style.paddingRight = '0px';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-      document.body.style.paddingRight = '0px';
-    };
-  }, [openModelMessage]);
+  // useEffect(() => {
+  //   if (openModelMessage) {
+  //     const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  //     if (!isMobile) {
+  //       document.body.style.paddingRight = '15px';
+  //     }
+  //     document.body.style.overflow = 'hidden';
+  //   } else {
+  //     document.body.style.overflow = 'unset';
+  //     document.body.style.paddingRight = '0px';
+  //   }
+  //   return () => {
+  //     document.body.style.overflow = 'unset';
+  //     document.body.style.paddingRight = '0px';
+  //   };
+  // }, [openModelMessage]);
   const handleToggleEmoj = () => {
     setIsOpenEmoj(pre => !pre);
   };
@@ -303,8 +303,8 @@ const ModelMessage = ({ setOpenModelMessage, openModelMessage }: Props) => {
     }
   };
   const darkModeContext = useContext(DarkModeContext);
-  if(!darkModeContext) {
-    return null
+  if (!darkModeContext) {
+    return null;
   }
   const { darkMode } = darkModeContext;
   return (
@@ -384,7 +384,7 @@ const ModelMessage = ({ setOpenModelMessage, openModelMessage }: Props) => {
               onMouseDown={e => e.preventDefault()}
               ref={ref}
             >
-             <EmojiPicker
+              <EmojiPicker
                 open={true}
                 searchDisabled={true}
                 theme={darkMode ? Theme.DARK : Theme.LIGHT}

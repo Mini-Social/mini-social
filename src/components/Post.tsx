@@ -59,7 +59,7 @@ const Post = ({
   };
   return (
     <div
-      className={`bg-background mb-5 rounded-[10px] ${noShadow ? 'shadow-none' : 'shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)]'}`}
+      className={`bg-background mb-2 md:mb-5 md:rounded-[10px] ${noShadow ? 'shadow-none' : 'md:shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)]'}`}
     >
       <div className="item-center flex justify-between px-3 pt-3">
         <div className="flex items-center gap-3">
@@ -138,17 +138,15 @@ const Post = ({
               onTouchEnd={endPress}
               className="group relative z-50 flex h-fit w-full cursor-pointer items-center justify-center gap-2 py-1 transition-all duration-200 hover:bg-(--background-primary)"
             >
-              {
-                react === 'default' ? (
-                 <LikeButton className="fix-select h-5 w-5 text-(--textColor)" />
-                ) : (
-                  <img
-                    src={reactionStyle[react].icon}
-                    alt=""
-                    className="fix-select h-5 w-5"
-                  />
-                )
-              }
+              {react === 'default' ? (
+                <LikeButton className="fix-select h-5 w-5 text-(--textColor)" />
+              ) : (
+                <img
+                  src={reactionStyle[react].icon}
+                  alt=""
+                  className="fix-select h-5 w-5"
+                />
+              )}
               <span
                 className={`${reactionStyle[react].color} fix-select font-medium`}
               >
@@ -164,7 +162,7 @@ const Post = ({
               className="fix-select flex h-fit w-full cursor-pointer items-center justify-center gap-2 py-1 font-medium text-(--textColor2) transition-all duration-200 hover:bg-(--background-primary)"
               onClick={() => setIsVisible(true)}
             >
-              <ChatButton className="fix-select h-5 w-5 text-(--textColor)"/>
+              <ChatButton className="fix-select h-5 w-5 text-(--textColor)" />
               <span>Comments</span>
             </div>
             <div className="fix-select flex h-fit w-full cursor-pointer items-center justify-center gap-2 py-1 font-medium text-(--textColor2) transition-all duration-200 hover:bg-(--background-primary)">

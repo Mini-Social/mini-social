@@ -1,8 +1,22 @@
-import { DarkmodeContextProvider } from '@/contexts/DarkmodeProvider';
-import AppRouter from '@/routes';
+import { useEffect } from 'react';
+import { ToastContainer } from 'react-toastify';
 
-const App = () => <DarkmodeContextProvider>
-    <AppRouter />
-</DarkmodeContextProvider>;
+import { DarkmodeContextProvider } from '@/contexts/DarkmodeProvider';
+import { checkAuth } from '@/features/auth.api.slice';
+import AppRouter from '@/routes';
+import { UseAppDispatch } from '@/store';
+
+const App = () => {
+  const dispatch = UseAppDispatch();
+  useEffect(() => {
+    dispatch(checkAuth());
+  }, [dispatch]);
+  return (
+    <DarkmodeContextProvider>
+      <AppRouter />
+      <ToastContainer />
+    </DarkmodeContextProvider>
+  );
+};
 
 export default App;

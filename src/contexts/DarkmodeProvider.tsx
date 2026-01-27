@@ -7,14 +7,16 @@ export const DarkmodeContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [darkMode, setDarkMode] = useState<boolean>(JSON.parse(localStorage.getItem('DarkMode') ?? 'false'));
+  const [darkMode, setDarkMode] = useState<boolean>(
+    JSON.parse(localStorage.getItem('DarkMode') ?? 'false'),
+  );
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
-    localStorage.setItem('DarkMode', JSON.stringify(!darkMode))
+    localStorage.setItem('DarkMode', JSON.stringify(!darkMode));
   };
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode);
-  }, [darkMode])
+  }, [darkMode]);
   return (
     <DarkModeContext.Provider
       value={{

@@ -1,3 +1,6 @@
+import { useSelector } from 'react-redux';
+
+import noAvatar from '@/assets/avatars/noavatar.png'
 import courses from '@/assets/icons/courses.png';
 import events from '@/assets/icons/events.png';
 import friends from '@/assets/icons/friends.png';
@@ -12,17 +15,17 @@ import tutorials from '@/assets/icons/tutorials.png';
 import videos from '@/assets/icons/videos.png';
 import watch from '@/assets/icons/watch.png';
 import LeftBarItem from '@/components/LeftBarItem';
+import type { RootState } from '@/store';
 
-const LeftBar = () => (
-  <div className="no-scrollbar bg-background sticky top-17.5 hidden h-[calc(100vh-70px)] flex-2 shrink-0 overflow-auto lg:block">
+const LeftBar = () => {
+   const user = useSelector((state: RootState) => state.auth.user);
+  return  <div className="no-scrollbar bg-background sticky top-17.5 hidden h-[calc(100vh-70px)] flex-2 shrink-0 overflow-auto lg:block">
     <div className="">
       <div className="mt-2.5 flex flex-col">
         <LeftBarItem
-          src={
-            'https://images.pexels.com/photos/3228727/pexels-photo-3228727.jpeg?auto=compress&cs=tinysrgb&w=1600'
-          }
-          text="Xuan Duong"
-          link="/"
+          src={user?.avatar ?? noAvatar}
+          text={user && user?.firstName + " " + user?.lastName}
+          link={`/profile/${user?.userName}`}
           isUser
         />
         <LeftBarItem src={friends} text="Friends" link="/" />
@@ -54,6 +57,6 @@ const LeftBar = () => (
       </div>
     </div>
   </div>
-);
+}
 
 export default LeftBar;

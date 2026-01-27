@@ -1,10 +1,17 @@
-
-const ChatButton = ({...props}) => <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
- width="512.000000pt" height="512.000000pt" viewBox="0 0 512.000000 512.000000"
- preserveAspectRatio="xMidYMid meet" {...props} fill="currentColor">
-
-<g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)">
-<path d="M2380 5113 c-249 -24 -412 -55 -597 -114 -558 -179 -1044 -548 -1366
+const ChatButton = ({ ...props }) => (
+  <svg
+    version="1.0"
+    xmlns="http://www.w3.org/2000/svg"
+    width="512.000000pt"
+    height="512.000000pt"
+    viewBox="0 0 512.000000 512.000000"
+    preserveAspectRatio="xMidYMid meet"
+    {...props}
+    fill="currentColor"
+  >
+    <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)">
+      <path
+        d="M2380 5113 c-249 -24 -412 -55 -597 -114 -558 -179 -1044 -548 -1366
 -1039 -89 -136 -212 -384 -266 -535 -193 -544 -200 -1122 -21 -1665 216 -657
 679 -1188 1305 -1496 256 -126 510 -203 810 -246 137 -20 523 -16 665 5 371
 58 698 175 992 358 68 42 88 50 115 46 66 -11 306 -115 573 -249 233 -117 281
@@ -18,9 +25,10 @@ const ChatButton = ({...props}) => <svg version="1.0" xmlns="http://www.w3.org/2
 -88 -253 -164 -573 -281 -888 -325 -143 -20 -417 -22 -555 -4 -660 84 -1230
 442 -1600 1005 -75 114 -183 340 -229 480 -79 236 -114 452 -114 705 0 349 71
 655 223 967 116 237 258 432 452 619 179 172 342 286 563 395 382 187 808 259
-1230 208z"/>
-</g>
-</svg>
+1230 208z"
+      />
+    </g>
+  </svg>
+);
 
-
-export default ChatButton
+export default ChatButton;

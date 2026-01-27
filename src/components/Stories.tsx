@@ -1,8 +1,13 @@
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+
+import noAvatar from '@/assets/avatars/noavatar.png'
+import type { RootState } from '@/store';
 
 const Stories = () => {
+  const user = useSelector((state: RootState) => state.auth.user);
   const [translateX, setTranslateX] = useState<number>(0);
   const ref = useRef<HTMLDivElement>(null);
   const [maxTranslateX, setMaxTranslateX] = useState<number>(0);
@@ -18,7 +23,7 @@ const Stories = () => {
   return (
     <div className="relative mb-5 overflow-hidden">
       {translateX < 0 && (
-        <div className="absolute top-[50%] left-[20px] z-10 flex h-12 w-12 translate-y-[-50%] cursor-pointer items-center justify-center rounded-full bg-background shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)]">
+        <div className="bg-background absolute top-[50%] left-[20px] z-10 flex h-12 w-12 translate-y-[-50%] cursor-pointer items-center justify-center rounded-full shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)]">
           <ArrowBackIosNewIcon
             fontSize="small"
             onClick={() => setTranslateX(Math.min(0, translateX + 400))}
@@ -33,12 +38,12 @@ const Stories = () => {
         <div className="h-full w-[120px] shrink-0 cursor-pointer overflow-hidden rounded-[10px] shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)] hover:opacity-90">
           <div className="relative h-37.5">
             <img
-              src="https://images.pexels.com/photos/3228727/pexels-photo-3228727.jpeg?auto=compress&cs=tinysrgb&w=1600"
+              src={user?.avatar ?? noAvatar}
               alt=""
               className="h-full w-[120px] shrink-0 cursor-pointer bg-cover object-cover"
             />
           </div>
-          <div className="relative h-12.5 w-full bg-background px-4 pt-7 pb-3 text-center text-[11px] font-medium">
+          <div className="bg-background relative h-12.5 w-full px-4 pt-7 pb-3 text-center text-[11px] font-medium">
             <div className="absolute top-0 left-[50%] flex h-9 w-9 translate-[-50%] transform cursor-pointer items-center justify-center rounded-[50%] border-4 border-white bg-[#0866ff] text-3xl text-white">
               +
             </div>
@@ -295,7 +300,7 @@ const Stories = () => {
         </div>
       </div>
       {translateX > -maxTranslateX && (
-        <div className="absolute top-[50%] right-[20px] z-10 flex h-12 w-12 translate-y-[-50%] cursor-pointer items-center justify-center rounded-full bg-background shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)]">
+        <div className="bg-background absolute top-[50%] right-[20px] z-10 flex h-12 w-12 translate-y-[-50%] cursor-pointer items-center justify-center rounded-full shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)]">
           <ArrowForwardIosIcon
             fontSize="small"
             onClick={() => setTranslateX(translateX - 400)}

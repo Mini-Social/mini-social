@@ -1,3 +1,6 @@
-import { createContext } from 'react'
+import { createContext } from 'react';
 
-export const DarkModeContext = createContext<{darkMode: boolean, toggleDarkMode: () => void} | null>(null)
+export const DarkModeContext = createContext<{
+  darkMode: boolean;
+  toggleDarkMode: () => void;
+} | null>(null);

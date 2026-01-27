@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 interface Props {
   src: string;
-  text: string;
+  text: string | null;
   link: string;
   isUser?: boolean;
 }

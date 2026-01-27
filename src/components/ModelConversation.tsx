@@ -1,7 +1,7 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CreateIcon from '@mui/icons-material/Create';
 import SearchIcon from '@mui/icons-material/Search';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Contacts from '@/components/Contacts';
 import Conversations from '@/components/Conversations';
@@ -10,13 +10,27 @@ import Tooltip from '@/components/Tooltip';
 
 interface Props {
   open: string;
+  setOpen: React.Dispatch<React.SetStateAction<string>>;
+  refIcon: React.RefObject<HTMLDivElement | null>;
 }
 
-const ModelConversation = ({ open }: Props) => {
+const ModelConversation = ({ open, setOpen, refIcon }: Props) => {
   const [active, setActive] = useState<string>('All');
   const [showContacts, setShowContacts] = useState<boolean>(false);
   const [search, setSearch] = useState<string>('');
+  const ref = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const handleClickOutSide = (event: MouseEvent) => {
+    if(ref.current && !ref.current.contains(event.target as Node) && refIcon?.current && !refIcon.current.contains(event.target as Node)) {
+      setOpen('');
+    }
+  }
+    document.addEventListener('mousedown', handleClickOutSide);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutSide);
+    }
+  }, [ref, setOpen, refIcon])
   useEffect(() => {
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
     if (open === 'conversation' && isMobile) {
@@ -29,7 +43,7 @@ const ModelConversation = ({ open }: Props) => {
     };
   }, [open]);
   return (
-    <div className="fixed top-17 z-998 h-[calc(100vh-11rem)] w-screen rounded-[12px] bg-background shadow-[0px_0px_1px_1px_rgba(0,0,0,0.1)] md:right-20 md:h-140 md:w-[380px]">
+    <div className="bg-background fixed top-17 z-998 h-[calc(100vh-11rem)] w-screen rounded-[12px] shadow-[0px_0px_1px_1px_rgba(0,0,0,0.1)] md:right-20 md:h-140 md:w-[380px]" ref={ref}>
       <div className="flex h-full flex-col">
         <div className="flex items-center justify-between px-3 pt-4 pb-1">
           <h1 className="text-2xl! font-bold!">Đoạn chat</h1>
