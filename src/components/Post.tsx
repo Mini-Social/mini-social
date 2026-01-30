@@ -5,12 +5,15 @@ import PublicIcon from '@mui/icons-material/Public';
 import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import noAvatar from '@/assets/avatars/noavatar.png';
 import ChatButton from '@/assets/icons/components/ChatButton';
 import LikeButton from '@/assets/icons/components/LikeButton';
 import ShareButton from '@/assets/icons/components/ShareButton';
 import PostImages from '@/components/PostImages';
 import ReactionsBar from '@/components/ReactionsBar';
 import ReacionsPost from '@/components/ReactionsPost';
+import { selectPost } from '@/features/post/post.slice';
+import { UseAppDispatch } from '@/store';
 import { type IPost, type ReactionType } from '@/types/type';
 import { reactionStyle } from '@/types/type';
 import { FormatDate } from '@/utils/formatDate';
@@ -27,6 +30,7 @@ const Post = ({
   noShadow,
   setActiveReaction,
 }: PostProps) => {
+  const dispatch = UseAppDispatch();
   const [react, setReact] = useState<ReactionType>('default');
   const [showBar, setShowBar] = useState(false);
   const timeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -34,7 +38,6 @@ const Post = ({
     (acc, value) => acc + value,
     0,
   );
-
   const startPress = () => {
     timeRef.current = setTimeout(() => {
       setShowBar(true);
@@ -63,16 +66,19 @@ const Post = ({
     >
       <div className="item-center flex justify-between px-3 pt-3">
         <div className="flex items-center gap-3">
-          <Link to={'/'}>
+          <Link to={`/profile/${post.author.userName}`}>
             <img
-              src={post.avatar}
+              src={post.author.avatar || noAvatar}
               alt=""
               className="h-10 w-10 rounded-[50%] object-cover"
             />
           </Link>
           <div className="flex flex-col">
-            <Link to={'/'} className="text-inherit!">
-              <span className="font-medium text-[14x] hover:underline">{`${post.firstName} ${post.lastName}`}</span>
+            <Link
+              to={`/profile/${post.author.userName}`}
+              className="text-inherit!"
+            >
+              <span className="font-medium text-[14x] hover:underline">{`${post.author.firstName} ${post.author.lastName}`}</span>
             </Link>
             <div className="flex items-center gap-2">
               <span className="text-[11px] text-[#65686c]">
@@ -114,15 +120,13 @@ const Post = ({
         <MoreHorizIcon className="cursor-pointer self-center" />
       </div>
       <div className="mt-2">
-        <span className="mb-2 block px-3 text-[13px]">
-          Cựu Đội trưởng ĐTQG Việt Nam - Quế Ngọc Hải khoe món quà năm mới 2026
-          mà anh nhận được là chiếc áo đấu Real Madrid có in tên, số kèm chữ ký
-          của Jude Bellingham 🔥 Fan 20 năm là có thật 🤍
-        </span>
+        <span className="mb-2 block px-3 text-[13px]">{post.content}</span>
         <PostImages images={post.images} />
         <ReacionsPost
+          post={post}
           setIsVisible={setIsVisible}
           count={count}
+          id={post._id}
           setActiveReaction={setActiveReaction}
         />
 
@@ -160,7 +164,10 @@ const Post = ({
             </div>
             <div
               className="fix-select flex h-fit w-full cursor-pointer items-center justify-center gap-2 py-1 font-medium text-(--textColor2) transition-all duration-200 hover:bg-(--background-primary)"
-              onClick={() => setIsVisible(true)}
+              onClick={() => {
+                dispatch(selectPost(post._id));
+                setIsVisible(true);
+              }}
             >
               <ChatButton className="fix-select h-5 w-5 text-(--textColor)" />
               <span>Comments</span>

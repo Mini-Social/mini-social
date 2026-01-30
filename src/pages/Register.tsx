@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { z } from 'zod';
 
-import { signUpThunk } from '@/features/auth.api.slice';
+import { signUpThunk } from '@/features/auth/auth.api.slice';
 import { UseAppDispatch } from '@/store';
 import { type errorResponseType, formSchema } from '@/types/auth.type';
 

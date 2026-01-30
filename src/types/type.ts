@@ -16,17 +16,59 @@ export interface PostReactions {
 }
 
 export interface IPost {
-  _id: string | number;
-  firstName: string;
-  lastName: string;
-  avatar: string;
-  createdAt: string;
-  content: string;
+  _id: string;
+  content?: string;
+  author: {
+    _id: string;
+    avatar: string;
+    firstName: string;
+    lastName: string;
+    userName: string;
+  };
   images: string[];
-  reactions: PostReactions;
-  visibility: string;
+  reactions: {
+    like: number;
+    love: number;
+    haha: number;
+    wow: number;
+    sad: number;
+    angry: number;
+  };
+  userReactions: [
+    {
+      userId: {
+        _id: string;
+        userName: string;
+        firstName: string;
+        lastName: string;
+        avatar: string;
+      };
+      reactions: string;
+      reactionAt: Date;
+    },
+  ];
+  visibility: 'public' | 'private' | 'friends';
+  commentCount: number;
+  shares?: [
+    {
+      userId: string;
+      sharePostId: string;
+      shareAt: Date;
+    },
+  ];
+  sharePostId?: string | null;
+  deleted?: boolean;
+  deletedAt?: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
-
+export type ReactionTypeNotDefault =
+  | 'like'
+  | 'love'
+  | 'haha'
+  | 'wow'
+  | 'sad'
+  | 'angry';
 export type ReactionType =
   | 'default'
   | 'like'

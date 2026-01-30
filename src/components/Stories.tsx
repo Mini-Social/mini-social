@@ -3,7 +3,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import noAvatar from '@/assets/avatars/noavatar.png'
+import noAvatar from '@/assets/avatars/noavatar.png';
 import type { RootState } from '@/store';
 
 const Stories = () => {

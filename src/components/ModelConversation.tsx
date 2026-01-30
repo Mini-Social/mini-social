@@ -22,15 +22,20 @@ const ModelConversation = ({ open, setOpen, refIcon }: Props) => {
 
   useEffect(() => {
     const handleClickOutSide = (event: MouseEvent) => {
-    if(ref.current && !ref.current.contains(event.target as Node) && refIcon?.current && !refIcon.current.contains(event.target as Node)) {
-      setOpen('');
-    }
-  }
+      if (
+        ref.current &&
+        !ref.current.contains(event.target as Node) &&
+        refIcon?.current &&
+        !refIcon.current.contains(event.target as Node)
+      ) {
+        setOpen('');
+      }
+    };
     document.addEventListener('mousedown', handleClickOutSide);
     return () => {
       document.removeEventListener('mousedown', handleClickOutSide);
-    }
-  }, [ref, setOpen, refIcon])
+    };
+  }, [ref, setOpen, refIcon]);
   useEffect(() => {
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
     if (open === 'conversation' && isMobile) {
@@ -43,7 +48,10 @@ const ModelConversation = ({ open, setOpen, refIcon }: Props) => {
     };
   }, [open]);
   return (
-    <div className="bg-background fixed top-17 z-998 h-[calc(100vh-11rem)] w-screen rounded-[12px] shadow-[0px_0px_1px_1px_rgba(0,0,0,0.1)] md:right-20 md:h-140 md:w-[380px]" ref={ref}>
+    <div
+      className="bg-background fixed top-17 z-998 h-[calc(100vh-11rem)] w-screen rounded-[12px] shadow-[0px_0px_1px_1px_rgba(0,0,0,0.1)] md:right-20 md:h-140 md:w-[380px]"
+      ref={ref}
+    >
       <div className="flex h-full flex-col">
         <div className="flex items-center justify-between px-3 pt-4 pb-1">
           <h1 className="text-2xl! font-bold!">Đoạn chat</h1>

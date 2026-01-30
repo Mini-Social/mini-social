@@ -1,143 +1,30 @@
 import CloseIcon from '@mui/icons-material/Close';
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import SendIcon from '@/assets/icons/send-message.png';
 import CommentTree from '@/components/CommentTree';
 import Post from '@/components/Post';
-import type { IPost } from '@/types/type';
+import {
+  useGetCommentsByPostIdQuery
+} from '@/features/comment/comment.slice';
+import { useGetDetailPostQuery } from '@/features/post/post.api.slice';
+import type { RootState } from '@/store';
 
 interface ModelCommentProps {
   isVisible: boolean;
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
   setActiveReaction: React.Dispatch<React.SetStateAction<string | null>>;
-  post: IPost;
 }
 
-const mockComments = [
-  {
-    _id: '1',
-    user: {
-      name: 'Nguyễn Công Hiệp',
-      avatar: 'https://i.pravatar.cc/150?u=hiep',
-    },
-    content: 'Giao diện này nhìn mượt đấy, dùng Tailwind đúng không bạn?',
-    createdAt: '2 giờ trước',
-    replies: [
-      {
-        _id: '1-1',
-        user: {
-          name: 'Admin',
-          avatar: 'https://i.pravatar.cc/150?u=admin',
-        },
-        content:
-          'Đúng rồi bạn, mình dùng Tailwind và vẽ dây nối bằng CSS Border.',
-        createdAt: '1 giờ trước',
-        replies: [
-          {
-            _id: '2-6',
-            user: {
-              name: 'Lê Nam',
-              avatar: 'https://i.pravatar.cc/150?u=nam',
-            },
-            content: 'Cho mình xin đoạn CSS vẽ cái dây cong với!',
-            createdAt: '30 phút trước',
-            replies: [],
-          },
-          {
-            _id: '2-71212',
-            user: {
-              name: 'Lê Nam',
-              avatar: 'https://i.pravatar.cc/150?u=nam',
-            },
-            content: 'Cho mình xin đoạn CSS vẽ cái dây cong với!',
-            createdAt: '30 phút trước',
-            replies: [
-              {
-                _id: '2-7',
-                user: {
-                  name: 'Lê Nam',
-                  avatar: 'https://i.pravatar.cc/150?u=nam',
-                },
-                content: 'Cho mình xin đoạn CSS vẽ cái dây cong với!',
-                createdAt: '30 phút trước',
-                replies: [],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        _id: '1-412',
-        user: {
-          name: 'Trần Hoa',
-          avatar: 'https://i.pravatar.cc/150?u=hoa',
-        },
-        content: 'Màu xám nhạt nhìn sang thật sự.',
-        createdAt: '45 phút trước',
-        replies: [],
-      },
-    ],
-  },
-  {
-    _id: 'sds',
-    user: {
-      name: 'Trần Hoa',
-      avatar: 'https://i.pravatar.cc/150?u=hoa',
-    },
-    content: 'Màu xám nhạt nhìn sang thật sự.',
-    createdAt: '45 phút trước',
-    replies: [
-      {
-        _id: '1-1123',
-        user: {
-          name: 'Admin',
-          avatar: 'https://i.pravatar.cc/150?u=admin',
-        },
-        content:
-          'Đúng rồi bạn, mình dùng Tailwind và vẽ dây nối bằng CSS Border.',
-        createdAt: '1 giờ trước',
-        replies: [
-          {
-            _id: '2-6wwww',
-            user: {
-              name: 'Lê Nam',
-              avatar: 'https://i.pravatar.cc/150?u=nam',
-            },
-            content: 'Cho mình xin đoạn CSS vẽ cái dây cong với!',
-            createdAt: '30 phút trước',
-            replies: [],
-          },
-          {
-            _id: '2-7123',
-            user: {
-              name: 'Lê Nam',
-              avatar: 'https://i.pravatar.cc/150?u=nam',
-            },
-            content: 'Cho mình xin đoạn CSS vẽ cái dây cong với!',
-            createdAt: '30 phút trước',
-            replies: [],
-          },
-        ],
-      },
-      {
-        _id: '1-4122212',
-        user: {
-          name: 'Trần Hoa',
-          avatar: 'https://i.pravatar.cc/150?u=hoa',
-        },
-        content: 'Màu xám nhạt nhìn sang thật sự.',
-        createdAt: '45 phút trước',
-        replies: [],
-      },
-    ],
-  },
-];
 const ModelComment = ({
   isVisible,
   setIsVisible,
   setActiveReaction,
-  post,
 }: ModelCommentProps) => {
+  const postId = useSelector((state: RootState) => state.post.selectPostId);
+  const { data } = useGetDetailPostQuery(postId);
+  const { data: commentData } = useGetCommentsByPostIdQuery(postId);
   const [replyingId, setReplyingId] = useState<string[]>([]);
   const handleOpenReply = (id: string) => {
     setReplyingId(pre => (pre.includes(id) ? pre : [...pre, id]));
@@ -162,7 +49,8 @@ const ModelComment = ({
           <div className="border-b--border bg-background flex h-15 w-full items-center justify-between border-b p-2">
             <span></span>
             <span className="text-[1rem] font-bold text-(--textColor2)">
-              Bài viết của {`${post.firstName + ' ' + post.lastName}`}
+              Bài viết của{' '}
+              {`${data?.data?.post.author.firstName + ' ' + data?.data?.post.author.lastName}`}
             </span>
             <div
               className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-[50%] bg-(--closeColor) hover:opacity-80"
@@ -172,17 +60,21 @@ const ModelComment = ({
             </div>
           </div>
           <div className="no-scrollbar h-full w-full flex-1 overflow-x-hidden overflow-y-auto">
-            <Post
-              post={post}
-              setIsVisible={setIsVisible}
-              setActiveReaction={setActiveReaction}
-              noShadow
-            />
-            <CommentTree
-              comments={mockComments}
-              handleOpenReply={handleOpenReply}
-              replyingId={replyingId}
-            />
+            {data?.data?.post && (
+              <Post
+                post={data?.data.post}
+                setIsVisible={setIsVisible}
+                setActiveReaction={setActiveReaction}
+                noShadow
+              />
+            )}
+            {commentData?.data && (
+              <CommentTree
+                comments={commentData?.data.comments}
+                handleOpenReply={handleOpenReply}
+                replyingId={replyingId}
+              />
+            )}
             <div></div>
           </div>
 

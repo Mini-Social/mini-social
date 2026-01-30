@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 
 import { DarkmodeContextProvider } from '@/contexts/DarkmodeProvider';
-import { checkAuth } from '@/features/auth.api.slice';
+import { checkAuth } from '@/features/auth/auth.api.slice';
 import AppRouter from '@/routes';
 import { UseAppDispatch } from '@/store';
 

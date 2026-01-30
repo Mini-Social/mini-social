@@ -1,74 +1,57 @@
-import UserReaction from '@/components/UserReaction';
+import { useSelector } from 'react-redux';
 
-const MOCK_REACTIONS = [
-  {
-    id: '1',
-    avatar: 'https://i.pravatar.cc/150?u=1',
-    firstName: 'Xuân',
-    lastName: 'Dương',
-    react: 'like',
-    isFriend: false,
-  },
-  {
-    id: '2',
-    avatar: 'https://i.pravatar.cc/150?u=2',
-    firstName: 'Minh',
-    lastName: 'Hoàng',
-    react: 'love',
-    isFriend: false,
-  },
-  {
-    id: '3',
-    avatar: 'https://i.pravatar.cc/150?u=3',
-    firstName: 'Anh',
-    lastName: 'Nguyễn',
-    react: 'haha',
-    isFriend: false,
-  },
-  {
-    id: '4',
-    avatar: 'https://i.pravatar.cc/150?u=4',
-    firstName: 'Thảo',
-    lastName: 'Lê',
-    react: 'wow',
-    isFriend: false,
-  },
-  {
-    id: '5',
-    avatar: 'https://i.pravatar.cc/150?u=5',
-    firstName: 'Quốc',
-    lastName: 'Trần',
-    react: 'sad',
-    isFriend: false,
-  },
-  {
-    id: '6',
-    avatar: 'https://i.pravatar.cc/150?u=6',
-    firstName: 'Hương',
-    lastName: 'Phạm',
-    react: 'angry',
-    isFriend: false,
-  },
-];
+import UserReaction from '@/components/UserReaction';
+import type { RootState } from '@/store';
+
 type ReactionType = 'like' | 'love' | 'haha' | 'wow' | 'sad' | 'angry';
+interface userReactionType {
+  reactions: string;
+  reactionAt: Date;
+  userId: {
+    _id: string;
+    userName: string;
+    firstName: string;
+    lastName: string;
+    avatar: string;
+  };
+}
 interface Props {
   active: string;
+  userReactions: userReactionType[];
 }
-const UserReactions = ({ active }: Props) => {
+const UserReactions = ({ active, userReactions }: Props) => {
+  const friendIds = useSelector((state: RootState) => state.auth.user?.friends);
+  if (!userReactions) {
+    return null;
+  }
   const filteredReactions =
     active === 'all'
-      ? MOCK_REACTIONS
-      : MOCK_REACTIONS.filter(user => user.react === active);
+      ? userReactions
+      : userReactions.filter(user => user.reactions === active);
+
+  const sortedReactions = [...filteredReactions].sort((a, b) => {
+    const isAFriend = friendIds?.includes(a.userId._id);
+    const isBFriend = friendIds?.includes(b.userId._id);
+
+    if (isAFriend && !isBFriend) {
+      return -1;
+    }
+    if (!isAFriend && isBFriend) {
+      return 1;
+    }
+    return 0;
+  });
   return (
     <ul className="custom-scrollbar mt-2.5 h-full flex-1 overflow-y-auto">
-      {filteredReactions.map(user => (
+      {sortedReactions.map(user => (
         <UserReaction
-          key={user.id}
-          avatar={user.avatar}
-          firstName={user.firstName}
-          lastName={user.lastName}
-          react={user.react as ReactionType}
-          isFriend={user.isFriend}
+          key={user.userId._id}
+          userName={user.userId.userName}
+          avatar={user.userId.avatar}
+          firstName={user.userId.firstName}
+          lastName={user.userId.lastName}
+          react={user.reactions as ReactionType}
+          isFriend={friendIds?.includes(user.userId._id)}
         />
       ))}
     </ul>

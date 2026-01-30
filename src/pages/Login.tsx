@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { z } from 'zod';
 
-import { signInThunk } from '@/features/auth.api.slice';
+import { signInThunk } from '@/features/auth/auth.api.slice';
 import { UseAppDispatch } from '@/store';
 
 type errorResponseType = {
@@ -12,8 +12,8 @@ type errorResponseType = {
 };
 const formSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8, {
-    message: 'Password must be at least 8 characters long',
+  password: z.string().min(6, {
+    message: 'Password must be at least 6 characters long',
   }),
 });
 

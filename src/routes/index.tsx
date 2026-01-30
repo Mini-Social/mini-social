@@ -18,47 +18,53 @@ interface Props {
 }
 const ProtectRouter = ({ children }: Props) => {
   const { user, isAuthChecked } = useSelector((state: RootState) => state.auth);
-  if(!isAuthChecked) {
-    return null
+  if (!isAuthChecked) {
+    return null;
   }
   if (!user) {
-    return <Navigate to={'/login'} replace/>;
+    return <Navigate to={'/login'} replace />;
   }
   return children;
 };
 const GuestRouter = ({ children }: Props) => {
-  const { user, isAuthChecked } = useSelector(
-    (state: RootState) => state.auth
-  );
+  const { user, isAuthChecked } = useSelector((state: RootState) => state.auth);
 
-  if (!isAuthChecked) {return null;}
+  if (!isAuthChecked) {
+    return null;
+  }
 
-  if (user) {return <Navigate to="/" replace />;}
+  if (user) {
+    return <Navigate to="/" replace />;
+  }
 
   return children;
 };
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <ProtectRouter>
-      <MainLayout />
-    </ProtectRouter>,
+    element: (
+      <ProtectRouter>
+        <MainLayout />
+      </ProtectRouter>
+    ),
     children: [
       {
         index: true,
         element: <Home />,
       },
       {
-        path: 'profile/:id',
+        path: 'profile/:userName',
         element: <Profile />,
       },
     ],
   },
   {
     path: '/',
-    element: <GuestRouter>
-      <AuthLayout />
-    </GuestRouter>,
+    element: (
+      <GuestRouter>
+        <AuthLayout />
+      </GuestRouter>
+    ),
     children: [
       {
         path: '/login',

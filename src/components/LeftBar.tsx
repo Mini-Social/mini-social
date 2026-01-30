@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 
-import noAvatar from '@/assets/avatars/noavatar.png'
+import noAvatar from '@/assets/avatars/noavatar.png';
 import courses from '@/assets/icons/courses.png';
 import events from '@/assets/icons/events.png';
 import friends from '@/assets/icons/friends.png';
@@ -18,45 +18,47 @@ import LeftBarItem from '@/components/LeftBarItem';
 import type { RootState } from '@/store';
 
 const LeftBar = () => {
-   const user = useSelector((state: RootState) => state.auth.user);
-  return  <div className="no-scrollbar bg-background sticky top-17.5 hidden h-[calc(100vh-70px)] flex-2 shrink-0 overflow-auto lg:block">
-    <div className="">
-      <div className="mt-2.5 flex flex-col">
-        <LeftBarItem
-          src={user?.avatar ?? noAvatar}
-          text={user && user?.firstName + " " + user?.lastName}
-          link={`/profile/${user?.userName}`}
-          isUser
-        />
-        <LeftBarItem src={friends} text="Friends" link="/" />
-        <LeftBarItem src={groups} text="Groups" link="/" />
-        <LeftBarItem src={market} text="Marketplace" link="/" />
-        <LeftBarItem src={watch} text="Watch" link="/" />
-        <LeftBarItem src={memories} text="Memories" link="/" />
-      </div>
-      <div className="px-5">
-        <hr className="bg-border my-2.5 h-[0.5px] border-none" />
-      </div>
-      {/* Your shortcuts */}
-      <div className="flex flex-col">
-        <span className="my-2.5 px-5 text-xs">Your shortcuts</span>
-        <LeftBarItem src={events} text="Events" link="/" />
-        <LeftBarItem src={gamings} text="Gaming" link="/" />
-        <LeftBarItem src={gallery} text="Gallery" link="/" />
-        <LeftBarItem src={videos} text="Videos" link="/" />
-        <LeftBarItem src={messages} text="Messages" link="/" />
-      </div>
-      <div className="px-5">
-        <hr className="bg-border my-2.5 h-[0.5px] border-none" />
-      </div>
-      <div className="flex flex-col">
-        <span className="my-2.5 px-5 text-xs">Others</span>
-        <LeftBarItem src={fundraiser} text="Fundraiser" link="/" />
-        <LeftBarItem src={tutorials} text="Tutorials" link="/" />
-        <LeftBarItem src={courses} text="Courses" link="/" />
+  const user = useSelector((state: RootState) => state.auth.user);
+  return (
+    <div className="no-scrollbar bg-background sticky top-17.5 hidden h-[calc(100vh-70px)] flex-2 shrink-0 overflow-auto lg:block">
+      <div className="">
+        <div className="mt-2.5 flex flex-col">
+          <LeftBarItem
+            src={user?.avatar ?? noAvatar}
+            text={user && user?.firstName + ' ' + user?.lastName}
+            link={`/profile/${user?.userName}`}
+            isUser
+          />
+          <LeftBarItem src={friends} text="Friends" link="/" />
+          <LeftBarItem src={groups} text="Groups" link="/" />
+          <LeftBarItem src={market} text="Marketplace" link="/" />
+          <LeftBarItem src={watch} text="Watch" link="/" />
+          <LeftBarItem src={memories} text="Memories" link="/" />
+        </div>
+        <div className="px-5">
+          <hr className="bg-border my-2.5 h-[0.5px] border-none" />
+        </div>
+        {/* Your shortcuts */}
+        <div className="flex flex-col">
+          <span className="my-2.5 px-5 text-xs">Your shortcuts</span>
+          <LeftBarItem src={events} text="Events" link="/" />
+          <LeftBarItem src={gamings} text="Gaming" link="/" />
+          <LeftBarItem src={gallery} text="Gallery" link="/" />
+          <LeftBarItem src={videos} text="Videos" link="/" />
+          <LeftBarItem src={messages} text="Messages" link="/" />
+        </div>
+        <div className="px-5">
+          <hr className="bg-border my-2.5 h-[0.5px] border-none" />
+        </div>
+        <div className="flex flex-col">
+          <span className="my-2.5 px-5 text-xs">Others</span>
+          <LeftBarItem src={fundraiser} text="Fundraiser" link="/" />
+          <LeftBarItem src={tutorials} text="Tutorials" link="/" />
+          <LeftBarItem src={courses} text="Courses" link="/" />
+        </div>
       </div>
     </div>
-  </div>
-}
+  );
+};
 
 export default LeftBar;

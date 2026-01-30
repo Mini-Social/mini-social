@@ -9,108 +9,99 @@ import sad from '@/assets/icons/sad.svg';
 import wow from '@/assets/icons/wow.svg';
 import ModelMoreReaction from '@/components/ModelMoreReaction';
 import ReactionFilterItem from '@/components/ReactionTabItem';
+import type { ReactionTypeNotDefault } from '@/types/type';
 
+const reactionIcon = {
+  like,
+  love,
+  haha,
+  wow,
+  sad,
+  angry,
+};
 interface Props {
   active: string;
   setActive: React.Dispatch<React.SetStateAction<string>>;
+  reactions: Record<string, number>;
 }
-const ReactionFilterBar = ({ active, setActive }: Props) => {
+const ReactionFilterBar = ({ active, setActive, reactions }: Props) => {
   const [isOpenMore, setIsOpenMore] = useState<boolean>(false);
-  const isActive =
-    active === 'haha' ||
-    active === 'wow' ||
-    active === 'sad' ||
-    active === 'angry';
+  const reactionsEntries = Object.entries(reactions).filter(
+    react => react[1] > 0,
+  );
+  const sortedReaction = [...reactionsEntries].sort(([, a], [, b]) => b - a);
+  const MAX_VISIBLE = 3;
+  const isActive = sortedReaction
+    .slice(MAX_VISIBLE)
+    .some(react => react[0] === active);
+  const isNoReaction = reactionsEntries.every(react => react[1] === 0);
   return (
-    <ul className="flex h-15">
-      <ReactionFilterItem
-        title="Tất cả"
-        active={active === 'all'}
-        state="all"
-        setIsOpenMore={setIsOpenMore}
-        setActive={setActive}
-      />
-      <ReactionFilterItem
-        src={like}
-        count={10000}
-        active={active === 'like'}
-        state="like"
-        setIsOpenMore={setIsOpenMore}
-        setActive={setActive}
-      />
-      <ReactionFilterItem
-        src={love}
-        count={10000}
-        active={active === 'love'}
-        state="love"
-        setIsOpenMore={setIsOpenMore}
-        setActive={setActive}
-      />
-      {/* <ReactionFilterItem
-        src={haha}
-        count={10000}
-        active={active === 'haha'}
-        state="haha"
-        setIsOpenMore={setIsOpenMore}
-        setActive={setActive}
-      /> */}
-      {/* <ReactionFilterItem src={wow} count={10000} active = {active === 'wow'} state='wow' setActive={setActive}/> */}
-      {/* <ReactionFilterItem src={sad} count={10000} active = {active === 'sad'} state='sad' setActive={setActive}/>
-    <ReactionFilterItem src={angry} count={10000} active = {active === 'angry'} state='angry' setActive={setActive}/> */}
-      <li
-        className="relative flex cursor-pointer items-center justify-center gap-1 px-4 text-[14px] font-medium text-[#606366] hover:bg-(--hoverColor) lg:text-[1rem]"
-        onClick={() => setIsOpenMore(pre => !pre)}
-      >
-        <span className={`${isActive && 'text-[#0806ff]'}`}>Xem Thêm</span>
-        <ArrowDropDownIcon
-          style={{
-            color: isActive ? '#0806ff' : '',
-          }}
+    <>
+      <ul className="flex h-15">
+        <ReactionFilterItem
+          title="Tất cả"
+          active={active === 'all'}
+          state="all"
+          setIsOpenMore={setIsOpenMore}
+          setActive={setActive}
         />
-        {isActive && (
-          <div
-            className={`absolute right-0 bottom-0 left-0 h-1 w-full bg-[#0806ff]`}
-          ></div>
-        )}
-        {isOpenMore && (
-          <div
-            className="absolute bottom-0 left-0 w-full translate-y-full overflow-hidden rounded-[12px] bg-(--background) shadow-[0px_0px_10px_1px_rgba(0_0_0/0.2)]"
-            onMouseEnter={(e: React.MouseEvent) => e.stopPropagation()}
+        {sortedReaction.slice(0, MAX_VISIBLE).map((user, index) => {
+          if (user[1] > 0) {
+            return (
+              <ReactionFilterItem
+                key={index}
+                src={reactionIcon[user[0] as ReactionTypeNotDefault]}
+                count={user[1]}
+                active={active === user[0]}
+                state={user[0]}
+                setIsOpenMore={setIsOpenMore}
+                setActive={setActive}
+              />
+            );
+          }
+        })}
+        {sortedReaction.slice(MAX_VISIBLE).length > 0 && (
+          <li
+            className="relative flex cursor-pointer items-center justify-center gap-1 px-4 text-[14px] font-medium text-[#606366] hover:bg-(--hoverColor) lg:text-[1rem]"
+            onClick={() => setIsOpenMore(pre => !pre)}
           >
-            <ul>
-              <ModelMoreReaction
-                src={haha}
-                count={10}
-                state="haha"
-                active={active === 'haha'}
-                setActive={setActive}
-              />
-              <ModelMoreReaction
-                src={wow}
-                count={10}
-                state="wow"
-                active={active === 'wow'}
-                setActive={setActive}
-              />
-              <ModelMoreReaction
-                src={sad}
-                count={10}
-                state="sad"
-                active={active === 'sad'}
-                setActive={setActive}
-              />
-              <ModelMoreReaction
-                src={angry}
-                count={10}
-                state="angry"
-                active={active === 'angry'}
-                setActive={setActive}
-              />
-            </ul>
-          </div>
+            <span className={`${isActive && 'text-[#0806ff]'}`}>Xem Thêm</span>
+            <ArrowDropDownIcon
+              style={{
+                color: isActive ? '#0806ff' : '',
+              }}
+            />
+            {isActive && (
+              <div
+                className={`absolute right-0 bottom-0 left-0 h-1 w-full bg-[#0806ff]`}
+              ></div>
+            )}
+            {isOpenMore && (
+              <div
+                className="bg-background absolute bottom-0 left-0 w-full translate-y-full overflow-hidden rounded-[12px] shadow-[0px_0px_10px_1px_rgba(0_0_0/0.2)]"
+                onMouseEnter={(e: React.MouseEvent) => e.stopPropagation()}
+              >
+                <ul>
+                  {sortedReaction.slice(MAX_VISIBLE).map((react, index) => (
+                    <ModelMoreReaction
+                      key={index}
+                      src={reactionIcon[react[0] as ReactionTypeNotDefault]}
+                      count={react[1]}
+                      state={react[0]}
+                      active={active === react[0]}
+                      setActive={setActive}
+                    />
+                  ))}
+                </ul>
+              </div>
+            )}
+          </li>
         )}
-      </li>
-    </ul>
+      </ul>
+      {isNoReaction && (
+        <span className="text-center text-[1rem]">No reaction</span>
+      )}
+    </>
   );
 };
 export default ReactionFilterBar;

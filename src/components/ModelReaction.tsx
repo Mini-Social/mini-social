@@ -1,8 +1,11 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import ReactionFilterBar from '@/components/ReactionFilterBar';
 import UserReactions from '@/components/UserReactions';
+import { useGetDetailPostQuery } from '@/features/post/post.api.slice';
+import type { RootState } from '@/store';
 
 interface ModelReactionProps {
   setActiveReaction: React.Dispatch<React.SetStateAction<string | null>>;
@@ -13,6 +16,8 @@ const ModelReaction = ({
   activeReaction,
   setActiveReaction,
 }: ModelReactionProps) => {
+  const postId = useSelector((state: RootState) => state.post.selectPostId);
+  const { data } = useGetDetailPostQuery(postId);
   const [active, setActive] = useState<string>('all');
   useEffect(() => {
     if (activeReaction === 'reaction-model') {
@@ -36,7 +41,13 @@ const ModelReaction = ({
       <div className="flex h-full w-full items-center justify-center">
         <div className="bg-background relative flex h-dvh w-full flex-col rounded-2xl p-2 lg:h-[90vh] lg:w-[50%]">
           <div className="flex justify-between">
-            <ReactionFilterBar active={active} setActive={setActive} />
+            {data?.data?.post?.reactions && (
+              <ReactionFilterBar
+                active={active}
+                setActive={setActive}
+                reactions={data?.data?.post?.reactions}
+              />
+            )}
             <div
               onClick={() => setActiveReaction(null)}
               className="flex h-9 w-9 items-center justify-center rounded-[50%] bg-(--closeColor) hover:opacity-80"
@@ -45,7 +56,12 @@ const ModelReaction = ({
             </div>
           </div>
 
-          <UserReactions active={active} />
+          {data?.data?.post?.userReactions && (
+            <UserReactions
+              active={active}
+              userReactions={data?.data?.post?.userReactions}
+            />
+          )}
         </div>
       </div>
     </div>

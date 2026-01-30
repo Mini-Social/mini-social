@@ -5,16 +5,16 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { logOut } from '@/features/auth.api.slice';
-import { type IUser } from '@/features/authSlice';
+import { logOut } from '@/features/auth/auth.api.slice';
+import { type IUser } from '@/features/auth/auth.slice';
 import { UseAppDispatch } from '@/store';
 
 interface IUserMenuProps {
-    user: IUser;
-    setOpen: React.Dispatch<React.SetStateAction<string>>;
-    refUserMenu: React.RefObject<HTMLDivElement | null>;
+  user: IUser;
+  setOpen: React.Dispatch<React.SetStateAction<string>>;
+  refUserMenu: React.RefObject<HTMLDivElement | null>;
 }
-const UserMenu = ({user, setOpen, refUserMenu}: IUserMenuProps) => {
+const UserMenu = ({ user, setOpen, refUserMenu }: IUserMenuProps) => {
   const ref = useRef<HTMLUListElement>(null);
   const dispatch = UseAppDispatch();
   const handleLogout = async () => {
@@ -22,37 +22,59 @@ const UserMenu = ({user, setOpen, refUserMenu}: IUserMenuProps) => {
       const res = await dispatch(logOut()).unwrap();
       toast.success(res.message);
     } catch (error) {
-      const err = error as {status: string, message: string}
+      const err = error as { status: string; message: string };
       toast.error(err.message);
     }
     setOpen('');
-  }
+  };
   useEffect(() => {
     const handleClickOutSide = (event: MouseEvent) => {
-    if(ref.current && !ref.current.contains(event.target as Node) && refUserMenu?.current && !refUserMenu.current.contains(event.target as Node)) {
-      setOpen('');
-    }
-  }
+      if (
+        ref.current &&
+        !ref.current.contains(event.target as Node) &&
+        refUserMenu?.current &&
+        !refUserMenu.current.contains(event.target as Node)
+      ) {
+        setOpen('');
+      }
+    };
     document.addEventListener('mousedown', handleClickOutSide);
     return () => {
       document.removeEventListener('mousedown', handleClickOutSide);
-    }
-  }, [ref, setOpen, refUserMenu])
-  return <ul onClick={(event) => event.stopPropagation()} ref={ref} className="absolute right-0 top-12 z-10 rounded-md bg-background text-(--textColor) shadow-md min-w-[120px] overflow-hidden">
-        <Link className='text-inherit!' to={`/profile/${user?.userName}`}><li className="flex items-center gap-2.5 p-2 cursor-pointer hover:bg-accent" onClick={() => setOpen('')}>
-        <PersonIcon fontSize='small' />
-        Profile
-        </li></Link>
+    };
+  }, [ref, setOpen, refUserMenu]);
+  return (
+    <ul
+      onClick={event => event.stopPropagation()}
+      ref={ref}
+      className="bg-background absolute top-12 right-0 z-10 min-w-[120px] overflow-hidden rounded-md text-(--textColor) shadow-md"
+    >
+      <Link className="text-inherit!" to={`/profile/${user?.userName}`}>
+        <li
+          className="hover:bg-accent flex cursor-pointer items-center gap-2.5 p-2"
+          onClick={() => setOpen('')}
+        >
+          <PersonIcon fontSize="small" />
+          Profile
+        </li>
+      </Link>
 
-      <li className="flex items-center gap-2.5 p-2 cursor-pointer hover:bg-accent" onClick={() => setOpen('')}>
-        <SettingsIcon fontSize='small' />
+      <li
+        className="hover:bg-accent flex cursor-pointer items-center gap-2.5 p-2"
+        onClick={() => setOpen('')}
+      >
+        <SettingsIcon fontSize="small" />
         Settings
-        </li>
-      <li className="flex items-center gap-2.5 p-2 cursor-pointer hover:bg-accent" onClick={handleLogout}>
-        <LogoutIcon fontSize='small' />
+      </li>
+      <li
+        className="hover:bg-accent flex cursor-pointer items-center gap-2.5 p-2"
+        onClick={handleLogout}
+      >
+        <LogoutIcon fontSize="small" />
         Logout
-        </li>
+      </li>
     </ul>
-}
+  );
+};
 
-export default UserMenu
+export default UserMenu;
