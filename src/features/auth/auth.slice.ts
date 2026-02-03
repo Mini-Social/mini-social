@@ -6,26 +6,8 @@ import {
   signInThunk,
   signUpThunk,
 } from '@/features/auth/auth.api.slice';
+import { type IUser } from '@/types/user.type';
 
-export interface IUser {
-  firstName: string;
-  lastName: string;
-  userName: string;
-  email: string;
-  password: string | undefined;
-  avatar: string | null;
-  bio: string | null;
-  gender: string;
-  phone: string | null;
-  birthDate: string | null;
-  role: 'Admin' | 'User';
-  friends: string[];
-  isOnline: boolean;
-  lastOnline: Date | null;
-  deleted: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
 type initialStateType = {
   user: IUser | null;
   isLoading: boolean;

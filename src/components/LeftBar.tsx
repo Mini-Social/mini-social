@@ -17,6 +17,7 @@ import watch from '@/assets/icons/watch.png';
 import LeftBarItem from '@/components/LeftBarItem';
 import type { RootState } from '@/store';
 
+const API_URL = import.meta.env.VITE_API_URL;
 const LeftBar = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   return (
@@ -24,7 +25,7 @@ const LeftBar = () => {
       <div className="">
         <div className="mt-2.5 flex flex-col">
           <LeftBarItem
-            src={user?.avatar ?? noAvatar}
+            src={(user?.avatar && API_URL + `/avatars/${user.avatar}`) || noAvatar}
             text={user && user?.firstName + ' ' + user?.lastName}
             link={`/profile/${user?.userName}`}
             isUser

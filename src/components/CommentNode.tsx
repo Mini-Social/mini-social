@@ -26,7 +26,9 @@ const CommentNode = ({
 }: Props) => {
   const avatarSize = Math.max(24, 32 - depth * 4);
   const [replies, setReplies] = useState<Record<string, boolean>>({});
-  const { data } = useGetCommentsRepliesQuery(comment._id, {skip: replies[comment._id]});
+  const { data } = useGetCommentsRepliesQuery(comment._id, {
+    skip: replies[comment._id],
+  });
   const ToggleReplies = (id: string) => {
     setReplies(pre => ({
       ...pre,

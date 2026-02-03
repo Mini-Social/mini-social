@@ -1,194 +1,416 @@
 import ChatIcon from '@mui/icons-material/Chat';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import OpenWithIcon from '@mui/icons-material/OpenWith';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import { useState } from 'react';
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import PublicIcon from '@mui/icons-material/Public';
+import React, { useRef, useState } from 'react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
+import StickyBox from 'react-sticky-box';
 import TextareaAutosize from 'react-textarea-autosize';
+import { toast } from 'react-toastify';
 
-import bgCover from '@/assets/avatars/bg-cover.jpeg';
 import noAvatar from '@/assets/avatars/noavatar.png';
-import ModelUserInformation from '@/components/ModelUserInformation';
+import camera from '@/assets/icons/camera.svg';
+import remove from '@/assets/icons/remove.svg';
+import ModelUpdateAvatar from '@/components/ModelUpdateAvatar';
+import { ModelUserInformationWrapper } from '@/components/ModelUserInfomationWrapper';
 import Posts from '@/components/Posts';
 import Share from '@/components/Share';
+import { setCredential } from '@/features/auth/auth.slice';
 import { useGetPostByUserIdQuery } from '@/features/post/post.api.slice';
-import { useGetUserByUserNameQuery } from '@/features/user/user.api.slice';
+import {
+  useGetUserByUserNameQuery,
+  useUpdateProfileMutation,
+} from '@/features/user/user.api.slice';
 import type { RootState } from '@/store';
+import { UseAppDispatch } from '@/store';
 
+const API_URL = import.meta.env.VITE_API_URL;
 const Profile = () => {
+  const dispatch = UseAppDispatch();
   const { userName } = useParams();
   const ownUser = useSelector((state: RootState) => state.auth.user);
   const { data } = useGetUserByUserNameQuery(userName!);
+  const [updateProfile] = useUpdateProfileMutation();
   const user = data?.data;
   const { data: posts } = useGetPostByUserIdQuery(user?._id ?? '', {
     skip: !user?._id,
   });
   const [edit, setEdit] = useState<boolean>(false);
-  const [bio, setBio] = useState<string>(user?.bio ?? '');
+  const [bio, setBio] = useState<string>('');
   const [isVisible, setIsVisible] = useState<boolean>(false);
-  // const [editData, setEditData] = useState({
-  //   address: 'New York',
-  //   gender: 'Male',
-  //   birthday: '1990-01-01',
-  //   phone: '1234567890',
-  //   relationship: 'Single',
-  // });
+  const [modelAvatar, setModelAvatar] = useState<string | undefined>(undefined);
+  const [selectFile, setSelectFile] = useState<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [activeReaction, setActiveReaction] = useState<string | null>(null);
   const isProfileOwner = ownUser?.userName === userName;
+  const [isHover, setIsHover] = useState<boolean>(false);
+  const [previewCoverImg, setPreviewCoverImg] = useState<string | null>(null)
+  const [isDrag, setIsDrag] = useState<boolean>(false)
+  const [positionY, setPositionY] = useState<number>(50)
+  const startY = useRef<number>(0)
+  const startPos = useRef<number>(0)
+  const handleUpdateBio = () => {
+    setEdit(false);
+    updateProfile({ bio });
+  };
+  const handleDeleteAvatar = async () => {
+    const isTrue = confirm('Are you sure you want to delete the avatar?');
+    if (isTrue) {
+      const res = await updateProfile({ avatar: '' }).unwrap();
+      dispatch(setCredential(res.data));
+    }
+  };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target?.files?.[0]
+    if(file){
+      setSelectedFile(file)
+      const url = URL.createObjectURL(file)
+      setPreviewCoverImg(url)
+    }
+  };
+  const handleMouseDown = (e: React.MouseEvent) =>{
+      setIsDrag(true)
+      startY.current = e.clientY
+      startPos.current = positionY
+  }
+  const handleMouseUp = () =>{
+      setIsDrag(false)
+  }
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if(isDrag){
+      const deltaY = e.clientY - startY.current
+      let newPos = startPos.current - deltaY/5
+      if(newPos < 0){
+        newPos = 0
+      }
+      if(newPos > 100) {
+        newPos = 100
+      }
+      setPositionY(newPos)
+    }
+  }
+  const handleMouseLeave = () => {
+    setIsDrag(false)
+  }
+  const handleUpdateBgCover = () =>{
+  if(selectedFile){
+    const formData = new FormData()
+    formData.append('background', selectedFile)
+    formData.append('coverPosition', String(positionY))
+    updateProfile(formData)
+    setPreviewCoverImg(null)
+    setSelectedFile(null)
+    toast.success('Update background successfully!')
+  }
+  }
+  const handleDeleteBgCover = async() => {
+      const isTrue = confirm('Are you sure you want to delete the background?');
+    if (isTrue) {
+      updateProfile({ background: '' })
+    }
+  }
   return (
-    <div className="mx-auto flex max-w-[1000px] flex-col lg:min-w-[1000px]">
-      <div className="relative h-[320px]">
-        <div className="aspect-ratio-16/9 h-62.5 w-full cursor-pointer">
-          <PhotoProvider>
-            <PhotoView src={bgCover}>
-              <img
-                src={bgCover}
-                alt=""
-                className="h-full w-full object-cover object-center"
-              />
-            </PhotoView>
-          </PhotoProvider>
-        </div>
-        <div className="absolute bottom-0 left-1/2 h-[170px] w-[170px] -translate-x-1/2 overflow-hidden rounded-full border-4 border-(--background-primary)">
-          <PhotoProvider>
-            <PhotoView src={user?.avatar || noAvatar}>
-              <img
-                src={user?.avatar || noAvatar}
-                alt=""
-                className="h-full w-full cursor-pointer object-cover object-center"
-              />
-            </PhotoView>
-          </PhotoProvider>
-        </div>
-      </div>
-
-      <div className="flex flex-col items-center">
-        <span className="text-2xl font-bold">
-          {user && user?.firstName + ' ' + user?.lastName}
-        </span>
-        {!isProfileOwner && (
-          <div className="mt-2 flex gap-2">
-            <button className="flex cursor-pointer items-center gap-1 bg-(--buttonColor2)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!">
-              <ChatIcon fontSize="small" />
-              <span>Message</span>
+    <>
+      {
+        previewCoverImg && <div className="fixed z-10 w-full bg-black/50 p-1">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-white">
+            <PublicIcon />
+            <span>Your cover photo is publicly displayed.</span>
+          </div>
+          <div className='flex items-center gap-2'>
+            <button className="rounded-lg border-none! text-white! bg-white/10! px-4 py-2 text-sm" onClick={() => setPreviewCoverImg(null)}>
+              Cancel
             </button>
-            <button className="bg-primary! text-primary-foreground! flex cursor-pointer items-center gap-1 text-[13px]! font-bold! hover:border-transparent! hover:opacity-80!">
-              <PersonAddIcon fontSize="small" />
-              <span>Add friend</span>
+            <button className="rounded-lg bg-[#0866ff]! px-4 py-2 text-sm text-white hover:opacity-90" onClick={handleUpdateBgCover}>
+              Save change
             </button>
           </div>
-        )}
+        </div>
       </div>
-      <div className="flex flex-col py-5 md:flex-row md:gap-5 md:px-5">
-        <div className="flex-3">
-          <div className="bg-background p-5 text-(--textColor) md:rounded-xl md:shadow-[0_0_4px_0px_rgba(0,0,0,0.2)]">
-            <h4 className="text-[16px] font-bold">User Information</h4>
-            {isProfileOwner ? (
-              <>
-                {edit ? (
-                  <TextareaAutosize
-                    minRows={2}
-                    value={bio}
-                    onChange={e => setBio(e.target.value)}
-                    maxLength={100}
-                    className="border-border mt-2 w-full resize-none rounded-[5px] border px-3 py-2 text-center placeholder:text-center"
-                    placeholder="Description about you"
-                  />
-                ) : (
-                  <span
-                    className={`block p-2 text-center text-[14px] text-(--textColor) ${bio ? 'border-border border-b' : ''}`}
-                  >
-                    {bio}
-                  </span>
-                )}
-                {edit && (
-                  <span className="block text-end text-[12px] text-(--textColor2)">
-                    {bio.length}/100
-                  </span>
-                )}
-                {!edit && bio && (
-                  <button
-                    className="w-full cursor-pointer bg-(--buttonColor)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!"
-                    onClick={() => setEdit(true)}
-                  >
-                    Edit biography
-                  </button>
-                )}
-                {!edit && !bio && (
-                  <button
-                    className="w-full cursor-pointer bg-(--buttonColor)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!"
-                    onClick={() => setEdit(true)}
-                  >
-                    Add biography
-                  </button>
-                )}
-                {edit && (
-                  <div className="mt-2 flex gap-2">
-                    <button
-                      className="w-full cursor-pointer bg-(--buttonColor)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!"
-                      onClick={() => {
-                        setBio(user?.bio ?? '');
-                        setEdit(false);
+      }
+      <div
+        className="mx-auto flex max-w-[1000px] flex-col lg:min-w-[1000px]"
+        key={userName}
+      >
+        <div className="relative h-[320px]">
+          <div className="aspect-ratio-16/9 absolute h-62.5 w-full rounded-b-[8px] overflow-hidden cursor-pointer">
+            {previewCoverImg && <div className='w-full h-full absolute'>
+              {
+                !isDrag && <div className='w-full h-full flex items-center justify-center absolute pointer-events-none'>
+                <div className='bg-black/50 p-2 rounded-[8px] flex items-center gap-2'>
+                  <OpenWithIcon className='text-white'/>
+                  <span className='text-white'>Drag to reposition the image.</span>
+                </div>
+              </div>
+              }
+              <img src={previewCoverImg} alt="" className='w-full h-full object-cover' onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onDragStart={(e) => e.preventDefault()} style={{
+                objectPosition: `50% ${positionY}%`
+              }}/>
+
+            </div> }
+            { !previewCoverImg && !user?.background &&  <>
+            <div className="h-full w-full bg-(--bgCover)"></div>
+            {
+              isProfileOwner && <label htmlFor="bgCover">
+              <div className="absolute right-5 bottom-4 flex cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-(--gray200) p-2 text-[13px] font-bold text-(--textColor) hover:opacity-80">
+                <FileUploadIcon /> Add cover photo
+              </div>
+            </label>
+            }
+            </> }
+             <input
+                type="file"
+                className="hidden"
+                accept="image/*"
+                id="bgCover"
+                onChange={handleFileChange}
+              />
+            {
+              user?.background && <PhotoProvider className=''>
+            <PhotoView src={API_URL + `backgrounds/${user.background}`}>
+              <img
+                src={API_URL + `backgrounds/${user.background}`}
+                alt=""
+                className="h-full w-full object-cover"
+                style={{
+                  objectPosition: `50% ${user.coverPosition}%`
+                }}
+
+              />
+            </PhotoView>
+           <div>
+            {
+              !previewCoverImg && <div className="absolute right-4 bottom-4 flex cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-(--gray200) p-2 text-[13px] font-bold text-(--textColor) hover:opacity-80" onClick={handleDeleteBgCover}>
+                <DeleteIcon />
+              </div>
+            }
+            {
+              !previewCoverImg && <label htmlFor="bgCover">
+              <div className="absolute right-16 bottom-4 flex cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-(--gray200) p-2 text-[13px] font-bold text-(--textColor) hover:opacity-80">
+                <PhotoCameraIcon /> Update
+              </div>
+            </label>
+            }
+           </div>
+          </PhotoProvider>
+            }
+          </div>
+          <div
+            className="absolute bottom-0 left-1/2 h-[170px] w-[170px] -translate-x-1/2 overflow-hidden rounded-full border-4 border-(--background-primary)"
+            onMouseEnter={() => setIsHover(true)}
+            onMouseLeave={() => setIsHover(false)}
+          >
+            {isProfileOwner && isHover && (
+              <div className="absolute z-1000 flex h-full w-full items-center justify-center">
+                <div className="flex items-center justify-between gap-3 rounded-[10px] bg-black/60 px-4 py-2">
+                  <label htmlFor="avatar" aria-label="Change avatar">
+                    <img
+                      src={camera}
+                      alt=""
+                      className={`cursor-pointer ${user?.avatar ? 'border-r border-r-white pr-3.5' : ''}`}
+                    />
+                    <input
+                      type="file"
+                      id="avatar"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const imageUrl = URL.createObjectURL(file);
+                          setSelectFile(file);
+                          setModelAvatar(imageUrl);
+                        }
                       }}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      className="bg-primary! text-primary-foreground! w-full cursor-pointer text-[13px]! font-bold! hover:border-transparent! hover:opacity-80!"
-                      onClick={() => {
-                        setEdit(false);
-                      }}
-                    >
-                      Save
-                    </button>
-                  </div>
-                )}
-              </>
-            ) : (
-              <span
-                className={`block p-2 text-center text-[14px] text-(--textColor) ${bio ? 'border-border border-b' : ''}`}
-              >
-                {bio}
-              </span>
+                      hidden
+                    />
+                  </label>
+                  {user?.avatar && (
+                    <img
+                      src={remove}
+                      alt=""
+                      className="cursor-pointer"
+                      onClick={handleDeleteAvatar}
+                    />
+                  )}
+                </div>
+              </div>
             )}
-            <div className="mt-4 flex flex-col gap-2 text-[14px]">
-              <div className="flex items-center gap-2">
-                <span className="font-bold">Address: </span>
-                <span>New York</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold">Gender: </span>
-                <span>Male</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold">Birthday: </span>
-                <span>1990-01-01</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold">Phone: </span>
-                <span>1234567890</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold">Relationship: </span>
-                <span>Single</span>
-              </div>
-              <button
-                className="w-full cursor-pointer bg-(--buttonColor)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!"
-                onClick={() => setIsVisible(true)}
+            <PhotoProvider>
+              <PhotoView
+                src={(user?.avatar && API_URL + `avatars/${user.avatar}`) || noAvatar}
               >
-                Edit details
+                <img
+                  src={
+                    (user?.avatar && API_URL + `avatars/${user.avatar}`) || noAvatar
+                  }
+                  alt=""
+                  className="h-full w-full cursor-pointer object-cover object-center"
+                />
+              </PhotoView>
+            </PhotoProvider>
+          </div>
+        </div>
+        {selectFile && (
+          <ModelUpdateAvatar
+            isVisible={modelAvatar !== undefined}
+            setIsVisible={setModelAvatar}
+            currentAvatar={modelAvatar}
+            selectFile={selectFile}
+            setSelectFile={setSelectFile}
+          />
+        )}
+        <div className="flex flex-col items-center">
+          <span className="text-2xl font-bold">
+            {user && user?.firstName + ' ' + user?.lastName}
+          </span>
+          {!isProfileOwner && (
+            <div className="mt-2 flex gap-2">
+              <button className="flex cursor-pointer items-center gap-1 bg-(--buttonColor2)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!">
+                <ChatIcon fontSize="small" />
+                <span>Message</span>
+              </button>
+              <button className="bg-primary! text-primary-foreground! flex cursor-pointer items-center gap-1 text-[13px]! font-bold! hover:border-transparent! hover:opacity-80!">
+                <PersonAddIcon fontSize="small" />
+                <span>Add friend</span>
               </button>
             </div>
-          </div>
+          )}
+        </div>
+        <div className="flex flex-col py-5 md:flex-row md:gap-5 md:px-5">
+          <div className="sticky bottom-5 flex-3">
+            <StickyBox offsetTop={80} offsetBottom={20}>
+              <div className="bg-background p-5 text-(--textColor) md:rounded-xl md:shadow-[0_0_4px_0px_rgba(0,0,0,0.2)]">
+                <h4 className="text-[16px] font-bold">User Information</h4>
+                {isProfileOwner ? (
+                  <>
+                    {edit ? (
+                      <TextareaAutosize
+                        minRows={2}
+                        value={bio}
+                        onChange={e => setBio(e.target.value)}
+                        maxLength={100}
+                        className="border-border mt-2 w-full resize-none rounded-[5px] border px-3 py-2 text-center placeholder:text-center"
+                        placeholder="Description about you"
+                      />
+                    ) : (
+                      user?.bio && (
+                        <span
+                          className={`block p-2 text-center text-[14px] text-(--textColor) ${user.bio ? 'border-border border-b' : ''}`}
+                        >
+                          {user.bio}
+                        </span>
+                      )
+                    )}
+                    {edit && (
+                      <span className="block text-end text-[12px] text-(--textColor2)">
+                        {bio.length}/100
+                      </span>
+                    )}
+                    {!edit && user?.bio && (
+                      <button
+                        className="w-full cursor-pointer bg-(--buttonColor)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!"
+                        onClick={() => {
+                          setEdit(true);
+                          setBio(user.bio);
+                        }}
+                      >
+                        Edit biography
+                      </button>
+                    )}
+                    {!edit && !user?.bio && (
+                      <button
+                        className="w-full cursor-pointer bg-(--buttonColor)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!"
+                        onClick={() => setEdit(true)}
+                      >
+                        Add biography
+                      </button>
+                    )}
+                    {edit && (
+                      <div className="mt-2 flex gap-2">
+                        <button
+                          className="w-full cursor-pointer bg-(--buttonColor)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!"
+                          onClick={() => {
+                            setEdit(false);
+                          }}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          className="bg-primary! text-primary-foreground! w-full cursor-pointer text-[13px]! font-bold! hover:border-transparent! hover:opacity-80!"
+                          onClick={handleUpdateBio}
+                        >
+                          Save
+                        </button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <span
+                    className={`block p-2 text-center text-[14px] text-(--textColor) ${user?.bio ? 'border-border border-b' : ''}`}
+                  >
+                    {user?.bio}
+                  </span>
+                )}
+                <div className="mt-4 flex flex-col gap-2 text-[14px]">
+                  {user?.address && (
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold">Address: </span>
+                      <span className="line-clamp-1">{user.address}</span>
+                    </div>
+                  )}
+                  {user?.gender && (
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold">Gender: </span>
+                      <span>{user.gender}</span>
+                    </div>
+                  )}
+                  {user?.birthDate && (
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold">Birthday: </span>
+                      <span>
+                        {new Date(user.birthDate).toLocaleDateString('vi-VN', {
+                          timeZone: 'UTC',
+                        })}
+                      </span>
+                    </div>
+                  )}
+                  {user?.phone && (
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold">Phone: </span>
+                      <span>{user.phone}</span>
+                    </div>
+                  )}
+                  {user?.relationship && (
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold">Relationship: </span>
+                      <span>{user.relationship}</span>
+                    </div>
+                  )}
+                  {isProfileOwner && (
+                    <button
+                      className="w-full cursor-pointer bg-(--buttonColor)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!"
+                      onClick={() => setIsVisible(true)}
+                    >
+                      Edit details
+                    </button>
+                  )}
+                </div>
+              </div>
 
-          {/* <div className="bg-background mt-5 hidden p-5 text-(--textColor) shadow-[0_0_4px_0px_rgba(0,0,0,0.2)] md:block md:rounded-xl">
+              {/* <div className="bg-background mt-5 hidden p-5 text-(--textColor) shadow-[0_0_4px_0px_rgba(0,0,0,0.2)] md:block md:rounded-xl">
             <div className="flex items-center justify-between">
               <h4 className="text-[16px] font-bold">Photos</h4>
               <span className="cursor-pointer text-[13px] text-(--textColor2) hover:underline">
                 {userPhotos.length} Photos
               </span>
             </div> */}
-          {/* Photos */}
-          {/* <div className="mt-2.5 grid grid-cols-3 gap-1">
+              {/* Photos */}
+              {/* <div className="mt-2.5 grid grid-cols-3 gap-1">
               {userPhotos.slice(0, 9).map(photo => (
                 <div key={photo.id} className="">
                   <div className="aspect-square">
@@ -207,55 +429,85 @@ const Profile = () => {
             </div>
           </div> */}
 
-          <div className="bg-background p-5 text-(--textColor) md:mt-5 md:rounded-xl md:shadow-[0_0_4px_0px_rgba(0,0,0,0.2)]">
-            <div className="flex items-center justify-between">
-              <h4 className="text-[16px] font-bold">Friends</h4>
-              <span className="cursor-pointer text-[13px] text-(--textColor2) hover:underline">
-                {user?.friends.length} Friends
+              <div className="bg-background p-5 text-(--textColor) md:mt-5 md:rounded-xl md:shadow-[0_0_4px_0px_rgba(0,0,0,0.2)]">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-[16px] font-bold">Friends</h4>
+                  <span className="cursor-pointer text-[13px] text-(--textColor2) hover:underline">
+                    {user?.friends.length} Friends
+                  </span>
+                </div>
+                {/* Friend */}
+                <div className="mt-2.5 grid grid-cols-3 gap-2">
+                  {user?.friends.slice(0, 9).map(friend => (
+                    <Link
+                      className="text-inherit!"
+                      to={`/profile/${friend.userName}`}
+                      key={friend._id}
+                    >
+                      <div
+                        key={friend._id}
+                        className="flex flex-col items-start"
+                      >
+                        <div className="aspect-square h-full w-full">
+                          <img
+                            src={friend.avatar || noAvatar}
+                            alt=""
+                            className="h-full w-full cursor-pointer rounded-[8px] object-cover object-center"
+                          />
+                        </div>
+                        <span className="mt-1 block w-full cursor-pointer text-[11px] font-bold wrap-break-word whitespace-pre-wrap hover:underline">
+                          {friend.firstName} {friend.lastName}
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </StickyBox>
+          </div>
+          <div className="flex-5">
+            {isProfileOwner && <Share />}
+            {!isProfileOwner && (
+              <div className="bg-background mt-5 mb-5 p-5 text-(--textColor) shadow-[0_0_4px_0px_rgba(0,0,0,0.2)] md:mt-0 md:rounded-xl">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-[16px] font-bold">Posts</h4>
+                  <span className="text-[14px] text-(--textColor2)">
+                    {
+                      posts?.data.posts.filter(post =>
+                        isProfileOwner ? post : post.visibility !== 'private',
+                      ).length
+                    }{' '}
+                    Posts
+                  </span>
+                </div>
+              </div>
+            )}
+            {posts?.data?.posts && (
+              <Posts
+                posts={posts.data.posts}
+                activeReaction={activeReaction}
+                setActiveReaction={setActiveReaction}
+                isProfileOwner={isProfileOwner}
+              />
+            )}
+            {posts?.data.posts.filter(post =>
+              isProfileOwner ? post : post.visibility !== 'private',
+            ).length === 0 && (
+              <span className="block w-full text-center text-xl font-bold text-(--textColor2)">
+                There are no posts
               </span>
-            </div>
-            {/* Friend */}
-            <div className="mt-2.5 grid grid-cols-3 gap-2">
-              {user?.friends.slice(0, 9).map(friend => (
-                <Link
-                  className="text-inherit!"
-                  to={`/profile/${friend.userName}`}
-                  key={friend._id}
-                >
-                  <div key={friend._id} className="flex flex-col items-start">
-                    <div className="aspect-square h-full w-full">
-                      <img
-                        src={friend.avatar || noAvatar}
-                        alt=""
-                        className="h-full w-full cursor-pointer rounded-[8px] object-cover object-center"
-                      />
-                    </div>
-                    <span className="mt-1 block w-full cursor-pointer text-[11px] font-bold wrap-break-word whitespace-pre-wrap hover:underline">
-                      {friend.firstName} {friend.lastName}
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
+            )}
+            {isVisible && user && (
+              <ModelUserInformationWrapper
+                key={user.address}
+                setIsVisible={setIsVisible}
+                user={user}
+              />
+            )}
           </div>
         </div>
-        <div className="flex-5">
-          {isProfileOwner && <Share />}
-          {!isProfileOwner && (
-            <div className="bg-background mb-5 rounded-xl p-5 text-(--textColor) shadow-[0_0_4px_0px_rgba(0,0,0,0.2)]">
-              <div className="flex items-center justify-between">
-                <h4 className="text-[16px] font-bold">Posts</h4>
-                <span className="text-[14px] text-(--textColor2)">
-                  {posts?.data.posts.length} Posts
-                </span>
-              </div>
-            </div>
-          )}
-          {posts?.data?.posts && <Posts posts={posts.data.posts} />}
-          {isVisible && <ModelUserInformation setIsVisible={setIsVisible} />}
-        </div>
       </div>
-    </div>
+    </>
   );
 };
 

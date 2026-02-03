@@ -18,6 +18,7 @@ import { type IPost, type ReactionType } from '@/types/type';
 import { reactionStyle } from '@/types/type';
 import { FormatDate } from '@/utils/formatDate';
 
+const API_URL = import.meta.env.VITE_API_URL;
 interface PostProps {
   post: IPost;
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
@@ -58,7 +59,6 @@ const Post = ({
       setReact('like');
       setShowBar(false);
     }
-    console.log('Đã reset về mặc định');
   };
   return (
     <div
@@ -68,7 +68,10 @@ const Post = ({
         <div className="flex items-center gap-3">
           <Link to={`/profile/${post.author.userName}`}>
             <img
-              src={post.author.avatar || noAvatar}
+              src={
+                (post.author?.avatar && API_URL + `/avatars/${post.author.avatar}`) ||
+                noAvatar
+              }
               alt=""
               className="h-10 w-10 rounded-[50%] object-cover"
             />

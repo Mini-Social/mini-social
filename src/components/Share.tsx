@@ -7,14 +7,15 @@ import location from '@/assets/icons/location.png';
 import tag from '@/assets/icons/tag.png';
 import type { RootState } from '@/store';
 
+const API_URL = import.meta.env.VITE_API_URL;
 const Share = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   return (
-    <div className="bg-background mb-2 p-5 md:mb-5 md:rounded-[10px] md:shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)]">
+    <div className="bg-background mt-2 mb-2 p-5 md:mt-0 md:mb-5 md:rounded-[10px] md:shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)]">
       <div className="flex shrink-0 items-center gap-5">
         <Link to={'/'} className="shrink-0">
           <img
-            src={user?.avatar ?? noAvatar}
+            src={(user?.avatar && API_URL + `/avatars/${user.avatar}`) || noAvatar}
             alt=""
             className="h-10 w-10 shrink-0 rounded-[50%] object-cover"
           />

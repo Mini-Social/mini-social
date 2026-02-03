@@ -1,7 +1,7 @@
-import postService from './post.service';
+import apiSlice from '@/app/api.slice';
 import { type IPost } from '@/types/type';
 
-export const postApi = postService.injectEndpoints({
+export const postApi = apiSlice.injectEndpoints({
   endpoints: build => ({
     getPosts: build.query<
       {
@@ -12,19 +12,34 @@ export const postApi = postService.injectEndpoints({
       },
       void
     >({
-      query: () => 'getAllPost',
+      query: () => ({
+        url: 'post/getAllPost',
+        credentials: 'include',
+      }),
     }),
     getDetailPost: build.query<
       { status: string; data: { post: IPost } },
       string
     >({
-      query: id => `getPost/${id}`,
+      query: id => ({
+        url: `post/getPost/${id}`,
+        credentials: 'include',
+      }),
     }),
     getPostByUserId: build.query<
       { status: string; data: { posts: IPost[] } },
       string
     >({
-      query: userId => `getPostByUserId/${userId}`,
+      query: userId => ({
+        url: `post/getPostByUserId/${userId}`,
+        credentials: 'include',
+      }),
+      providesTags: (_, __, userId) => [
+        {
+          type: 'Posts' as const,
+          id: userId,
+        },
+      ],
     }),
   }),
 });

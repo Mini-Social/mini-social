@@ -1,34 +1,7 @@
-import userService from '@/features/user/user.service';
+import apiSlice from '@/app/api.slice';
+import { type IUser } from '@/types/user.type';
 
-export interface IUser {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  userName: string;
-  email: string;
-  password: string | undefined;
-  avatar: string | null;
-  bio: string | null;
-  gender: string;
-  phone: string | null;
-  birthDate: string | null;
-  role: 'Admin' | 'User';
-  friends: [
-    {
-      _id: string;
-      userName: string;
-      firstName: string;
-      lastName: string;
-      avatar: string;
-    },
-  ];
-  isOnline: boolean;
-  lastOnline: Date | null;
-  deleted: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
-const useApi = userService.injectEndpoints({
+const useApi = apiSlice.injectEndpoints({
   endpoints: build => ({
     getUserByUserName: build.query<
       {
@@ -37,9 +10,51 @@ const useApi = userService.injectEndpoints({
       },
       string
     >({
-      query: userName => `getUserByUserName/${userName}`,
+      query: userName => ({
+        url: `user/getUserByUserName/${userName}`,
+        credentials: 'include',
+      }),
+      providesTags: result => {
+        if (result?.data) {
+          const final = [
+            {
+              type: 'User' as const,
+              id: result.data._id,
+            },
+            {
+              type: 'User' as const,
+              id: 'LIST',
+            },
+          ];
+          return final;
+        }
+        return [
+          {
+            type: 'User' as const,
+            id: 'LIST',
+          },
+        ];
+      },
+    }),
+    updateProfile: build.mutation<{ status: string; data: IUser }, object>({
+      query: body => ({
+        url: 'user/update-profile',
+        method: 'PUT',
+        credentials: 'include',
+        body,
+      }),
+      invalidatesTags: result => [
+        {
+          type: 'User' as const,
+          id: result?.data._id,
+        },
+        {
+          type: 'Posts' as const,
+          id: result?.data._id,
+        },
+      ],
     }),
   }),
 });
 export default useApi;
-export const { useGetUserByUserNameQuery } = useApi;
+export const { useGetUserByUserNameQuery, useUpdateProfileMutation } = useApi;

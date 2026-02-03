@@ -14,6 +14,7 @@ import UserMenu from '@/components/UserMenu';
 import { DarkModeContext } from '@/contexts/DarkModeContext';
 import type { RootState } from '@/store';
 
+const API_URL = import.meta.env.VITE_API_URL;
 const Navbar = () => {
   const { user, isAuthChecked } = useSelector((state: RootState) => state.auth);
   const [open, setOpen] = useState<string>('');
@@ -106,7 +107,9 @@ const Navbar = () => {
                   }
                 >
                   <img
-                    src={user?.avatar ?? noAvatar}
+                    src={
+                      (user?.avatar && API_URL + `/avatars/${user.avatar}`) || noAvatar
+                    }
                     alt=""
                     className="h-full w-full object-cover"
                   />

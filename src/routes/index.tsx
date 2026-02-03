@@ -3,6 +3,7 @@ import {
   createBrowserRouter,
   Navigate,
   RouterProvider,
+  useLocation,
 } from 'react-router-dom';
 
 import AuthLayout from '@/layouts/AuthLayout';
@@ -16,6 +17,10 @@ import type { RootState } from '@/store';
 interface Props {
   children: React.ReactNode;
 }
+const ProfileWrapper = () => {
+  const { pathname } = useLocation();
+  return <Profile key={pathname} />;
+};
 const ProtectRouter = ({ children }: Props) => {
   const { user, isAuthChecked } = useSelector((state: RootState) => state.auth);
   if (!isAuthChecked) {
@@ -54,7 +59,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'profile/:userName',
-        element: <Profile />,
+        element: <ProfileWrapper />,
       },
     ],
   },

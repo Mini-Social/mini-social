@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import noAvatar from '@/assets/avatars/noavatar.png';
 import type { RootState } from '@/store';
 
+const API_URL = import.meta.env.VITE_API_URL;
 const Stories = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   const [translateX, setTranslateX] = useState<number>(0);
@@ -38,7 +39,7 @@ const Stories = () => {
         <div className="h-full w-[120px] shrink-0 cursor-pointer overflow-hidden rounded-[10px] shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)] hover:opacity-90">
           <div className="relative h-37.5">
             <img
-              src={user?.avatar ?? noAvatar}
+              src={(user?.avatar && API_URL + `/avatars/${user.avatar}`) || noAvatar}
               alt=""
               className="h-full w-[120px] shrink-0 cursor-pointer bg-cover object-cover"
             />

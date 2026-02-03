@@ -1,7 +1,7 @@
-import commentService from '@/features/comment/comment.service';
+import apiSlice from '@/app/api.slice';
 import type { IComment } from '@/types/comment.type';
 
-const commentApi = commentService.injectEndpoints({
+const commentApi = apiSlice.injectEndpoints({
   endpoints: builder => ({
     getCommentsByPostId: builder.query<
       {
@@ -13,7 +13,10 @@ const commentApi = commentService.injectEndpoints({
       },
       string
     >({
-      query: postId => `/getComments/${postId}`,
+      query: postId => ({
+        url: `comment/getComments/${postId}`,
+        credentials: 'include',
+      }),
     }),
     getCommentsReplies: builder.query<
       {
@@ -25,7 +28,10 @@ const commentApi = commentService.injectEndpoints({
       },
       string
     >({
-      query: parentCommentId => `/getCommentsReplies/${parentCommentId}`,
+      query: parentCommentId => ({
+        url: `comment/getCommentsReplies/${parentCommentId}`,
+        credentials: 'include',
+      }),
     }),
   }),
 });

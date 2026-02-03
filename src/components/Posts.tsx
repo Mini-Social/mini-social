@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import ModelComment from '@/components/ModelComment';
 import ModelReaction from '@/components/ModelReaction';
@@ -7,16 +7,34 @@ import type { IPost } from '@/types/type';
 
 interface Props {
   posts: IPost[];
+  activeReaction: string | null;
+  setActiveReaction: React.Dispatch<React.SetStateAction<string | null>>;
+  isProfileOwner?: boolean;
 }
-const Posts = ({ posts }: Props) => {
+const Posts = ({
+  posts,
+  activeReaction,
+  setActiveReaction,
+  isProfileOwner,
+}: Props) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [activeReaction, setActiveReaction] = useState<string | null>(null);
   if (!posts) {
     return null;
   }
   return (
     <>
       {posts.length > 0 &&
+        isProfileOwner &&
+        posts.map(post => (
+          <Post
+            key={post._id}
+            setIsVisible={setIsVisible}
+            setActiveReaction={setActiveReaction}
+            post={post}
+          />
+        ))}
+      {posts.length > 0 &&
+        !isProfileOwner &&
         posts.map(post => {
           if (post.visibility !== 'private') {
             return (

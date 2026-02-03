@@ -5,9 +5,7 @@ import { useSelector } from 'react-redux';
 import SendIcon from '@/assets/icons/send-message.png';
 import CommentTree from '@/components/CommentTree';
 import Post from '@/components/Post';
-import {
-  useGetCommentsByPostIdQuery
-} from '@/features/comment/comment.slice';
+import { useGetCommentsByPostIdQuery } from '@/features/comment/comment.slice';
 import { useGetDetailPostQuery } from '@/features/post/post.api.slice';
 import type { RootState } from '@/store';
 

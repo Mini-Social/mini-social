@@ -3,11 +3,13 @@ import { Outlet, useLocation } from 'react-router-dom';
 import LeftBar from '@/components/LeftBar';
 import Navbar from '@/components/Navbar';
 import RightBar from '@/components/RightBar';
+import ScrollToTop from '@/components/ScrollToTop';
 
 const MainLayout = () => {
   const location = useLocation();
   return (
     <>
+      <ScrollToTop />
       <Navbar />
       <div className="flex justify-between bg-(--background-primary)">
         {location.pathname.includes('/profile') ? null : <LeftBar />}

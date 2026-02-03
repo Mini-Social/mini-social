@@ -56,3 +56,13 @@
   user-select: none;
   touch-action: manipulation;
 }
+.no-spinner::-webkit-inner-spin-button,
+.no-spinner::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+.react-tel-input .selected-flag:hover {
+  background-color: var(--hoverColor) !important;
+}
+.react-tel-input .selected-flag.open {
+  background-color: var(--hoverColor) !important;
+}

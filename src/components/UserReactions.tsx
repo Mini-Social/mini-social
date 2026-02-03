@@ -30,8 +30,8 @@ const UserReactions = ({ active, userReactions }: Props) => {
       : userReactions.filter(user => user.reactions === active);
 
   const sortedReactions = [...filteredReactions].sort((a, b) => {
-    const isAFriend = friendIds?.includes(a.userId._id);
-    const isBFriend = friendIds?.includes(b.userId._id);
+    const isAFriend = friendIds?.some(friend => friend._id === a.userId._id);
+    const isBFriend = friendIds?.some(friend => friend._id === b.userId._id);
 
     if (isAFriend && !isBFriend) {
       return -1;
@@ -51,7 +51,7 @@ const UserReactions = ({ active, userReactions }: Props) => {
           firstName={user.userId.firstName}
           lastName={user.userId.lastName}
           react={user.reactions as ReactionType}
-          isFriend={friendIds?.includes(user.userId._id)}
+          isFriend={friendIds?.some(friend => friend._id === user.userId._id)}
         />
       ))}
     </ul>

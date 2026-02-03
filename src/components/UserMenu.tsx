@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { logOut } from '@/features/auth/auth.api.slice';
-import { type IUser } from '@/features/auth/auth.slice';
 import { UseAppDispatch } from '@/store';
+import { type IUser } from '@/types/user.type';
 
 interface IUserMenuProps {
   user: IUser;
