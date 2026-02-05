@@ -1,6 +1,7 @@
 import { faFacebookMessenger } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
 import angry from '@/assets/icons/angry.svg';
@@ -9,6 +10,7 @@ import like from '@/assets/icons/like.svg';
 import love from '@/assets/icons/love.svg';
 import sad from '@/assets/icons/sad.svg';
 import wow from '@/assets/icons/wow.svg';
+import LanguageContext from '@/contexts/LanguageContext';
 
 type ReactionType = 'like' | 'love' | 'haha' | 'wow' | 'sad' | 'angry';
 const iconsReaction: Record<ReactionType, string> = {
@@ -35,8 +37,14 @@ const UserReaction = ({
   firstName,
   lastName,
   isFriend,
-}: Props) => (
-  <>
+}: Props) => {
+
+   const languageContext = useContext(LanguageContext);
+    if (!languageContext) {
+      return null;
+    }
+    const { language, translate } = languageContext;
+  return <>
     <Link className="text-inherit!" to={`/profile/${userName}`}>
       <li className="flex h-14 items-center justify-between px-2">
         <div className="flex shrink-0 cursor-pointer items-center gap-4">
@@ -57,14 +65,14 @@ const UserReaction = ({
             {!isFriend && (
               <>
                 <PersonAddIcon fontSize="small" />
-                <span>Thêm bạn bè</span>
+                <span>{translate(language, 'addFriend')}</span>
               </>
             )}
 
             {isFriend && (
               <>
                 <FontAwesomeIcon icon={faFacebookMessenger} />
-                <span>Nhắn tin</span>
+                <span>{translate(language, 'message')}</span>
               </>
             )}
           </button>
@@ -72,6 +80,6 @@ const UserReaction = ({
       </li>
     </Link>
   </>
-);
+}
 
 export default UserReaction;

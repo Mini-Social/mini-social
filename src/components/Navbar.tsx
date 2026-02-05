@@ -10,8 +10,10 @@ import { Link } from 'react-router-dom';
 
 import noAvatar from '@/assets/avatars/noavatar.png';
 import ModelConversation from '@/components/ModelConversation';
+import ModelSetting from '@/components/ModelSetting';
 import UserMenu from '@/components/UserMenu';
 import { DarkModeContext } from '@/contexts/DarkModeContext';
+import LanguageContext from '@/contexts/LanguageContext';
 import type { RootState } from '@/store';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -19,13 +21,14 @@ const Navbar = () => {
   const { user, isAuthChecked } = useSelector((state: RootState) => state.auth);
   const [open, setOpen] = useState<string>('');
   const darkModeContext = useContext(DarkModeContext);
+  const languageContext = useContext(LanguageContext);
   const refIcon = useRef<HTMLDivElement>(null);
   const refUserMenu = useRef<HTMLDivElement>(null);
-  if (!darkModeContext || !isAuthChecked) {
+  if (!darkModeContext || !isAuthChecked || !languageContext) {
     return null;
   }
   const { darkMode, toggleDarkMode } = darkModeContext;
-
+  const { language, translate } = languageContext;
   return (
     <>
       {open === 'conversation' && (
@@ -64,7 +67,7 @@ const Navbar = () => {
                 <SearchOutlinedIcon />
                 <input
                   type="text"
-                  placeholder="Search"
+                  placeholder={translate(language, 'search')}
                   className="h-full w-0 bg-transparent outline-none md:w-[200px] lg:w-[300px] xl:w-125"
                 />
               </div>
@@ -108,7 +111,8 @@ const Navbar = () => {
                 >
                   <img
                     src={
-                      (user?.avatar && API_URL + `/avatars/${user.avatar}`) || noAvatar
+                      (user?.avatar && API_URL + `/avatars/${user.avatar}`) ||
+                      noAvatar
                     }
                     alt=""
                     className="h-full w-full object-cover"
@@ -120,6 +124,7 @@ const Navbar = () => {
               </div>
               {user && open === 'userMenu' && (
                 <UserMenu
+                  open={open}
                   user={user}
                   setOpen={setOpen}
                   refUserMenu={refUserMenu}
@@ -129,6 +134,7 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+      {open === 'setting' && <ModelSetting setIsOpen={setOpen} />}
     </>
   );
 };

@@ -1,9 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useContext } from 'react';
 import { useForm, type FieldErrors } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { z } from 'zod';
 
+import LanguageContext from '@/contexts/LanguageContext';
 import { signUpThunk } from '@/features/auth/auth.api.slice';
 import { UseAppDispatch } from '@/store';
 import { type errorResponseType, formSchema } from '@/types/auth.type';
@@ -24,7 +26,6 @@ const Register = () => {
       navigate('/');
       toast.success('Register successfully!');
     } catch (error: unknown) {
-      console.log(error);
       const typeError = error as errorResponseType;
       toast.error(typeError.message);
     }
@@ -35,6 +36,11 @@ const Register = () => {
       toast.error(fieldError.message);
     }
   };
+  const languageContext = useContext(LanguageContext);
+        if (!languageContext) {
+          return null;
+        }
+        const { language, translate } = languageContext;
   return (
     <div className="flex min-h-150 w-[90%] flex-row-reverse overflow-hidden rounded-[10px] md:w-[80%] xl:w-[60%]">
       {/* Left */}
@@ -47,67 +53,70 @@ const Register = () => {
           alias totam numquam ipsa exercitationem dignissimos, error nam,
           consequatur.
         </span>
-        <span>Do you have an account?</span>
+        <span>{translate(language, 'loginText')}</span>
         <Link to={'/login'}>
-          <button className="w-[50%] rounded-none! font-bold! text-[#3f51b5] outline-none!">
-            Login
-          </button>
+         <button
+              className={`w-full rounded-none! bg-[#725dfd]! font-bold! text-white! outline-none! md:w-[50%] ${isLoading ? 'cursor-not-allowed! opacity-50' : ''}`}
+              disabled={isLoading}
+            >
+              {translate(language, 'login')}
+            </button>
         </Link>
       </div>
       {/* Right */}
-      <div className="flex flex-1 flex-col justify-center gap-5 bg-white p-12.5 md:p-7.5">
-        <h2 className="text-[2rem] font-bold text-[#555555]">Register</h2>
+      <div className="flex flex-1 flex-col justify-center gap-5 bg-(--background-primary) p-12.5 md:p-7.5">
+        <h2 className="text-[2rem] font-bold text-(--textColor)">{translate(language, 'register')}</h2>
 
         <form action="" onSubmit={handleSubmit(handleSubmitForm, onInvalid)}>
           <div className="flex flex-col gap-7.5">
             <div className="flex gap-5">
               <input
                 type="text"
-                placeholder="Firstname"
-                className="w-full border-b border-b-gray-300 px-2.5 py-5"
+                placeholder={translate(language, 'firstName')}
+                className="w-full border-b border-b-gray-300 px-2.5 py-5 outline-none"
                 {...register('firstName')}
               />
               <input
                 type="text"
-                placeholder="Lastname"
-                className="w-full border-b border-b-gray-300 px-2.5 py-5"
+                placeholder={translate(language, 'lastName')}
+                className="w-full border-b border-b-gray-300 px-2.5 py-5 outline-none"
                 {...register('lastName')}
               />
             </div>
             <input
               type="text"
-              placeholder="Username"
-              className="w-full border-b border-b-gray-300 px-2.5 py-5"
+              placeholder={translate(language, 'userName')}
+              className="w-full border-b border-b-gray-300 px-2.5 py-5 outline-none"
               {...register('userName')}
             />
             <input
               type="email"
               placeholder="Email"
-              className="w-full border-b border-b-gray-300 px-2.5 py-5"
+              className="w-full border-b border-b-gray-300 px-2.5 py-5 outline-none"
               {...register('email')}
             />
             <input
               type="password"
-              placeholder="Password"
-              className="w-full border-b border-b-gray-300 px-2.5 py-5"
+              placeholder={translate(language, 'password')}
+              className="w-full border-b border-b-gray-300 px-2.5 py-5 outline-none"
               {...register('password')}
             />
             <input
               type="password"
-              placeholder="Confirm password"
-              className="w-full border-b border-b-gray-300 px-2.5 py-5"
+              placeholder={translate(language, 'confirm') + ' ' + translate(language, 'password').toLowerCase()}
+              className="w-full border-b border-b-gray-300 px-2.5 py-5 outline-none"
               {...register('passwordConfirm')}
             />
             <button
               className={`w-full rounded-none! bg-[#725dfd]! font-bold! text-white! outline-none! md:w-[50%] ${isLoading ? 'cursor-not-allowed! opacity-50' : ''}`}
               disabled={isLoading}
             >
-              Register
+              {translate(language, 'register')}
             </button>
           </div>
           <div className="mt-7.5 text-center md:hidden">
             <Link to="/login" className="mb-2.5 underline!">
-              Do you have an account?
+              {translate(language, 'loginText')}
             </Link>
           </div>
         </form>

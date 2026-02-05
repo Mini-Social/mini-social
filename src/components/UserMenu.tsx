@@ -1,16 +1,18 @@
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+import LanguageContext from '@/contexts/LanguageContext';
 import { logOut } from '@/features/auth/auth.api.slice';
 import { UseAppDispatch } from '@/store';
 import { type IUser } from '@/types/user.type';
 
 interface IUserMenuProps {
   user: IUser;
+  open: string;
   setOpen: React.Dispatch<React.SetStateAction<string>>;
   refUserMenu: React.RefObject<HTMLDivElement | null>;
 }
@@ -43,37 +45,46 @@ const UserMenu = ({ user, setOpen, refUserMenu }: IUserMenuProps) => {
       document.removeEventListener('mousedown', handleClickOutSide);
     };
   }, [ref, setOpen, refUserMenu]);
+
+
+const languageContext = useContext(LanguageContext);
+  if (!languageContext) {
+    return null;
+  }
+  const { language, translate } = languageContext;
   return (
-    <ul
-      onClick={event => event.stopPropagation()}
-      ref={ref}
-      className="bg-background absolute top-12 right-0 z-10 min-w-[120px] overflow-hidden rounded-md text-(--textColor) shadow-md"
-    >
-      <Link className="text-inherit!" to={`/profile/${user?.userName}`}>
+    <>
+      <ul
+        onClick={event => event.stopPropagation()}
+        ref={ref}
+        className="bg-background absolute top-12 right-0 z-10 min-w-[150px] overflow-hidden rounded-md text-(--textColor) shadow-md"
+      >
+        <Link className="text-inherit!" to={`/profile/${user?.userName}`}>
+          <li
+            className="hover:bg-accent flex cursor-pointer items-center gap-2.5 p-2"
+            onClick={() => setOpen('')}
+          >
+            <PersonIcon fontSize="small" />
+            {translate(language, 'profile')}
+          </li>
+        </Link>
+
         <li
           className="hover:bg-accent flex cursor-pointer items-center gap-2.5 p-2"
-          onClick={() => setOpen('')}
+          onClick={() => setOpen('setting')}
         >
-          <PersonIcon fontSize="small" />
-          Profile
+          <SettingsIcon fontSize="small" />
+          {translate(language, 'setting')}
         </li>
-      </Link>
-
-      <li
-        className="hover:bg-accent flex cursor-pointer items-center gap-2.5 p-2"
-        onClick={() => setOpen('')}
-      >
-        <SettingsIcon fontSize="small" />
-        Settings
-      </li>
-      <li
-        className="hover:bg-accent flex cursor-pointer items-center gap-2.5 p-2"
-        onClick={handleLogout}
-      >
-        <LogoutIcon fontSize="small" />
-        Logout
-      </li>
-    </ul>
+        <li
+          className="hover:bg-accent flex cursor-pointer items-center gap-2.5 p-2"
+          onClick={handleLogout}
+        >
+          <LogoutIcon fontSize="small" />
+          {translate(language, 'logout')}
+        </li>
+      </ul>
+    </>
   );
 };
 

@@ -2,7 +2,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import PeopleIcon from '@mui/icons-material/People';
 import PublicIcon from '@mui/icons-material/Public';
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import noAvatar from '@/assets/avatars/noavatar.png';
@@ -12,7 +12,9 @@ import ShareButton from '@/assets/icons/components/ShareButton';
 import PostImages from '@/components/PostImages';
 import ReactionsBar from '@/components/ReactionsBar';
 import ReacionsPost from '@/components/ReactionsPost';
+import LanguageContext from '@/contexts/LanguageContext';
 import { selectPost } from '@/features/post/post.slice';
+import type { translations } from '@/language/language';
 import { UseAppDispatch } from '@/store';
 import { type IPost, type ReactionType } from '@/types/type';
 import { reactionStyle } from '@/types/type';
@@ -60,6 +62,11 @@ const Post = ({
       setShowBar(false);
     }
   };
+  const languageContext = useContext(LanguageContext);
+  if (!languageContext) {
+    return null;
+  }
+  const { language, translate } = languageContext;
   return (
     <div
       className={`bg-background mb-2 md:mb-5 md:rounded-[10px] ${noShadow ? 'shadow-none' : 'md:shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)]'}`}
@@ -69,7 +76,8 @@ const Post = ({
           <Link to={`/profile/${post.author.userName}`}>
             <img
               src={
-                (post.author?.avatar && API_URL + `/avatars/${post.author.avatar}`) ||
+                (post.author?.avatar &&
+                  API_URL + `/avatars/${post.author.avatar}`) ||
                 noAvatar
               }
               alt=""
@@ -157,7 +165,12 @@ const Post = ({
               <span
                 className={`${reactionStyle[react].color} fix-select font-medium`}
               >
-                {reactionStyle[react].text}
+                {translate(
+                  language,
+                  reactionStyle[
+                    react
+                  ].text.toLowerCase() as keyof typeof translations.vi,
+                )}
               </span>
               <ReactionsBar
                 setState={setReact}
@@ -173,11 +186,11 @@ const Post = ({
               }}
             >
               <ChatButton className="fix-select h-5 w-5 text-(--textColor)" />
-              <span>Comments</span>
+              <span>{translate(language, 'comment')}</span>
             </div>
             <div className="fix-select flex h-fit w-full cursor-pointer items-center justify-center gap-2 py-1 font-medium text-(--textColor2) transition-all duration-200 hover:bg-(--background-primary)">
               <ShareButton className="fix-select h-5 w-5 text-(--textColor)" />
-              <span>Shares</span>
+              <span>{translate(language, 'shares')}</span>
             </div>
           </div>
         </div>

@@ -44,6 +44,7 @@
   --textColor: #000000;
   --textColor2: #65686c;
   --textColor3: #ffffff;
+  --textColor3: #dddddd;
   --closeColor: #d3d6da;
   --hoverColor: #f3f4f6;
   --buttonColor: #d6d9dd;
@@ -90,6 +91,7 @@
   --textColor: #ffffff;
   --textColor2: #ffffff;
   --textColor3: #000000;
+  --textColor3: #dddddd;
   --closeColor: #333333;
   --hoverColor: #333333;
   --typingColor: #333333;

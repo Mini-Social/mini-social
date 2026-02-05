@@ -5,7 +5,7 @@ import OpenWithIcon from '@mui/icons-material/OpenWith';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import PublicIcon from '@mui/icons-material/Public';
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
@@ -20,12 +20,14 @@ import ModelUpdateAvatar from '@/components/ModelUpdateAvatar';
 import { ModelUserInformationWrapper } from '@/components/ModelUserInfomationWrapper';
 import Posts from '@/components/Posts';
 import Share from '@/components/Share';
+import LanguageContext from '@/contexts/LanguageContext';
 import { setCredential } from '@/features/auth/auth.slice';
 import { useGetPostByUserIdQuery } from '@/features/post/post.api.slice';
 import {
   useGetUserByUserNameQuery,
   useUpdateProfileMutation,
 } from '@/features/user/user.api.slice';
+import type { translations } from '@/language/language';
 import type { RootState } from '@/store';
 import { UseAppDispatch } from '@/store';
 
@@ -49,11 +51,11 @@ const Profile = () => {
   const [activeReaction, setActiveReaction] = useState<string | null>(null);
   const isProfileOwner = ownUser?.userName === userName;
   const [isHover, setIsHover] = useState<boolean>(false);
-  const [previewCoverImg, setPreviewCoverImg] = useState<string | null>(null)
-  const [isDrag, setIsDrag] = useState<boolean>(false)
-  const [positionY, setPositionY] = useState<number>(50)
-  const startY = useRef<number>(0)
-  const startPos = useRef<number>(0)
+  const [previewCoverImg, setPreviewCoverImg] = useState<string | null>(null);
+  const [isDrag, setIsDrag] = useState<boolean>(false);
+  const [positionY, setPositionY] = useState<number>(50);
+  const startY = useRef<number>(0);
+  const startPos = useRef<number>(0);
   const handleUpdateBio = () => {
     setEdit(false);
     updateProfile({ bio });
@@ -66,140 +68,168 @@ const Profile = () => {
     }
   };
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target?.files?.[0]
-    if(file){
-      setSelectedFile(file)
-      const url = URL.createObjectURL(file)
-      setPreviewCoverImg(url)
+    const file = e.target?.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const url = URL.createObjectURL(file);
+      setPreviewCoverImg(url);
     }
   };
-  const handleMouseDown = (e: React.MouseEvent) =>{
-      setIsDrag(true)
-      startY.current = e.clientY
-      startPos.current = positionY
-  }
-  const handleMouseUp = () =>{
-      setIsDrag(false)
-  }
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDrag(true);
+    startY.current = e.clientY;
+    startPos.current = positionY;
+  };
+  const handleMouseUp = () => {
+    setIsDrag(false);
+  };
   const handleMouseMove = (e: React.MouseEvent) => {
-    if(isDrag){
-      const deltaY = e.clientY - startY.current
-      let newPos = startPos.current - deltaY/5
-      if(newPos < 0){
-        newPos = 0
+    if (isDrag) {
+      const deltaY = e.clientY - startY.current;
+      let newPos = startPos.current - deltaY / 5;
+      if (newPos < 0) {
+        newPos = 0;
       }
-      if(newPos > 100) {
-        newPos = 100
+      if (newPos > 100) {
+        newPos = 100;
       }
-      setPositionY(newPos)
+      setPositionY(newPos);
     }
-  }
+  };
   const handleMouseLeave = () => {
-    setIsDrag(false)
-  }
-  const handleUpdateBgCover = () =>{
-  if(selectedFile){
-    const formData = new FormData()
-    formData.append('background', selectedFile)
-    formData.append('coverPosition', String(positionY))
-    updateProfile(formData)
-    setPreviewCoverImg(null)
-    setSelectedFile(null)
-    toast.success('Update background successfully!')
-  }
-  }
-  const handleDeleteBgCover = async() => {
-      const isTrue = confirm('Are you sure you want to delete the background?');
-    if (isTrue) {
-      updateProfile({ background: '' })
+    setIsDrag(false);
+  };
+  const handleUpdateBgCover = () => {
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append('background', selectedFile);
+      formData.append('coverPosition', String(positionY));
+      updateProfile(formData);
+      setPreviewCoverImg(null);
+      setSelectedFile(null);
+      toast.success('Update background successfully!');
     }
-  }
+  };
+  const handleDeleteBgCover = async () => {
+    const isTrue = confirm('Are you sure you want to delete the background?');
+    if (isTrue) {
+      updateProfile({ background: '' });
+    }
+  };
+  const languageContext = useContext(LanguageContext);
+      if (!languageContext) {
+        return null;
+      }
+      const { language, translate } = languageContext;
   return (
     <>
-      {
-        previewCoverImg && <div className="fixed z-10 w-full bg-black/50 p-1">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-white">
-            <PublicIcon />
-            <span>Your cover photo is publicly displayed.</span>
-          </div>
-          <div className='flex items-center gap-2'>
-            <button className="rounded-lg border-none! text-white! bg-white/10! px-4 py-2 text-sm" onClick={() => setPreviewCoverImg(null)}>
-              Cancel
-            </button>
-            <button className="rounded-lg bg-[#0866ff]! px-4 py-2 text-sm text-white hover:opacity-90" onClick={handleUpdateBgCover}>
-              Save change
-            </button>
+      {previewCoverImg && (
+        <div className="fixed z-10 w-full bg-black/50 p-1">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-white">
+              <PublicIcon />
+              <span>{translate(language, 'publicText')}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                className="rounded-lg border-none! bg-white/10! px-4 py-2 text-sm text-white!"
+                onClick={() => setPreviewCoverImg(null)}
+              >
+                {translate(language, 'cancel')}
+              </button>
+              <button
+                className="rounded-lg bg-[#0866ff]! px-4 py-2 text-sm text-white hover:opacity-90"
+                onClick={handleUpdateBgCover}
+              >
+                {translate(language, 'save') + ' ' + translate(language, 'change').toLowerCase()}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      }
+      )}
       <div
         className="mx-auto flex max-w-[1000px] flex-col lg:min-w-[1000px]"
         key={userName}
       >
         <div className="relative h-[320px]">
-          <div className="aspect-ratio-16/9 absolute h-62.5 w-full rounded-b-[8px] overflow-hidden cursor-pointer">
-            {previewCoverImg && <div className='w-full h-full absolute'>
-              {
-                !isDrag && <div className='w-full h-full flex items-center justify-center absolute pointer-events-none'>
-                <div className='bg-black/50 p-2 rounded-[8px] flex items-center gap-2'>
-                  <OpenWithIcon className='text-white'/>
-                  <span className='text-white'>Drag to reposition the image.</span>
+          <div className="aspect-ratio-16/9 absolute h-62.5 w-full cursor-pointer overflow-hidden rounded-b-[8px]">
+            {previewCoverImg && (
+              <div className="absolute h-full w-full">
+                {!isDrag && (
+                  <div className="pointer-events-none absolute flex h-full w-full items-center justify-center">
+                    <div className="flex items-center gap-2 rounded-[8px] bg-black/50 p-2">
+                      <OpenWithIcon className="text-white" />
+                      <span className="text-white">
+                        {translate(language, 'dragText')}
+                      </span>
+                    </div>
+                  </div>
+                )}
+                <img
+                  src={previewCoverImg}
+                  alt=""
+                  className="h-full w-full object-cover"
+                  onMouseDown={handleMouseDown}
+                  onMouseUp={handleMouseUp}
+                  onMouseMove={handleMouseMove}
+                  onMouseLeave={handleMouseLeave}
+                  onDragStart={e => e.preventDefault()}
+                  style={{
+                    objectPosition: `50% ${positionY}%`,
+                  }}
+                />
+              </div>
+            )}
+            {!previewCoverImg && !user?.background && (
+              <>
+                <div className="h-full w-full bg-(--bgCover)"></div>
+                {isProfileOwner && (
+                  <label htmlFor="bgCover">
+                    <div className="absolute right-5 bottom-4 flex cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-(--gray200) p-2 text-[13px] font-bold text-(--textColor) hover:opacity-80">
+                      <FileUploadIcon /> {translate(language, 'addBgCoverText')}
+                    </div>
+                  </label>
+                )}
+              </>
+            )}
+            <input
+              type="file"
+              className="hidden"
+              accept="image/*"
+              id="bgCover"
+              onChange={handleFileChange}
+            />
+            {user?.background && (
+              <PhotoProvider className="">
+                <PhotoView src={API_URL + `backgrounds/${user.background}`}>
+                  <img
+                    src={API_URL + `backgrounds/${user.background}`}
+                    alt=""
+                    className="h-full w-full object-cover"
+                    style={{
+                      objectPosition: `50% ${user.coverPosition}%`,
+                    }}
+                  />
+                </PhotoView>
+                <div>
+                  {!previewCoverImg && (
+                    <div
+                      className="absolute right-4 bottom-4 flex cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-(--gray200) p-2 text-[13px] font-bold text-(--textColor) hover:opacity-80"
+                      onClick={handleDeleteBgCover}
+                    >
+                      <DeleteIcon />
+                    </div>
+                  )}
+                  {!previewCoverImg && (
+                    <label htmlFor="bgCover">
+                      <div className="absolute right-16 bottom-4 flex cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-(--gray200) p-2 text-[13px] font-bold text-(--textColor) hover:opacity-80">
+                        <PhotoCameraIcon /> {translate(language, 'update')}
+                      </div>
+                    </label>
+                  )}
                 </div>
-              </div>
-              }
-              <img src={previewCoverImg} alt="" className='w-full h-full object-cover' onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onDragStart={(e) => e.preventDefault()} style={{
-                objectPosition: `50% ${positionY}%`
-              }}/>
-
-            </div> }
-            { !previewCoverImg && !user?.background &&  <>
-            <div className="h-full w-full bg-(--bgCover)"></div>
-            {
-              isProfileOwner && <label htmlFor="bgCover">
-              <div className="absolute right-5 bottom-4 flex cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-(--gray200) p-2 text-[13px] font-bold text-(--textColor) hover:opacity-80">
-                <FileUploadIcon /> Add cover photo
-              </div>
-            </label>
-            }
-            </> }
-             <input
-                type="file"
-                className="hidden"
-                accept="image/*"
-                id="bgCover"
-                onChange={handleFileChange}
-              />
-            {
-              user?.background && <PhotoProvider className=''>
-            <PhotoView src={API_URL + `backgrounds/${user.background}`}>
-              <img
-                src={API_URL + `backgrounds/${user.background}`}
-                alt=""
-                className="h-full w-full object-cover"
-                style={{
-                  objectPosition: `50% ${user.coverPosition}%`
-                }}
-
-              />
-            </PhotoView>
-           <div>
-            {
-              !previewCoverImg && <div className="absolute right-4 bottom-4 flex cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-(--gray200) p-2 text-[13px] font-bold text-(--textColor) hover:opacity-80" onClick={handleDeleteBgCover}>
-                <DeleteIcon />
-              </div>
-            }
-            {
-              !previewCoverImg && <label htmlFor="bgCover">
-              <div className="absolute right-16 bottom-4 flex cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-(--gray200) p-2 text-[13px] font-bold text-(--textColor) hover:opacity-80">
-                <PhotoCameraIcon /> Update
-              </div>
-            </label>
-            }
-           </div>
-          </PhotoProvider>
-            }
+              </PhotoProvider>
+            )}
           </div>
           <div
             className="absolute bottom-0 left-1/2 h-[170px] w-[170px] -translate-x-1/2 overflow-hidden rounded-full border-4 border-(--background-primary)"
@@ -207,8 +237,8 @@ const Profile = () => {
             onMouseLeave={() => setIsHover(false)}
           >
             {isProfileOwner && isHover && (
-              <div className="absolute z-1000 flex h-full w-full items-center justify-center">
-                <div className="flex items-center justify-between gap-3 rounded-[10px] bg-black/60 px-4 py-2">
+              <div className="pointer-events-none absolute z-1000 flex h-full w-full items-center justify-center">
+                <div className="pointer-events-auto flex items-center justify-between gap-3 rounded-[10px] bg-black/60 px-4 py-2">
                   <label htmlFor="avatar" aria-label="Change avatar">
                     <img
                       src={camera}
@@ -242,11 +272,15 @@ const Profile = () => {
             )}
             <PhotoProvider>
               <PhotoView
-                src={(user?.avatar && API_URL + `avatars/${user.avatar}`) || noAvatar}
+                src={
+                  (user?.avatar && API_URL + `avatars/${user.avatar}`) ||
+                  noAvatar
+                }
               >
                 <img
                   src={
-                    (user?.avatar && API_URL + `avatars/${user.avatar}`) || noAvatar
+                    (user?.avatar && API_URL + `avatars/${user.avatar}`) ||
+                    noAvatar
                   }
                   alt=""
                   className="h-full w-full cursor-pointer object-cover object-center"
@@ -272,11 +306,11 @@ const Profile = () => {
             <div className="mt-2 flex gap-2">
               <button className="flex cursor-pointer items-center gap-1 bg-(--buttonColor2)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!">
                 <ChatIcon fontSize="small" />
-                <span>Message</span>
+                <span>{translate(language, 'message')}</span>
               </button>
               <button className="bg-primary! text-primary-foreground! flex cursor-pointer items-center gap-1 text-[13px]! font-bold! hover:border-transparent! hover:opacity-80!">
                 <PersonAddIcon fontSize="small" />
-                <span>Add friend</span>
+                <span>{translate(language, 'addFriend')}</span>
               </button>
             </div>
           )}
@@ -285,7 +319,7 @@ const Profile = () => {
           <div className="sticky bottom-5 flex-3">
             <StickyBox offsetTop={80} offsetBottom={20}>
               <div className="bg-background p-5 text-(--textColor) md:rounded-xl md:shadow-[0_0_4px_0px_rgba(0,0,0,0.2)]">
-                <h4 className="text-[16px] font-bold">User Information</h4>
+                <h4 className="text-[16px] font-bold">{translate(language, 'information')}</h4>
                 {isProfileOwner ? (
                   <>
                     {edit ? (
@@ -295,7 +329,7 @@ const Profile = () => {
                         onChange={e => setBio(e.target.value)}
                         maxLength={100}
                         className="border-border mt-2 w-full resize-none rounded-[5px] border px-3 py-2 text-center placeholder:text-center"
-                        placeholder="Description about you"
+                        placeholder={translate(language, 'description')}
                       />
                     ) : (
                       user?.bio && (
@@ -319,7 +353,7 @@ const Profile = () => {
                           setBio(user.bio);
                         }}
                       >
-                        Edit biography
+                        {translate(language, 'edit') + ' ' + translate(language, 'bio').toLowerCase()}
                       </button>
                     )}
                     {!edit && !user?.bio && (
@@ -327,7 +361,9 @@ const Profile = () => {
                         className="w-full cursor-pointer bg-(--buttonColor)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!"
                         onClick={() => setEdit(true)}
                       >
-                        Add biography
+                        {
+                           translate(language, 'add2') + ' ' + translate(language, 'bio').toLowerCase()
+                        }
                       </button>
                     )}
                     {edit && (
@@ -338,13 +374,13 @@ const Profile = () => {
                             setEdit(false);
                           }}
                         >
-                          Cancel
+                          {translate(language, 'cancel')}
                         </button>
                         <button
                           className="bg-primary! text-primary-foreground! w-full cursor-pointer text-[13px]! font-bold! hover:border-transparent! hover:opacity-80!"
                           onClick={handleUpdateBio}
                         >
-                          Save
+                          {translate(language, 'save')}
                         </button>
                       </div>
                     )}
@@ -359,19 +395,19 @@ const Profile = () => {
                 <div className="mt-4 flex flex-col gap-2 text-[14px]">
                   {user?.address && (
                     <div className="flex items-center gap-2">
-                      <span className="font-bold">Address: </span>
+                      <span className="font-bold text-nowrap">{translate(language, 'address') + ':'} </span>
                       <span className="line-clamp-1">{user.address}</span>
                     </div>
                   )}
                   {user?.gender && (
                     <div className="flex items-center gap-2">
-                      <span className="font-bold">Gender: </span>
+                      <span className="font-bold">{translate(language, 'gender') + ':'} </span>
                       <span>{user.gender}</span>
                     </div>
                   )}
                   {user?.birthDate && (
                     <div className="flex items-center gap-2">
-                      <span className="font-bold">Birthday: </span>
+                      <span className="font-bold">{translate(language, 'birthday') + ':'} </span>
                       <span>
                         {new Date(user.birthDate).toLocaleDateString('vi-VN', {
                           timeZone: 'UTC',
@@ -381,14 +417,14 @@ const Profile = () => {
                   )}
                   {user?.phone && (
                     <div className="flex items-center gap-2">
-                      <span className="font-bold">Phone: </span>
+                      <span className="font-bold">{translate(language, 'phone') + ':'} </span>
                       <span>{user.phone}</span>
                     </div>
                   )}
                   {user?.relationship && (
                     <div className="flex items-center gap-2">
-                      <span className="font-bold">Relationship: </span>
-                      <span>{user.relationship}</span>
+                      <span className="font-bold">{translate(language, 'relationship') + ':'} </span>
+                      <span>{translate(language, user.relationship.toLowerCase() as keyof typeof translations.vi)}</span>
                     </div>
                   )}
                   {isProfileOwner && (
@@ -396,7 +432,9 @@ const Profile = () => {
                       className="w-full cursor-pointer bg-(--buttonColor)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!"
                       onClick={() => setIsVisible(true)}
                     >
-                      Edit details
+                      {
+                        translate(language, 'edit') + ' ' + translate(language, 'detail').toLowerCase()
+                      }
                     </button>
                   )}
                 </div>
@@ -431,9 +469,9 @@ const Profile = () => {
 
               <div className="bg-background p-5 text-(--textColor) md:mt-5 md:rounded-xl md:shadow-[0_0_4px_0px_rgba(0,0,0,0.2)]">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-[16px] font-bold">Friends</h4>
+                  <h4 className="text-[16px] font-bold">{translate(language, 'friend')}</h4>
                   <span className="cursor-pointer text-[13px] text-(--textColor2) hover:underline">
-                    {user?.friends.length} Friends
+                    {user?.friends.length} {translate(language, 'friend')}
                   </span>
                 </div>
                 {/* Friend */}
@@ -470,14 +508,14 @@ const Profile = () => {
             {!isProfileOwner && (
               <div className="bg-background mt-5 mb-5 p-5 text-(--textColor) shadow-[0_0_4px_0px_rgba(0,0,0,0.2)] md:mt-0 md:rounded-xl">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-[16px] font-bold">Posts</h4>
+                  <h4 className="text-[16px] font-bold">{translate(language, 'post')}</h4>
                   <span className="text-[14px] text-(--textColor2)">
                     {
                       posts?.data.posts.filter(post =>
                         isProfileOwner ? post : post.visibility !== 'private',
                       ).length
                     }{' '}
-                    Posts
+                    {translate(language, 'post').toLowerCase()}
                   </span>
                 </div>
               </div>

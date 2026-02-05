@@ -54,7 +54,22 @@ const useApi = apiSlice.injectEndpoints({
         },
       ],
     }),
+    updatePassword: build.mutation<{ message: string }, object>({
+      query: body => ({
+        url: 'user/update-password',
+        method: 'PUT',
+        body,
+        credentials: 'include',
+      }),
+      //       invalidatesTags: (result) => [{
+      // type: 'User' as const, id: 'LIST'
+      // }]
+    }),
   }),
 });
 export default useApi;
-export const { useGetUserByUserNameQuery, useUpdateProfileMutation } = useApi;
+export const {
+  useGetUserByUserNameQuery,
+  useUpdateProfileMutation,
+  useUpdatePasswordMutation,
+} = useApi;

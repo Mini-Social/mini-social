@@ -1,8 +1,9 @@
 import CloseIcon from '@mui/icons-material/Close';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import { toast } from 'react-toastify';
 
+import LanguageContext from '@/contexts/LanguageContext';
 import { useUpdateProfileMutation } from '@/features/user/user.api.slice';
 import type { IDistrict, IProvince, IWard } from '@/types/address.type';
 import type { IUser } from '@/types/user.type';
@@ -137,6 +138,11 @@ const ModelUserInformation = ({
     toast.success('Update your profile successfully!');
   };
   {
+    const languageContext = useContext(LanguageContext);
+          if (!languageContext) {
+            return null;
+          }
+          const { language, translate } = languageContext;
     return (
       <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/40 backdrop-blur-sm">
         <div className="bg-background relative w-full max-w-md rounded-2xl shadow-xl md:max-w-lg lg:max-w-xl">
@@ -145,7 +151,7 @@ const ModelUserInformation = ({
             <span className="w-8"></span>
 
             <h2 className="text-lg font-semibold text-(--textColor2)">
-              Edit profile
+             { translate(language, 'edit') + ' ' + translate(language, 'profile').toLowerCase() }
             </h2>
 
             <button
@@ -164,7 +170,7 @@ const ModelUserInformation = ({
                   className="text-sm font-medium text-(--textColor)"
                   htmlFor="address"
                 >
-                  Address
+                  {translate(language, 'address')}
                 </label>
                 <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
                   <select
@@ -184,7 +190,7 @@ const ModelUserInformation = ({
                     }}
                   >
                     <option value="default" className="text-center" disabled>
-                      -- Select province --
+                      -- {translate(language, 'select') + ' ' + translate(language, 'province')}  --
                     </option>
                     {provincesData &&
                       provincesData.map(province => (
@@ -215,7 +221,7 @@ const ModelUserInformation = ({
                     }}
                   >
                     <option value="default" className="text-center" disabled>
-                      -- Select district --
+                      -- {translate(language, 'select') + ' ' + translate(language, 'dictrict')}  --
                     </option>
                     {dictrictsData &&
                       dictrictsData.map(dictrict => (
@@ -240,7 +246,7 @@ const ModelUserInformation = ({
                     }}
                   >
                     <option value="default" className="text-center" disabled>
-                      -- Select ward --
+                      -- {translate(language, 'select') + ' ' + translate(language, 'ward')}  --
                     </option>
                     {wardsData &&
                       districtCode &&
@@ -258,7 +264,7 @@ const ModelUserInformation = ({
                   className="text-sm font-medium text-(--textColor)"
                   htmlFor="gender"
                 >
-                  Gender
+                  {translate(language, 'gender')}
                 </label>
                 <div className="flex items-center gap-6">
                   <label className="flex cursor-pointer items-center gap-2">
@@ -270,7 +276,7 @@ const ModelUserInformation = ({
                       checked={formData.gender === 'Male'}
                       onChange={handleInputChange}
                     />
-                    <span className="text-sm">Male</span>
+                    <span className="text-sm">{translate(language, 'male')}</span>
                   </label>
 
                   <label className="flex cursor-pointer items-center gap-2">
@@ -282,7 +288,7 @@ const ModelUserInformation = ({
                       checked={formData.gender === 'Female'}
                       onChange={handleInputChange}
                     />
-                    <span className="text-sm">Female</span>
+                    <span className="text-sm">{translate(language, 'female')}</span>
                   </label>
                 </div>
               </div>
@@ -292,7 +298,7 @@ const ModelUserInformation = ({
                   className="text-sm font-medium text-(--textColor)"
                   htmlFor="birthday"
                 >
-                  Birthday
+                  {translate(language, 'birthday')}
                 </label>
                 <input
                   type="date"
@@ -309,7 +315,7 @@ const ModelUserInformation = ({
                   className="text-sm font-medium text-(--textColor)"
                   htmlFor="phone"
                 >
-                  Phone
+                  {translate(language, 'phone')}
                 </label>
                 <PhoneInput
                   inputStyle={{ background: 'var(--background)' }}
@@ -339,7 +345,7 @@ const ModelUserInformation = ({
                   className="text-sm font-medium text-(--textColor)"
                   htmlFor="relationship"
                 >
-                  Relationship
+                  {translate(language, 'relationship')}
                 </label>
                 <div className="flex items-center gap-6">
                   <label className="flex cursor-pointer items-center gap-2">
@@ -351,7 +357,7 @@ const ModelUserInformation = ({
                       onChange={handleInputChange}
                       checked={formData.relationship === 'Single'}
                     />
-                    <span className="text-sm">Single</span>
+                    <span className="text-sm">{translate(language, 'single')}</span>
                   </label>
 
                   <label className="flex cursor-pointer items-center gap-2">
@@ -363,7 +369,7 @@ const ModelUserInformation = ({
                       onChange={handleInputChange}
                       checked={formData.relationship === 'Married'}
                     />
-                    <span className="text-sm">Married</span>
+                    <span className="text-sm">{translate(language, 'married')}</span>
                   </label>
                 </div>
               </div>
@@ -375,10 +381,10 @@ const ModelUserInformation = ({
                 onClick={() => setIsVisible(false)}
                 className="rounded-lg border-none! bg-(--gray200)! px-4 py-2 text-sm"
               >
-                Cancel
+                {translate(language, 'cancel')}
               </button>
               <button className="rounded-lg bg-[#0866ff]! px-4 py-2 text-sm text-white hover:opacity-90">
-                Save
+                {translate(language, 'save')}
               </button>
             </div>
           </form>

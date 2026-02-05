@@ -1,14 +1,16 @@
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import noAvatar from '@/assets/avatars/noavatar.png';
+import LanguageContext from '@/contexts/LanguageContext';
 import type { RootState } from '@/store';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const Stories = () => {
   const user = useSelector((state: RootState) => state.auth.user);
+
   const [translateX, setTranslateX] = useState<number>(0);
   const ref = useRef<HTMLDivElement>(null);
   const [maxTranslateX, setMaxTranslateX] = useState<number>(0);
@@ -21,6 +23,11 @@ const Stories = () => {
       }
     }
   }, [translateX, maxTranslateX]);
+  const languageContext = useContext(LanguageContext);
+  if (!languageContext) {
+    return null;
+  }
+  const { language, translate } = languageContext;
   return (
     <div className="relative mb-5 overflow-hidden">
       {translateX < 0 && (
@@ -39,7 +46,10 @@ const Stories = () => {
         <div className="h-full w-[120px] shrink-0 cursor-pointer overflow-hidden rounded-[10px] shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)] hover:opacity-90">
           <div className="relative h-37.5">
             <img
-              src={(user?.avatar && API_URL + `/avatars/${user.avatar}`) || noAvatar}
+              src={
+                (user?.avatar && API_URL + `/avatars/${user.avatar}`) ||
+                noAvatar
+              }
               alt=""
               className="h-full w-[120px] shrink-0 cursor-pointer bg-cover object-cover"
             />
@@ -48,7 +58,7 @@ const Stories = () => {
             <div className="absolute top-0 left-[50%] flex h-9 w-9 translate-[-50%] transform cursor-pointer items-center justify-center rounded-[50%] border-4 border-white bg-[#0866ff] text-3xl text-white">
               +
             </div>
-            Create news
+            {translate(language, 'news')}
           </div>
           <div></div>
         </div>

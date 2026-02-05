@@ -1,4 +1,7 @@
+import { useContext } from 'react';
+
 import noAvatar from '@/assets/avatars/noavatar.png';
+import LanguageContext from '@/contexts/LanguageContext';
 
 const friends = [
   {
@@ -73,6 +76,11 @@ const friends = [
   },
 ];
 const Contacts = ({ search }: { search: string }) => {
+  const languageContext = useContext(LanguageContext);
+  if (!languageContext) {
+    return null;
+  }
+  const { language, translate } = languageContext;
   const filterFriends = friends.filter(
     friend =>
       friend.firstName.toLowerCase().includes(search.toLowerCase()) ||
@@ -82,7 +90,11 @@ const Contacts = ({ search }: { search: string }) => {
   return (
     <div className="custom-scrollbar flex-1 overflow-y-auto p-1.5">
       <span className="p-2 text-[14px] font-bold text-[#65686c]">
-        Your contact
+        {language === 'vi'
+          ? translate(language, 'contact') + ' ' + translate(language, 'your')
+          : translate(language, 'your') +
+            ' ' +
+            translate(language, 'contact').toLowerCase()}
       </span>
       {filterFriends.map(friend => (
         <div

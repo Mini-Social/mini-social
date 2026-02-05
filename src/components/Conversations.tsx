@@ -1,4 +1,7 @@
+import { useContext } from 'react';
+
 import Conversation from '@/components/Conversation';
+import LanguageContext from '@/contexts/LanguageContext';
 
 const conversations = [
   // 1. Chat cá nhân (Đã có sẵn)
@@ -137,19 +140,24 @@ const conversations = [
 ];
 
 const Conversations = ({ active }: { active: string }) => {
+  const languageContext = useContext(LanguageContext);
+  if (!languageContext) {
+    return null;
+  }
+  const { language, translate } = languageContext;
   const myId = '65a8ef88e9b1a12f9c000111';
   const arrangeConversations = conversations.sort(
     (a, b) =>
       new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime(),
   );
   const filterConversations = arrangeConversations.filter(convo => {
-    if (active === 'All') {
+    if (active === translate(language, 'all')) {
       return true;
-    } else if (active === 'Unread') {
+    } else if (active === translate(language, 'unread')) {
       return (
         convo.unReadCount.find(item => item.userId === myId)?.count ?? 0 > 0
       );
-    } else if (active === 'Group') {
+    } else if (active === translate(language, 'group')) {
       return convo.type === 'group';
     }
   });

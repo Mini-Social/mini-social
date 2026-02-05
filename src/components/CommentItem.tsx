@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 import angry from '@/assets/icons/angry.svg';
 import haha from '@/assets/icons/haha.svg';
@@ -7,6 +7,7 @@ import love from '@/assets/icons/love.svg';
 import sad from '@/assets/icons/sad.svg';
 import wow from '@/assets/icons/wow.svg';
 import ReactionsBar from '@/components/ReactionsBar';
+import LanguageContext from '@/contexts/LanguageContext';
 import type { IComment } from '@/types/comment.type';
 import { reactionStyle } from '@/types/type';
 import type { ReactionType, ReactionTypeNotDefault } from '@/types/type';
@@ -58,7 +59,11 @@ const CommentItem = ({
       setShowBar(false);
     }
   };
-
+  const languageContext = useContext(LanguageContext);
+  if (!languageContext) {
+    return null;
+  }
+  const { language, translate } = languageContext;
   return (
     <div
       className={`relative flex items-start gap-2.5 pt-1`}
@@ -122,11 +127,11 @@ const CommentItem = ({
               handleOpenReply(comment._id);
             }}
           >
-            Trả lời
+            {translate(language, 'reply')}
           </span>
           <div className="flex items-center">
             <span className="cursor-pointer text-xs text-[#65686c] hover:underline">
-              {translateCount(count) !== 'No reactions' &&
+              {translateCount(count) !== 'reaction' &&
                 translateCount(count)}
             </span>
             <div className="flex items-center">
@@ -164,7 +169,8 @@ const CommentItem = ({
                 }
               }}
             >
-              Xem tất cả {comment.replyCount} phản hồi
+              {translate(language, 'seeAll') + ' '} {comment.replyCount + ' '}{' '}
+              {translate(language, 'response').toLowerCase() + ' '}
             </span>
           </>
         )}

@@ -1,5 +1,5 @@
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import angry from '@/assets/icons/angry.svg';
 import haha from '@/assets/icons/haha.svg';
@@ -9,6 +9,7 @@ import sad from '@/assets/icons/sad.svg';
 import wow from '@/assets/icons/wow.svg';
 import ModelMoreReaction from '@/components/ModelMoreReaction';
 import ReactionFilterItem from '@/components/ReactionTabItem';
+import LanguageContext from '@/contexts/LanguageContext';
 import type { ReactionTypeNotDefault } from '@/types/type';
 
 const reactionIcon = {
@@ -35,11 +36,16 @@ const ReactionFilterBar = ({ active, setActive, reactions }: Props) => {
     .slice(MAX_VISIBLE)
     .some(react => react[0] === active);
   const isNoReaction = reactionsEntries.every(react => react[1] === 0);
+  const languageContext = useContext(LanguageContext);
+  if (!languageContext) {
+    return null;
+  }
+  const { language, translate } = languageContext;
   return (
     <>
       <ul className="flex h-15">
         <ReactionFilterItem
-          title="Tất cả"
+          title={translate(language, 'all')}
           active={active === 'all'}
           state="all"
           setIsOpenMore={setIsOpenMore}
@@ -65,7 +71,9 @@ const ReactionFilterBar = ({ active, setActive, reactions }: Props) => {
             className="relative flex cursor-pointer items-center justify-center gap-1 px-4 text-[14px] font-medium text-[#606366] hover:bg-(--hoverColor) lg:text-[1rem]"
             onClick={() => setIsOpenMore(pre => !pre)}
           >
-            <span className={`${isActive && 'text-[#0806ff]'}`}>Xem Thêm</span>
+            <span className={`${isActive && 'text-[#0806ff]'}`}>
+              {translate(language, 'seeMore')}
+            </span>
             <ArrowDropDownIcon
               style={{
                 color: isActive ? '#0806ff' : '',
@@ -99,7 +107,9 @@ const ReactionFilterBar = ({ active, setActive, reactions }: Props) => {
         )}
       </ul>
       {isNoReaction && (
-        <span className="text-center text-[1rem]">No reaction</span>
+        <span className="text-center text-[1rem]">
+          {translate(language, 'reaction')}
+        </span>
       )}
     </>
   );

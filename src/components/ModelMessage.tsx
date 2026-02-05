@@ -15,6 +15,7 @@ import noAvatar from '@/assets/avatars/noavatar.png';
 import SendIcon from '@/assets/icons/send-message.png';
 import Messages from '@/components/Messages';
 import { DarkModeContext } from '@/contexts/DarkModeContext';
+import LanguageContext from '@/contexts/LanguageContext';
 import { FormatDate } from '@/utils/formatDate';
 
 const user = {
@@ -303,9 +304,14 @@ const ModelMessage = ({ setOpenModelMessage }: Props) => {
     }
   };
   const darkModeContext = useContext(DarkModeContext);
+  const languageContext = useContext(LanguageContext);
   if (!darkModeContext) {
     return null;
   }
+      if (!languageContext) {
+        return null;
+      }
+      const { language, translate } = languageContext;
   const { darkMode } = darkModeContext;
   return (
     <div className="fixed bottom-0 z-100 lg:right-40">
@@ -329,9 +335,9 @@ const ModelMessage = ({ setOpenModelMessage }: Props) => {
                   {user.firstName} {user.lastName}
                 </span>
                 <span className="text-xs text-gray-500">
-                  {user.isOnline
-                    ? 'Online'
-                    : `Hoạt động ${FormatDate(user.lastOnline, true)}`}
+                  {!user.isOnline
+                    ? translate(language, 'online')
+                    : `${translate(language, 'online')} ${FormatDate(user.lastOnline, true)}`}
                 </span>
               </div>
             </div>

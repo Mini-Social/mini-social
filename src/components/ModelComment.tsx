@@ -1,10 +1,11 @@
 import CloseIcon from '@mui/icons-material/Close';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import SendIcon from '@/assets/icons/send-message.png';
 import CommentTree from '@/components/CommentTree';
 import Post from '@/components/Post';
+import LanguageContext from '@/contexts/LanguageContext';
 import { useGetCommentsByPostIdQuery } from '@/features/comment/comment.slice';
 import { useGetDetailPostQuery } from '@/features/post/post.api.slice';
 import type { RootState } from '@/store';
@@ -40,6 +41,11 @@ const ModelComment = ({
       document.body.style.paddingRight = '0px';
     };
   }, [isVisible]);
+  const languageContext = useContext(LanguageContext);
+  if (!languageContext) {
+    return null;
+  }
+  const { language, translate } = languageContext;
   return (
     <div className="pointer-events-auto fixed inset-0 z-9999 bg-gray-500/50 shadow-[0px_0px_1px_1px_rgba(0_0_0/0.2)]">
       <div className="flex h-full w-full items-center justify-center">
@@ -47,7 +53,7 @@ const ModelComment = ({
           <div className="border-b--border bg-background flex h-15 w-full items-center justify-between border-b p-2">
             <span></span>
             <span className="text-[1rem] font-bold text-(--textColor2)">
-              Bài viết của{' '}
+              {translate(language, 'article')}{' '}
               {`${data?.data?.post.author.firstName + ' ' + data?.data?.post.author.lastName}`}
             </span>
             <div
@@ -89,7 +95,7 @@ const ModelComment = ({
                 <textarea
                   contentEditable={false}
                   className="no-scrollbar relative h-auto w-full resize-none bg-(--background-primary) text-[16px] leading-5 break-all outline-none placeholder:text-[13px] placeholder:text-[#808080] lg:text-[13px]"
-                  placeholder="Viết bình luận...."
+                  placeholder={translate(language, 'writeComment') + '....'}
                 ></textarea>
                 <img
                   src={SendIcon}

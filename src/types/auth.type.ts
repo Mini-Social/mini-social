@@ -22,3 +22,10 @@ export const formSchema = z
 export type errorResponseType = {
   message: string;
 };
+export type errorResponseType2 = {
+  status: number;
+  data: {
+    status: string;
+    message: string;
+  };
+};

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 
 import { DarkmodeContextProvider } from '@/contexts/DarkmodeProvider';
+import LanguageProvider from '@/contexts/LanguageProvider';
 import { checkAuth } from '@/features/auth/auth.api.slice';
 import AppRouter from '@/routes';
 import { UseAppDispatch } from '@/store';
@@ -12,10 +13,12 @@ const App = () => {
     dispatch(checkAuth());
   }, [dispatch]);
   return (
-    <DarkmodeContextProvider>
-      <AppRouter />
-      <ToastContainer />
-    </DarkmodeContextProvider>
+    <LanguageProvider>
+      <DarkmodeContextProvider>
+        <AppRouter />
+        <ToastContainer />
+      </DarkmodeContextProvider>
+    </LanguageProvider>
   );
 };
 

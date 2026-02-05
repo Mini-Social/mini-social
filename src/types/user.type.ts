@@ -6,8 +6,8 @@ export interface IUser {
   email: string;
   password: string | undefined;
   avatar: string | null;
-  background: string,
-  coverPosition: number,
+  background: string;
+  coverPosition: number;
   bio: string;
   gender: string;
   address: string;
