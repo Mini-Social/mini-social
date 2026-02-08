@@ -4,7 +4,7 @@ export const SETTING_TAB = {
   NOTIFICATION: 'notification',
   APPEARANCE: 'appearance',
   ACCOUNT: 'account',
-} as const
+} as const;
 
 export const SETTING_TABS = [
   {
@@ -28,4 +28,4 @@ export const SETTING_TABS = [
     value: SETTING_TAB.ACCOUNT,
   },
 ];
-export type SettingTab = typeof SETTING_TAB[keyof typeof SETTING_TAB]
+export type SettingTab = (typeof SETTING_TAB)[keyof typeof SETTING_TAB];

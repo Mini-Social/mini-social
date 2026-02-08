@@ -131,8 +131,7 @@ const CommentItem = ({
           </span>
           <div className="flex items-center">
             <span className="cursor-pointer text-xs text-[#65686c] hover:underline">
-              {translateCount(count) !== 'reaction' &&
-                translateCount(count)}
+              {translateCount(count) !== 'reaction' && translateCount(count)}
             </span>
             <div className="flex items-center">
               {commentEntries.slice(0, 3).map((name, index) => (

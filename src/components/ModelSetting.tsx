@@ -1,5 +1,10 @@
 import CloseIcon from '@mui/icons-material/Close';
-import React, { useContext, useEffect, useState, type SetStateAction } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  type SetStateAction,
+} from 'react';
 
 import AccountSetting from './sections/AccountSetting';
 import AppearanceSetting from './sections/AppearanceSetting';
@@ -42,10 +47,10 @@ const ModelSetting = ({ setIsOpen }: Props) => {
     }
   };
   const languageContext = useContext(LanguageContext);
-    if (!languageContext) {
-      return null;
-    }
-    const { language, translate } = languageContext;
+  if (!languageContext) {
+    return null;
+  }
+  const { language, translate } = languageContext;
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/40">
       <div className="bg-background absolute flex h-full w-full flex-col overflow-hidden md:h-[80vh] md:w-[900px] md:rounded-xl">

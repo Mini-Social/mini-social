@@ -8,7 +8,6 @@ import sad from '@/assets/icons/sad.svg';
 import wow from '@/assets/icons/wow.svg';
 import LanguageContext from '@/contexts/LanguageContext';
 import { selectPost } from '@/features/post/post.slice';
-import type { translations } from '@/language/language';
 import { UseAppDispatch } from '@/store';
 import type { IPost } from '@/types/type';
 import { translateCount } from '@/utils/translateReaction';
@@ -65,13 +64,13 @@ const ReacionsPost = ({
           ))}
         </div>
         <span
-          className="cursor-pointer text-(--textColor2) hover:underline text-xs"
+          className="cursor-pointer text-xs text-(--textColor2) hover:underline"
           onClick={() => {
             setActiveReaction('reaction-model');
             dispatch(selectPost(id));
           }}
         >
-          { translateCount(count) === 'reaction' ? translate(language, translateCount(count) as keyof typeof translations.vi) : translateCount(count)}
+          {translateCount(count)}
         </span>
       </div>
       <div className="flex items-center gap-4 text-(--textColor2)">

@@ -102,7 +102,7 @@ export const translations = {
     system: 'Hệ thống',
     account: 'Tài khoản',
     language: 'Ngôn ngữ',
-    vietnamese: 'Tiếng việt'
+    vietnamese: 'Tiếng việt',
   },
   en: {
     event: 'Events',
@@ -207,7 +207,7 @@ export const translations = {
     autoPlayVideo: 'Automatically play videos',
     account: 'Account',
     language: 'Language',
-    vietnamese: 'Vietnamese'
+    vietnamese: 'Vietnamese',
   },
 };
 

@@ -219,10 +219,10 @@ const user = {
 //   updatedAt: '2026-01-17T17:34:30.000Z'
 // }
 interface Props {
-  setOpenModelMessage: React.Dispatch<React.SetStateAction<boolean>>;
-  openModelMessage: boolean;
+  setOpenModel: React.Dispatch<React.SetStateAction<string>>;
+  openModel: string;
 }
-const ModelMessage = ({ setOpenModelMessage }: Props) => {
+const ModelMessage = ({ setOpenModel }: Props) => {
   const [isOpenEmoj, setIsOpenEmoj] = useState<boolean>(false);
   const [content, setContent] = useState<string>('');
   const [preview, setPreview] = useState<string[]>([]);
@@ -308,10 +308,10 @@ const ModelMessage = ({ setOpenModelMessage }: Props) => {
   if (!darkModeContext) {
     return null;
   }
-      if (!languageContext) {
-        return null;
-      }
-      const { language, translate } = languageContext;
+  if (!languageContext) {
+    return null;
+  }
+  const { language, translate } = languageContext;
   const { darkMode } = darkModeContext;
   return (
     <div className="fixed bottom-0 z-100 lg:right-40">
@@ -368,7 +368,7 @@ const ModelMessage = ({ setOpenModelMessage }: Props) => {
               </div>
               <div
                 className="cursor-pointer rounded-[50%] p-1 hover:bg-(--hoverColor)"
-                onClick={() => setOpenModelMessage(false)}
+                onClick={() => setOpenModel('')}
               >
                 <CloseIcon
                   style={{

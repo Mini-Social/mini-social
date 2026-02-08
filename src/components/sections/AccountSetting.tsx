@@ -44,10 +44,10 @@ const AccountSetting = () => {
       setEditingField(null);
     }
   };
- if (!languageContext) {
-        return null;
-      }
-      const { language, translate } = languageContext;
+  if (!languageContext) {
+    return null;
+  }
+  const { language, translate } = languageContext;
   const renderRow = (label: string, key: FieldKey) => {
     const isEditing = editingField === key;
     return (
@@ -102,7 +102,15 @@ const AccountSetting = () => {
 
   return (
     <div className="max-w-xl">
-      <h3 className="mb-6 text-lg font-semibold">{language === 'en' ? translate(language, 'account') + ' ' + translate(language, 'information').toLowerCase() : translate(language, 'information') + ' ' + translate(language, 'account').toLowerCase()}</h3>
+      <h3 className="mb-6 text-lg font-semibold">
+        {language === 'en'
+          ? translate(language, 'account') +
+            ' ' +
+            translate(language, 'information').toLowerCase()
+          : translate(language, 'information') +
+            ' ' +
+            translate(language, 'account').toLowerCase()}
+      </h3>
 
       <div className="divide-y">
         {renderRow(translate(language, 'firstName'), 'firstName')}

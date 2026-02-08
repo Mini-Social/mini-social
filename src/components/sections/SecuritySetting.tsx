@@ -8,7 +8,6 @@ import LanguageContext from '@/contexts/LanguageContext';
 import { useUpdatePasswordMutation } from '@/features/user/user.api.slice';
 import type { errorResponseType2 } from '@/types/auth.type';
 
-
 interface Props {
   setIsOpen: React.Dispatch<SetStateAction<string>>;
 }
@@ -45,34 +44,56 @@ const SecuritySetting = ({ setIsOpen }: Props) => {
     }
   };
   const languageContext = useContext(LanguageContext);
-    if (!languageContext) {
-      return null;
-    }
-    const { language, translate } = languageContext;
+  if (!languageContext) {
+    return null;
+  }
+  const { language, translate } = languageContext;
   return (
     <form
       onSubmit={handleSubmit(handleSubmitForm, handleError)}
       className="space-y-4"
     >
-      <h3 className="text-lg font-semibold">{translate(language, 'security')}</h3>
+      <h3 className="text-lg font-semibold">
+        {translate(language, 'security')}
+      </h3>
 
       <input
         type="password"
-        placeholder={language === 'en' ? translate(language, 'old') + ' ' + translate(language, 'password').toLowerCase() : translate(language, 'password') + ' ' + translate(language, 'old').toLowerCase()}
+        placeholder={
+          language === 'en'
+            ? translate(language, 'old') +
+              ' ' +
+              translate(language, 'password').toLowerCase()
+            : translate(language, 'password') +
+              ' ' +
+              translate(language, 'old').toLowerCase()
+        }
         className="w-full rounded border px-3 py-2"
         {...register('oldPassword')}
       />
 
       <input
         type="password"
-        placeholder={language === 'en' ? translate(language, 'new') + ' ' + translate(language, 'password').toLowerCase() : translate(language, 'password') + ' ' + translate(language, 'new').toLowerCase()}
+        placeholder={
+          language === 'en'
+            ? translate(language, 'new') +
+              ' ' +
+              translate(language, 'password').toLowerCase()
+            : translate(language, 'password') +
+              ' ' +
+              translate(language, 'new').toLowerCase()
+        }
         className="w-full rounded border px-3 py-2"
         {...register('password')}
       />
 
       <input
         type="password"
-        placeholder={translate(language, 'confirm') + ' ' + translate(language, 'password').toLowerCase()}
+        placeholder={
+          translate(language, 'confirm') +
+          ' ' +
+          translate(language, 'password').toLowerCase()
+        }
         className="w-full rounded border px-3 py-2"
         {...register('passwordConfirm')}
       />

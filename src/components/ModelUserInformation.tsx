@@ -139,10 +139,10 @@ const ModelUserInformation = ({
   };
   {
     const languageContext = useContext(LanguageContext);
-          if (!languageContext) {
-            return null;
-          }
-          const { language, translate } = languageContext;
+    if (!languageContext) {
+      return null;
+    }
+    const { language, translate } = languageContext;
     return (
       <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/40 backdrop-blur-sm">
         <div className="bg-background relative w-full max-w-md rounded-2xl shadow-xl md:max-w-lg lg:max-w-xl">
@@ -151,7 +151,9 @@ const ModelUserInformation = ({
             <span className="w-8"></span>
 
             <h2 className="text-lg font-semibold text-(--textColor2)">
-             { translate(language, 'edit') + ' ' + translate(language, 'profile').toLowerCase() }
+              {translate(language, 'edit') +
+                ' ' +
+                translate(language, 'profile').toLowerCase()}
             </h2>
 
             <button
@@ -190,7 +192,11 @@ const ModelUserInformation = ({
                     }}
                   >
                     <option value="default" className="text-center" disabled>
-                      -- {translate(language, 'select') + ' ' + translate(language, 'province')}  --
+                      --{' '}
+                      {translate(language, 'select') +
+                        ' ' +
+                        translate(language, 'province')}{' '}
+                      --
                     </option>
                     {provincesData &&
                       provincesData.map(province => (
@@ -221,7 +227,11 @@ const ModelUserInformation = ({
                     }}
                   >
                     <option value="default" className="text-center" disabled>
-                      -- {translate(language, 'select') + ' ' + translate(language, 'dictrict')}  --
+                      --{' '}
+                      {translate(language, 'select') +
+                        ' ' +
+                        translate(language, 'dictrict')}{' '}
+                      --
                     </option>
                     {dictrictsData &&
                       dictrictsData.map(dictrict => (
@@ -246,7 +256,11 @@ const ModelUserInformation = ({
                     }}
                   >
                     <option value="default" className="text-center" disabled>
-                      -- {translate(language, 'select') + ' ' + translate(language, 'ward')}  --
+                      --{' '}
+                      {translate(language, 'select') +
+                        ' ' +
+                        translate(language, 'ward')}{' '}
+                      --
                     </option>
                     {wardsData &&
                       districtCode &&
@@ -276,7 +290,9 @@ const ModelUserInformation = ({
                       checked={formData.gender === 'Male'}
                       onChange={handleInputChange}
                     />
-                    <span className="text-sm">{translate(language, 'male')}</span>
+                    <span className="text-sm">
+                      {translate(language, 'male')}
+                    </span>
                   </label>
 
                   <label className="flex cursor-pointer items-center gap-2">
@@ -288,7 +304,9 @@ const ModelUserInformation = ({
                       checked={formData.gender === 'Female'}
                       onChange={handleInputChange}
                     />
-                    <span className="text-sm">{translate(language, 'female')}</span>
+                    <span className="text-sm">
+                      {translate(language, 'female')}
+                    </span>
                   </label>
                 </div>
               </div>
@@ -357,7 +375,9 @@ const ModelUserInformation = ({
                       onChange={handleInputChange}
                       checked={formData.relationship === 'Single'}
                     />
-                    <span className="text-sm">{translate(language, 'single')}</span>
+                    <span className="text-sm">
+                      {translate(language, 'single')}
+                    </span>
                   </label>
 
                   <label className="flex cursor-pointer items-center gap-2">
@@ -369,7 +389,9 @@ const ModelUserInformation = ({
                       onChange={handleInputChange}
                       checked={formData.relationship === 'Married'}
                     />
-                    <span className="text-sm">{translate(language, 'married')}</span>
+                    <span className="text-sm">
+                      {translate(language, 'married')}
+                    </span>
                   </label>
                 </div>
               </div>

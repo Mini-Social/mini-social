@@ -29,7 +29,9 @@ const GeneralSetting = () => {
       </h3>
 
       <div>
-        <span className="mb-1 block text-sm">{translate(language, 'language')}</span>
+        <span className="mb-1 block text-sm">
+          {translate(language, 'language')}
+        </span>
         <select
           className="bg-background w-full rounded border px-3 py-2"
           onChange={handleChangeLanguage}
@@ -46,7 +48,8 @@ const GeneralSetting = () => {
       </label>
 
       <button className="rounded bg-blue-500! px-4 py-2 text-white">
-        {translate(language, 'save')} {translate(language, 'change').toLowerCase()}
+        {translate(language, 'save')}{' '}
+        {translate(language, 'change').toLowerCase()}
       </button>
     </form>
   );

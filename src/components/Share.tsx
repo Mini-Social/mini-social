@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, type SetStateAction } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
@@ -9,8 +9,12 @@ import tag from '@/assets/icons/tag.png';
 import LanguageContext from '@/contexts/LanguageContext';
 import type { RootState } from '@/store';
 
+interface Props {
+  setOpenModel: React.Dispatch<SetStateAction<string>>;
+}
+
 const API_URL = import.meta.env.VITE_API_URL;
-const Share = () => {
+const Share = ({ setOpenModel }: Props) => {
   const user = useSelector((state: RootState) => state.auth.user);
   const languageContext = useContext(LanguageContext);
   if (!languageContext) {
@@ -32,42 +36,22 @@ const Share = () => {
 
         <input
           type="text"
+          onFocus={() => setOpenModel('post-model')}
           placeholder={`${translate(language, 'mind')} ${user?.firstName} ${user?.lastName}?`}
-          className="w-full bg-transparent px-2.5 py-5 text-[16px] outline-none placeholder:text-[13px] placeholder:text-[#808080] lg:text-[13px]"
+          className="bg-(--background-primary) rounded-[999px] w-full px-2.5 py-2.5 text-[16px] outline-none placeholder:text-[13px] placeholder:text-[#808080] lg:text-[13px] cursor-pointer"
         />
-      </div>
-      <hr className="bg-border my-5 h-px w-full border-none" />
-
-      <div className="flex items-center justify-between">
+             <div className="flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2 xl:gap-5">
-          <label
-            htmlFor="images"
-            className="flex cursor-pointer items-center gap-2.5"
-          >
             <img src={image} alt="" className="h-5 w-5" />
-            <span className="text-[10px] md:text-[13px]">
-              {translate(language, 'addImage')}
-            </span>
-          </label>
           <input type="file" className="hidden" id="images" />
           <div className="flex cursor-pointer items-center gap-2.5">
             <img src={location} alt="" className="h-5 w-5" />
-            <span className="text-[10px] md:text-[13px]">
-              {translate(language, 'addPlace')}
-            </span>
           </div>
           <div className="flex cursor-pointer items-center gap-2.5">
             <img src={tag} alt="" className="h-5 w-5" />
-            <span className="text-[10px] md:text-[13px]">
-              {translate(language, 'tag')}
-            </span>
           </div>
         </div>
-
-        <button className="cursor-not-allowed! border-none! bg-[#0866ff]! text-white">
-          {/* bg-[#e2e5e9]! */}
-          {translate(language, 'share')}
-        </button>
+      </div>
       </div>
     </div>
   );

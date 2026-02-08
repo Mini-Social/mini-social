@@ -28,7 +28,7 @@ const PostImages = ({ images }: { images: string[] }) => {
                 <img
                   src={image}
                   alt=""
-                  className="max-h-125 w-full object-cover"
+                  className="h-full w-full object-cover"
                 />
               </Link>
             </PhotoView>

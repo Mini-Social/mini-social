@@ -5,7 +5,7 @@ import LanguageContext from '@/contexts/LanguageContext';
 
 const AppearanceSetting = () => {
   const darkModeContext = useContext(DarkModeContext);
-   const languageContext = useContext(LanguageContext);
+  const languageContext = useContext(LanguageContext);
   if (!darkModeContext) {
     return null;
   }
@@ -26,13 +26,15 @@ const AppearanceSetting = () => {
     : darkModeContext.darkMode
       ? 'dark'
       : 'light';
-        if (!languageContext) {
-          return null;
-        }
-    const { language, translate } = languageContext;
+  if (!languageContext) {
+    return null;
+  }
+  const { language, translate } = languageContext;
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">{translate(language, 'appearance')}</h3>
+      <h3 className="text-lg font-semibold">
+        {translate(language, 'appearance')}
+      </h3>
 
       <select
         value={value}

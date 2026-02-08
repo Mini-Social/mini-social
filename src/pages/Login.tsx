@@ -44,11 +44,11 @@ const Login = () => {
       toast.error(errors.password.message);
     }
   };
-   const languageContext = useContext(LanguageContext);
-      if (!languageContext) {
-        return null;
-      }
-      const { language, translate } = languageContext;
+  const languageContext = useContext(LanguageContext);
+  if (!languageContext) {
+    return null;
+  }
+  const { language, translate } = languageContext;
   return (
     <>
       <div className="flex min-h-150 w-[90%] overflow-hidden rounded-[10px] md:w-[80%] xl:w-[60%]">
@@ -65,26 +65,28 @@ const Login = () => {
           <span>{translate(language, 'registerText')}</span>
           <Link to={'/register'}>
             <button className="w-full rounded-none! bg-[#725dfd]! font-bold! text-white! outline-none! md:w-[50%]">
-                {translate(language, 'register')}
-              </button>
+              {translate(language, 'register')}
+            </button>
           </Link>
         </div>
         {/* Right */}
         <div className="flex flex-1 flex-col justify-center gap-12.5 bg-(--background-primary) p-12.5 md:p-7.5">
-          <h2 className="text-[2rem] font-bold text-(--textColor)">{translate(language, 'login')}</h2>
+          <h2 className="text-[2rem] font-bold text-(--textColor)">
+            {translate(language, 'login')}
+          </h2>
 
           <form action="" onSubmit={handleSubmit(handleSubmitForm, onInvalid)}>
             <div className="flex flex-col gap-7.5">
               <input
                 type="email"
                 placeholder="Email"
-                className="w-full border-b border-b-border px-2.5 py-5 outline-none"
+                className="border-b-border w-full border-b px-2.5 py-5 outline-none"
                 {...register('email')}
               />
               <input
                 type="password"
                 placeholder={translate(language, 'password')}
-                className="w-full border-b border-b-border px-2.5 py-5 outline-none"
+                className="border-b-border w-full border-b px-2.5 py-5 outline-none"
                 {...register('password')}
               />
               <button className="w-full rounded-none! bg-[#725dfd]! font-bold! text-white! outline-none! md:w-[50%]">

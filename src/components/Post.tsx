@@ -4,18 +4,23 @@ import PeopleIcon from '@mui/icons-material/People';
 import PublicIcon from '@mui/icons-material/Public';
 import { useContext, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import noAvatar from '@/assets/avatars/noavatar.png';
 import ChatButton from '@/assets/icons/components/ChatButton';
 import LikeButton from '@/assets/icons/components/LikeButton';
 import ShareButton from '@/assets/icons/components/ShareButton';
+import ConfirmDeleteModal from '@/components/ConfirmDeleteModel';
 import PostImages from '@/components/PostImages';
+import PostMenu from '@/components/PostMenu';
 import ReactionsBar from '@/components/ReactionsBar';
 import ReacionsPost from '@/components/ReactionsPost';
 import LanguageContext from '@/contexts/LanguageContext';
+import { useDeletePostMutation } from '@/features/post/post.api.slice';
 import { selectPost } from '@/features/post/post.slice';
 import type { translations } from '@/language/language';
 import { UseAppDispatch } from '@/store';
+import type { errorResponseType2 } from '@/types/auth.type';
 import { type IPost, type ReactionType } from '@/types/type';
 import { reactionStyle } from '@/types/type';
 import { FormatDate } from '@/utils/formatDate';
@@ -26,21 +31,27 @@ interface PostProps {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
   setActiveReaction: React.Dispatch<React.SetStateAction<string | null>>;
   noShadow?: boolean;
+  setOpenModel?: React.Dispatch<React.SetStateAction<string>>;
 }
 const Post = ({
   post,
   setIsVisible,
   noShadow,
   setActiveReaction,
+  setOpenModel,
 }: PostProps) => {
+  const [deletePost] = useDeletePostMutation();
   const dispatch = UseAppDispatch();
   const [react, setReact] = useState<ReactionType>('default');
   const [showBar, setShowBar] = useState(false);
   const timeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dotRef = useRef(null);
   const count = Object.values(post.reactions).reduce(
     (acc, value) => acc + value,
     0,
   );
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [isOpenDeleteModel, setIsOpenDeleteModel] = useState<boolean>(false);
   const startPress = () => {
     timeRef.current = setTimeout(() => {
       setShowBar(true);
@@ -62,6 +73,15 @@ const Post = ({
       setShowBar(false);
     }
   };
+  const handleDeletePost = async (id: string) => {
+    try {
+      await deletePost(id).unwrap();
+      toast.success('Delete post successfully!');
+    } catch (error) {
+      const errorType = error as errorResponseType2;
+      toast.success(errorType.data.message);
+    }
+  };
   const languageContext = useContext(LanguageContext);
   if (!languageContext) {
     return null;
@@ -71,6 +91,12 @@ const Post = ({
     <div
       className={`bg-background mb-2 md:mb-5 md:rounded-[10px] ${noShadow ? 'shadow-none' : 'md:shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)]'}`}
     >
+      <ConfirmDeleteModal
+        isOpen={isOpenDeleteModel}
+        onClose={setIsOpenDeleteModel}
+        onConfirm={handleDeletePost}
+        postId={post._id}
+      />
       <div className="item-center flex justify-between px-3 pt-3">
         <div className="flex items-center gap-3">
           <Link to={`/profile/${post.author.userName}`}>
@@ -128,11 +154,24 @@ const Post = ({
             </div>
           </div>
         </div>
-        <MoreHorizIcon className="cursor-pointer self-center" />
+        <div className="relative">
+          <div onClick={() => setIsEdit(pre => !pre)} ref={dotRef}>
+            <MoreHorizIcon className="cursor-pointer self-center" />
+          </div>
+          {isEdit && (
+            <PostMenu
+              setIsEdit={setIsEdit}
+              dotRef={dotRef}
+              post={post}
+              setOpenModel={setOpenModel}
+              setOpenDeleteModel={setIsOpenDeleteModel}
+            />
+          )}
+        </div>
       </div>
       <div className="mt-2">
         <span className="mb-2 block px-3 text-[13px]">{post.content}</span>
-        <PostImages images={post.images} />
+        <PostImages images={post.images.map(p => API_URL + `posts/${p}`)} />
         <ReacionsPost
           post={post}
           setIsVisible={setIsVisible}

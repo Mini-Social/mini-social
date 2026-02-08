@@ -71,14 +71,10 @@ const RightBar = () => {
             </div>
             <div className="flex h-full gap-2.5">
               <button className="border-none! bg-[#0866ff]! px-2! text-xs! text-white!">
-                {
-                  translate(language, 'add')
-                }
+                {translate(language, 'add')}
               </button>
               <button className="border-none! bg-[#F0544F]! px-2! text-xs! text-white!">
-                 {
-                  translate(language, 'remove')
-                }
+                {translate(language, 'remove')}
               </button>
             </div>
           </div>
@@ -95,23 +91,19 @@ const RightBar = () => {
             </div>
             <div className="flex h-full gap-2.5">
               <button className="border-none! bg-[#0866ff]! px-2! text-xs! text-white!">
-                 {
-                  translate(language, 'add')
-                }
+                {translate(language, 'add')}
               </button>
               <button className="border-none! bg-[#F0544F]! px-2! text-xs! text-white!">
-                {
-                  translate(language, 'remove')
-                }
+                {translate(language, 'remove')}
               </button>
             </div>
           </div>
         </div>
         <div className="bg-background mb-5 shadow-[0px_0px_35px_0px_rgba(0_0_0/0.1)]">
           <span className="mb-4.5 block px-5 pt-5 text-xs text-[#808080]">
-             {
-                  translate(language, 'online') + ' ' + translate(language, 'friend').toLowerCase()
-                }
+            {translate(language, 'online') +
+              ' ' +
+              translate(language, 'friend').toLowerCase()}
           </span>
           {onlineFriends &&
             onlineFriends.map(user => (

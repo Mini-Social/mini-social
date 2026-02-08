@@ -16,6 +16,7 @@ import { toast } from 'react-toastify';
 import noAvatar from '@/assets/avatars/noavatar.png';
 import camera from '@/assets/icons/camera.svg';
 import remove from '@/assets/icons/remove.svg';
+import ModelCreatePost from '@/components/ModelCreatePost';
 import ModelUpdateAvatar from '@/components/ModelUpdateAvatar';
 import { ModelUserInformationWrapper } from '@/components/ModelUserInfomationWrapper';
 import Posts from '@/components/Posts';
@@ -33,9 +34,11 @@ import { UseAppDispatch } from '@/store';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const Profile = () => {
+  const selectPost = useSelector((state: RootState) => state.post.postSelect);
+  const ownUser = useSelector((state: RootState) => state.auth.user);
   const dispatch = UseAppDispatch();
   const { userName } = useParams();
-  const ownUser = useSelector((state: RootState) => state.auth.user);
+
   const { data } = useGetUserByUserNameQuery(userName!);
   const [updateProfile] = useUpdateProfileMutation();
   const user = data?.data;
@@ -56,6 +59,7 @@ const Profile = () => {
   const [positionY, setPositionY] = useState<number>(50);
   const startY = useRef<number>(0);
   const startPos = useRef<number>(0);
+  const [openModel, setOpenModel] = useState<string>('');
   const handleUpdateBio = () => {
     setEdit(false);
     updateProfile({ bio });
@@ -117,12 +121,17 @@ const Profile = () => {
     }
   };
   const languageContext = useContext(LanguageContext);
-      if (!languageContext) {
-        return null;
-      }
-      const { language, translate } = languageContext;
+  if (!languageContext) {
+    return null;
+  }
+  const { language, translate } = languageContext;
   return (
     <>
+      <ModelCreatePost
+        key={selectPost?._id}
+        openModel={openModel}
+        onClose={setOpenModel}
+      />
       {previewCoverImg && (
         <div className="fixed z-10 w-full bg-black/50 p-1">
           <div className="flex items-center justify-between">
@@ -141,7 +150,9 @@ const Profile = () => {
                 className="rounded-lg bg-[#0866ff]! px-4 py-2 text-sm text-white hover:opacity-90"
                 onClick={handleUpdateBgCover}
               >
-                {translate(language, 'save') + ' ' + translate(language, 'change').toLowerCase()}
+                {translate(language, 'save') +
+                  ' ' +
+                  translate(language, 'change').toLowerCase()}
               </button>
             </div>
           </div>
@@ -319,7 +330,9 @@ const Profile = () => {
           <div className="sticky bottom-5 flex-3">
             <StickyBox offsetTop={80} offsetBottom={20}>
               <div className="bg-background p-5 text-(--textColor) md:rounded-xl md:shadow-[0_0_4px_0px_rgba(0,0,0,0.2)]">
-                <h4 className="text-[16px] font-bold">{translate(language, 'information')}</h4>
+                <h4 className="text-[16px] font-bold">
+                  {translate(language, 'information')}
+                </h4>
                 {isProfileOwner ? (
                   <>
                     {edit ? (
@@ -353,7 +366,9 @@ const Profile = () => {
                           setBio(user.bio);
                         }}
                       >
-                        {translate(language, 'edit') + ' ' + translate(language, 'bio').toLowerCase()}
+                        {translate(language, 'edit') +
+                          ' ' +
+                          translate(language, 'bio').toLowerCase()}
                       </button>
                     )}
                     {!edit && !user?.bio && (
@@ -361,9 +376,9 @@ const Profile = () => {
                         className="w-full cursor-pointer bg-(--buttonColor)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!"
                         onClick={() => setEdit(true)}
                       >
-                        {
-                           translate(language, 'add2') + ' ' + translate(language, 'bio').toLowerCase()
-                        }
+                        {translate(language, 'add2') +
+                          ' ' +
+                          translate(language, 'bio').toLowerCase()}
                       </button>
                     )}
                     {edit && (
@@ -395,19 +410,25 @@ const Profile = () => {
                 <div className="mt-4 flex flex-col gap-2 text-[14px]">
                   {user?.address && (
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-nowrap">{translate(language, 'address') + ':'} </span>
+                      <span className="font-bold text-nowrap">
+                        {translate(language, 'address') + ':'}{' '}
+                      </span>
                       <span className="line-clamp-1">{user.address}</span>
                     </div>
                   )}
                   {user?.gender && (
                     <div className="flex items-center gap-2">
-                      <span className="font-bold">{translate(language, 'gender') + ':'} </span>
+                      <span className="font-bold">
+                        {translate(language, 'gender') + ':'}{' '}
+                      </span>
                       <span>{user.gender}</span>
                     </div>
                   )}
                   {user?.birthDate && (
                     <div className="flex items-center gap-2">
-                      <span className="font-bold">{translate(language, 'birthday') + ':'} </span>
+                      <span className="font-bold">
+                        {translate(language, 'birthday') + ':'}{' '}
+                      </span>
                       <span>
                         {new Date(user.birthDate).toLocaleDateString('vi-VN', {
                           timeZone: 'UTC',
@@ -417,14 +438,23 @@ const Profile = () => {
                   )}
                   {user?.phone && (
                     <div className="flex items-center gap-2">
-                      <span className="font-bold">{translate(language, 'phone') + ':'} </span>
+                      <span className="font-bold">
+                        {translate(language, 'phone') + ':'}{' '}
+                      </span>
                       <span>{user.phone}</span>
                     </div>
                   )}
                   {user?.relationship && (
                     <div className="flex items-center gap-2">
-                      <span className="font-bold">{translate(language, 'relationship') + ':'} </span>
-                      <span>{translate(language, user.relationship.toLowerCase() as keyof typeof translations.vi)}</span>
+                      <span className="font-bold">
+                        {translate(language, 'relationship') + ':'}{' '}
+                      </span>
+                      <span>
+                        {translate(
+                          language,
+                          user.relationship.toLowerCase() as keyof typeof translations.vi,
+                        )}
+                      </span>
                     </div>
                   )}
                   {isProfileOwner && (
@@ -432,9 +462,9 @@ const Profile = () => {
                       className="w-full cursor-pointer bg-(--buttonColor)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!"
                       onClick={() => setIsVisible(true)}
                     >
-                      {
-                        translate(language, 'edit') + ' ' + translate(language, 'detail').toLowerCase()
-                      }
+                      {translate(language, 'edit') +
+                        ' ' +
+                        translate(language, 'detail').toLowerCase()}
                     </button>
                   )}
                 </div>
@@ -469,7 +499,9 @@ const Profile = () => {
 
               <div className="bg-background p-5 text-(--textColor) md:mt-5 md:rounded-xl md:shadow-[0_0_4px_0px_rgba(0,0,0,0.2)]">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-[16px] font-bold">{translate(language, 'friend')}</h4>
+                  <h4 className="text-[16px] font-bold">
+                    {translate(language, 'friend')}
+                  </h4>
                   <span className="cursor-pointer text-[13px] text-(--textColor2) hover:underline">
                     {user?.friends.length} {translate(language, 'friend')}
                   </span>
@@ -504,11 +536,13 @@ const Profile = () => {
             </StickyBox>
           </div>
           <div className="flex-5">
-            {isProfileOwner && <Share />}
+            {isProfileOwner && <Share setOpenModel={setOpenModel} />}
             {!isProfileOwner && (
               <div className="bg-background mt-5 mb-5 p-5 text-(--textColor) shadow-[0_0_4px_0px_rgba(0,0,0,0.2)] md:mt-0 md:rounded-xl">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-[16px] font-bold">{translate(language, 'post')}</h4>
+                  <h4 className="text-[16px] font-bold">
+                    {translate(language, 'post')}
+                  </h4>
                   <span className="text-[14px] text-(--textColor2)">
                     {
                       posts?.data.posts.filter(post =>
@@ -526,6 +560,7 @@ const Profile = () => {
                 activeReaction={activeReaction}
                 setActiveReaction={setActiveReaction}
                 isProfileOwner={isProfileOwner}
+                setOpenModel={setOpenModel}
               />
             )}
             {posts?.data.posts.filter(post =>

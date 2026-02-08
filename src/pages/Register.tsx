@@ -37,10 +37,10 @@ const Register = () => {
     }
   };
   const languageContext = useContext(LanguageContext);
-        if (!languageContext) {
-          return null;
-        }
-        const { language, translate } = languageContext;
+  if (!languageContext) {
+    return null;
+  }
+  const { language, translate } = languageContext;
   return (
     <div className="flex min-h-150 w-[90%] flex-row-reverse overflow-hidden rounded-[10px] md:w-[80%] xl:w-[60%]">
       {/* Left */}
@@ -55,17 +55,19 @@ const Register = () => {
         </span>
         <span>{translate(language, 'loginText')}</span>
         <Link to={'/login'}>
-         <button
-              className={`w-full rounded-none! bg-[#725dfd]! font-bold! text-white! outline-none! md:w-[50%] ${isLoading ? 'cursor-not-allowed! opacity-50' : ''}`}
-              disabled={isLoading}
-            >
-              {translate(language, 'login')}
-            </button>
+          <button
+            className={`w-full rounded-none! bg-[#725dfd]! font-bold! text-white! outline-none! md:w-[50%] ${isLoading ? 'cursor-not-allowed! opacity-50' : ''}`}
+            disabled={isLoading}
+          >
+            {translate(language, 'login')}
+          </button>
         </Link>
       </div>
       {/* Right */}
       <div className="flex flex-1 flex-col justify-center gap-5 bg-(--background-primary) p-12.5 md:p-7.5">
-        <h2 className="text-[2rem] font-bold text-(--textColor)">{translate(language, 'register')}</h2>
+        <h2 className="text-[2rem] font-bold text-(--textColor)">
+          {translate(language, 'register')}
+        </h2>
 
         <form action="" onSubmit={handleSubmit(handleSubmitForm, onInvalid)}>
           <div className="flex flex-col gap-7.5">
@@ -103,7 +105,11 @@ const Register = () => {
             />
             <input
               type="password"
-              placeholder={translate(language, 'confirm') + ' ' + translate(language, 'password').toLowerCase()}
+              placeholder={
+                translate(language, 'confirm') +
+                ' ' +
+                translate(language, 'password').toLowerCase()
+              }
               className="w-full border-b border-b-gray-300 px-2.5 py-5 outline-none"
               {...register('passwordConfirm')}
             />

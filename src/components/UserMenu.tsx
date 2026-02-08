@@ -46,8 +46,7 @@ const UserMenu = ({ user, setOpen, refUserMenu }: IUserMenuProps) => {
     };
   }, [ref, setOpen, refUserMenu]);
 
-
-const languageContext = useContext(LanguageContext);
+  const languageContext = useContext(LanguageContext);
   if (!languageContext) {
     return null;
   }
