@@ -2,8 +2,10 @@ import { faFacebookMessenger } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { useContext } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+import noAvatar from '@/assets/avatars/noavatar.png';
 import angry from '@/assets/icons/angry.svg';
 import haha from '@/assets/icons/haha.svg';
 import like from '@/assets/icons/like.svg';
@@ -11,6 +13,7 @@ import love from '@/assets/icons/love.svg';
 import sad from '@/assets/icons/sad.svg';
 import wow from '@/assets/icons/wow.svg';
 import LanguageContext from '@/contexts/LanguageContext';
+import type { RootState } from '@/store';
 
 type ReactionType = 'like' | 'love' | 'haha' | 'wow' | 'sad' | 'angry';
 const iconsReaction: Record<ReactionType, string> = {
@@ -22,6 +25,7 @@ const iconsReaction: Record<ReactionType, string> = {
   angry,
 };
 interface Props {
+  id: string;
   userName: string;
   avatar: string;
   react: ReactionType;
@@ -29,8 +33,9 @@ interface Props {
   lastName: string;
   isFriend: boolean | undefined;
 }
-
+const API_URL = import.meta.env.VITE_API_URL;
 const UserReaction = ({
+  id,
   userName,
   avatar,
   react,
@@ -38,6 +43,7 @@ const UserReaction = ({
   lastName,
   isFriend,
 }: Props) => {
+  const ownUser = useSelector((state: RootState) => state.auth.user);
   const languageContext = useContext(LanguageContext);
   if (!languageContext) {
     return null;
@@ -50,7 +56,7 @@ const UserReaction = ({
           <div className="flex shrink-0 cursor-pointer items-center gap-4">
             <div className="relative h-10 w-10 shrink-0 rounded-[50%]">
               <img
-                src={avatar}
+                src={avatar ? API_URL + `/avatars/${avatar}` : noAvatar}
                 alt=""
                 className="h-full w-full rounded-[50%] object-cover"
               />
@@ -61,21 +67,23 @@ const UserReaction = ({
             <span className="text-[15px] font-medium">{`${firstName} ${lastName}`}</span>
           </div>
           <div>
-            <button className="flex items-center gap-2.5 bg-(--closeColor)! hover:border-transparent! hover:opacity-80!">
-              {!isFriend && (
-                <>
-                  <PersonAddIcon fontSize="small" />
-                  <span>{translate(language, 'addFriend')}</span>
-                </>
-              )}
+            {id !== ownUser?._id && (
+              <button className="flex items-center gap-2.5 bg-(--closeColor)! hover:border-transparent! hover:opacity-80!">
+                {!isFriend && (
+                  <>
+                    <PersonAddIcon fontSize="small" />
+                    <span>{translate(language, 'addFriend')}</span>
+                  </>
+                )}
 
-              {isFriend && (
-                <>
-                  <FontAwesomeIcon icon={faFacebookMessenger} />
-                  <span>{translate(language, 'message')}</span>
-                </>
-              )}
-            </button>
+                {isFriend && (
+                  <>
+                    <FontAwesomeIcon icon={faFacebookMessenger} />
+                    <span>{translate(language, 'message')}</span>
+                  </>
+                )}
+              </button>
+            )}
           </div>
         </li>
       </Link>

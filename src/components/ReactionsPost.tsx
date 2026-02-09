@@ -25,6 +25,8 @@ interface Props {
   count: number;
   id: string;
   post: IPost;
+  myReaction: Record<ReactionType, number>;
+  react: string;
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
   setActiveReaction: React.Dispatch<React.SetStateAction<string | null>>;
 }
@@ -34,9 +36,11 @@ const ReacionsPost = ({
   setIsVisible,
   setActiveReaction,
   id,
+  react,
+  myReaction,
 }: Props) => {
   const dispatch = UseAppDispatch();
-  const reactions = Object.entries(post.reactions)
+  const reactions = Object.entries(myReaction)
     .sort(([, a], [, b]) => b - a)
     .filter(react => react[1] > 0)
     .map(react => react[0]);
@@ -70,7 +74,15 @@ const ReacionsPost = ({
             dispatch(selectPost(id));
           }}
         >
-          {translateCount(count)}
+          {react !== 'default' ? (
+            <span className="text-gray-500">
+              Bạn{' '}
+              {Number(translateCount(count)) > 1 &&
+                `và ${translateCount(count - 1)} người khác`}
+            </span>
+          ) : (
+            translateCount(count)
+          )}
         </span>
       </div>
       <div className="flex items-center gap-4 text-(--textColor2)">

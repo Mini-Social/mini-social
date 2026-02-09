@@ -161,7 +161,7 @@ const ModelCreatePost = ({ openModel, onClose }: Props) => {
           </h2>
           <button
             onClick={handleCloseModel}
-            className="absolute right-4 flex h-10! w-10! items-center justify-center rounded-full! border-none! transition-colors bg-(--closeColor)!"
+            className="absolute right-4 flex h-10! w-10! items-center justify-center rounded-full! border-none! bg-(--closeColor)! transition-colors"
           >
             <CloseIcon fontSize="small" className="cursor-pointer" />
           </button>
@@ -172,7 +172,11 @@ const ModelCreatePost = ({ openModel, onClose }: Props) => {
           {/* User Info & Visibility */}
           <div className="mb-4 flex items-center gap-3">
             <img
-              src={API_URL + `/avatars/${ownUser?.avatar}` || noAvatar}
+              src={
+                ownUser?.avatar
+                  ? API_URL + `/avatars/${ownUser.avatar}`
+                  : noAvatar
+              }
               className="h-10 w-10 rounded-full border border-gray-200 object-cover"
               alt="Avatar"
             />
@@ -204,7 +208,7 @@ const ModelCreatePost = ({ openModel, onClose }: Props) => {
                           setVisibility(opt);
                           setIsVisibilityOpen(false);
                         }}
-                        className={`bg-background! mb-1 flex border-none! w-full items-center gap-3 rounded-lg p-2 transition-colors hover:bg-gray-100! dark:hover:bg-zinc-700/50! ${
+                        className={`bg-background! mb-1 flex w-full items-center gap-3 rounded-lg border-none! p-2 transition-colors hover:bg-gray-100! dark:hover:bg-zinc-700/50! ${
                           visibility.id === opt.id
                             ? 'bg-blue-50! dark:bg-blue-500/10!'
                             : ''
@@ -285,22 +289,22 @@ const ModelCreatePost = ({ openModel, onClose }: Props) => {
             <div className="flex w-full items-center justify-around gap-1 sm:w-auto sm:justify-end">
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="tooltip rounded-full border-none! p-2 text-green-500! bg-(--buttonColor)!"
+                className="tooltip rounded-full border-none! bg-(--buttonColor)! p-2 text-green-500!"
                 title="Ảnh/Video"
                 hidden={selectedImages.length >= 5}
               >
                 <Image size={24} />
               </button>
-              <button className="rounded-full border-none! p-2 text-blue-500! bg-(--buttonColor)!">
+              <button className="rounded-full border-none! bg-(--buttonColor)! p-2 text-blue-500!">
                 <UserPlus size={24} />
               </button>
-              <button className="rounded-full border-none! p-2 text-yellow-500 bg-(--buttonColor)!">
+              <button className="rounded-full border-none! bg-(--buttonColor)! p-2 text-yellow-500">
                 <Smile size={24} />
               </button>
-              <button className="rounded-full border-none! p-2 text-red-500 bg-(--buttonColor)!">
+              <button className="rounded-full border-none! bg-(--buttonColor)! p-2 text-red-500">
                 <MapPin size={24} />
               </button>
-              <button className="rounded-full border-none! p-2 text-gray-500 bg-(--buttonColor)!">
+              <button className="rounded-full border-none! bg-(--buttonColor)! p-2 text-gray-500">
                 <MoreHorizontal size={24} />
               </button>
             </div>

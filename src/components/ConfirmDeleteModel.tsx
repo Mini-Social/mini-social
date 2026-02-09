@@ -44,7 +44,7 @@ const ConfirmDeleteModal = ({
           <button
             disabled={isLoading}
             onClick={() => onConfirm(postId)}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 px-6 py-2.5 font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-50 sm:w-auto"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border-none! bg-red-600! px-6 py-2.5 font-semibold text-white! transition-colors hover:bg-red-700! disabled:opacity-50 sm:w-auto"
           >
             {isLoading ? (
               <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
@@ -57,7 +57,7 @@ const ConfirmDeleteModal = ({
           <button
             disabled={isLoading}
             onClick={() => onClose(false)}
-            className="w-full rounded-xl bg-zinc-200 px-6 py-2.5 font-semibold text-zinc-900 transition-colors hover:bg-zinc-300 disabled:opacity-50 sm:w-auto dark:bg-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-600"
+            className="w-full rounded-xl border-none! bg-zinc-200! px-6 py-2.5 font-semibold text-zinc-900! transition-colors hover:bg-zinc-300! disabled:opacity-50 sm:w-auto dark:bg-zinc-700! dark:text-zinc-100! dark:hover:bg-zinc-600!"
           >
             Hủy
           </button>

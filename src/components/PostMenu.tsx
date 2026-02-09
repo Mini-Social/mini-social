@@ -13,6 +13,7 @@ interface Props {
   post: IPost;
   setOpenModel?: React.Dispatch<React.SetStateAction<string>>;
   setOpenDeleteModel: React.Dispatch<SetStateAction<boolean>>;
+  setIsVisible?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const PostMenu = ({
   setIsEdit,
@@ -20,6 +21,7 @@ const PostMenu = ({
   post,
   setOpenModel,
   setOpenDeleteModel,
+  setIsVisible,
 }: Props) => {
   const ref = useRef<HTMLUListElement>(null);
   const dispatch = UseAppDispatch();
@@ -49,6 +51,9 @@ const PostMenu = ({
             className="hover:bg-accent flex cursor-pointer items-center gap-2.5 p-2"
             onClick={() => {
               dispatch(startEditPost(post));
+              if (setIsVisible) {
+                setIsVisible(false);
+              }
               if (setOpenModel) {
                 setOpenModel('post-model');
               }

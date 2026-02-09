@@ -2,7 +2,8 @@ import LockIcon from '@mui/icons-material/Lock';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import PeopleIcon from '@mui/icons-material/People';
 import PublicIcon from '@mui/icons-material/Public';
-import { useContext, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -16,10 +17,13 @@ import PostMenu from '@/components/PostMenu';
 import ReactionsBar from '@/components/ReactionsBar';
 import ReacionsPost from '@/components/ReactionsPost';
 import LanguageContext from '@/contexts/LanguageContext';
-import { useDeletePostMutation } from '@/features/post/post.api.slice';
+import {
+  useDeletePostMutation,
+  useReactionPostMutation,
+} from '@/features/post/post.api.slice';
 import { selectPost } from '@/features/post/post.slice';
 import type { translations } from '@/language/language';
-import { UseAppDispatch } from '@/store';
+import { UseAppDispatch, type RootState } from '@/store';
 import type { errorResponseType2 } from '@/types/auth.type';
 import { type IPost, type ReactionType } from '@/types/type';
 import { reactionStyle } from '@/types/type';
@@ -41,8 +45,13 @@ const Post = ({
   setOpenModel,
 }: PostProps) => {
   const [deletePost] = useDeletePostMutation();
+  const [reactionPost] = useReactionPostMutation();
+  const ownUser = useSelector((state: RootState) => state.auth.user);
   const dispatch = UseAppDispatch();
-  const [react, setReact] = useState<ReactionType>('default');
+  const [react, setReact] = useState<ReactionType>(
+    (post.userReactions.find(p => p.userId._id === ownUser?._id)
+      ?.reactions as ReactionType) || 'default',
+  );
   const [showBar, setShowBar] = useState(false);
   const timeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dotRef = useRef(null);
@@ -50,6 +59,7 @@ const Post = ({
     (acc, value) => acc + value,
     0,
   );
+  const [myReaction, setMyReaction] = useState(post.reactions);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isOpenDeleteModel, setIsOpenDeleteModel] = useState<boolean>(false);
   const startPress = () => {
@@ -57,6 +67,7 @@ const Post = ({
       setShowBar(true);
     }, 500);
   };
+
   const endPress = () => {
     if (timeRef.current) {
       clearTimeout(timeRef.current);
@@ -66,9 +77,25 @@ const Post = ({
   };
   const handleParentClick = () => {
     if (react !== 'default') {
+      setMyReaction(pre => ({
+        ...pre,
+        [react]: pre[react] - 1,
+      }));
+      reactionPost({
+        postId: post._id,
+        action: `un${react}`,
+      });
       setReact('default');
       setShowBar(false);
     } else {
+      setMyReaction(pre => ({
+        ...pre,
+        like: 1,
+      }));
+      reactionPost({
+        postId: post._id,
+        action: 'like',
+      });
       setReact('like');
       setShowBar(false);
     }
@@ -82,6 +109,15 @@ const Post = ({
       toast.success(errorType.data.message);
     }
   };
+  useEffect(() => {
+    setMyReaction(post.reactions);
+  }, [setMyReaction, post.reactions]);
+  useEffect(() => {
+    setReact(
+      (post.userReactions.find(p => p.userId._id === ownUser?._id)
+        ?.reactions as ReactionType) || 'default',
+    );
+  }, [setReact, post.userReactions, ownUser?._id]);
   const languageContext = useContext(LanguageContext);
   if (!languageContext) {
     return null;
@@ -163,6 +199,7 @@ const Post = ({
               setIsEdit={setIsEdit}
               dotRef={dotRef}
               post={post}
+              setIsVisible={setIsVisible}
               setOpenModel={setOpenModel}
               setOpenDeleteModel={setIsOpenDeleteModel}
             />
@@ -177,6 +214,8 @@ const Post = ({
           setIsVisible={setIsVisible}
           count={count}
           id={post._id}
+          myReaction={myReaction}
+          react={react}
           setActiveReaction={setActiveReaction}
         />
 
@@ -214,7 +253,10 @@ const Post = ({
               <ReactionsBar
                 setState={setReact}
                 setShowBar={setShowBar}
+                setMyReaction={setMyReaction}
+                post={post}
                 isVisible={showBar}
+                react={react}
               />
             </div>
             <div

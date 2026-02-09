@@ -67,6 +67,7 @@ const Posts = ({
           setIsVisible={setIsVisible}
           isVisible={isVisible}
           setActiveReaction={setActiveReaction}
+          setOpenModel={setOpenModel}
         />
       )}
       {activeReaction === 'reaction-model' && (

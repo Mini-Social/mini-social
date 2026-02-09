@@ -2,6 +2,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import React, { useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import noAvatar from '@/assets/avatars/noavatar.png';
 import SendIcon from '@/assets/icons/send-message.png';
 import CommentTree from '@/components/CommentTree';
 import Post from '@/components/Post';
@@ -14,14 +15,17 @@ interface ModelCommentProps {
   isVisible: boolean;
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
   setActiveReaction: React.Dispatch<React.SetStateAction<string | null>>;
+  setOpenModel?: React.Dispatch<React.SetStateAction<string>>;
 }
-
+const API_URL = import.meta.env.VITE_API_URL;
 const ModelComment = ({
   isVisible,
   setIsVisible,
   setActiveReaction,
+  setOpenModel,
 }: ModelCommentProps) => {
   const postId = useSelector((state: RootState) => state.post.selectPostId);
+  const ownUser = useSelector((state: RootState) => state.auth.user);
   const { data } = useGetDetailPostQuery(postId);
   const { data: commentData } = useGetCommentsByPostIdQuery(postId);
   const [replyingId, setReplyingId] = useState<string[]>([]);
@@ -69,6 +73,7 @@ const ModelComment = ({
                 post={data?.data.post}
                 setIsVisible={setIsVisible}
                 setActiveReaction={setActiveReaction}
+                setOpenModel={setOpenModel}
                 noShadow
               />
             )}
@@ -86,7 +91,9 @@ const ModelComment = ({
             <div className="sticky bottom-0 flex h-auto flex-1 items-start gap-1">
               <img
                 src={
-                  'https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg'
+                  ownUser?.avatar
+                    ? API_URL + `avatars/${ownUser.avatar}`
+                    : noAvatar
                 }
                 alt=""
                 className="z-100 h-8 w-8 cursor-pointer rounded-[50%]"

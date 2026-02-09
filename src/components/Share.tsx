@@ -38,20 +38,20 @@ const Share = ({ setOpenModel }: Props) => {
           type="text"
           onFocus={() => setOpenModel('post-model')}
           placeholder={`${translate(language, 'mind')} ${user?.firstName} ${user?.lastName}?`}
-          className="bg-(--background-primary) rounded-[999px] w-full px-2.5 py-2.5 text-[16px] outline-none placeholder:text-[13px] placeholder:text-[#808080] lg:text-[13px] cursor-pointer"
+          className="w-full cursor-pointer rounded-[999px] bg-(--background-primary) px-2.5 py-2.5 text-[16px] outline-none placeholder:text-[13px] placeholder:text-[#808080] lg:text-[13px]"
         />
-             <div className="flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2 xl:gap-5">
+        <div className="flex shrink-0 items-center justify-between">
+          <div className="flex items-center gap-2 xl:gap-5">
             <img src={image} alt="" className="h-5 w-5" />
-          <input type="file" className="hidden" id="images" />
-          <div className="flex cursor-pointer items-center gap-2.5">
-            <img src={location} alt="" className="h-5 w-5" />
-          </div>
-          <div className="flex cursor-pointer items-center gap-2.5">
-            <img src={tag} alt="" className="h-5 w-5" />
+            <input type="file" className="hidden" id="images" />
+            <div className="flex cursor-pointer items-center gap-2.5">
+              <img src={location} alt="" className="h-5 w-5" />
+            </div>
+            <div className="flex cursor-pointer items-center gap-2.5">
+              <img src={tag} alt="" className="h-5 w-5" />
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </div>
   );

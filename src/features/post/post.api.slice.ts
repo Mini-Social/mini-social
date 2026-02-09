@@ -43,6 +43,12 @@ export const postApi = apiSlice.injectEndpoints({
         url: `post/getPost/${id}`,
         credentials: 'include',
       }),
+      providesTags: (_, __, id) => [
+        {
+          type: 'Posts' as const,
+          id,
+        },
+      ],
     }),
     getPostByUserId: build.query<
       { status: string; data: { posts: IPost[] } },
@@ -68,10 +74,12 @@ export const postApi = apiSlice.injectEndpoints({
                 id: 'LIST',
               },
             ]
-          : [{
-              type: 'Posts' as const,
-              id: 'LIST',
-            }],
+          : [
+              {
+                type: 'Posts' as const,
+                id: 'LIST',
+              },
+            ],
     }),
     addPost: build.mutation<
       {
@@ -185,6 +193,41 @@ export const postApi = apiSlice.injectEndpoints({
       //   }
       // },
     }),
+    reactionPost: build.mutation<
+      { status: string; data: { post: IPost } },
+      { postId: string; action: string }
+    >({
+      query: ({ postId, action }) => ({
+        url: `post/reactions/${postId}/${action}`,
+        method: 'PUT',
+        credentials: 'include',
+      }),
+      invalidatesTags: (_, __, { postId }) => [
+        {
+          type: 'Posts' as const,
+          id: postId,
+        },
+        {
+          type: 'Posts' as const,
+          id: 'LIST',
+        },
+      ],
+      onQueryStarted: async (agr, { dispatch, queryFulfilled }) => {
+        try {
+          const { data: updatePost } = await queryFulfilled;
+          dispatch(
+            postApi.util.updateQueryData('getPosts', undefined, draft => {
+              const index = draft.data.posts.findIndex(
+                post => post._id === agr.postId,
+              );
+              draft.data.posts[index] = updatePost.data.post;
+            }),
+          );
+        } catch (error) {
+          console.error('Lỗi cập nhật cache:', error);
+        }
+      },
+    }),
   }),
 });
 export const {
@@ -194,4 +237,5 @@ export const {
   useAddPostMutation,
   useUpdatePostMutation,
   useDeletePostMutation,
+  useReactionPostMutation,
 } = postApi;

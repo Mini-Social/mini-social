@@ -159,7 +159,7 @@ const Profile = () => {
         </div>
       )}
       <div
-        className="mx-auto flex max-w-[1000px] flex-col lg:min-w-[1000px]"
+        className="mx-auto flex max-w-[1000px] min-w-full flex-col lg:min-w-[1000px]"
         key={userName}
       >
         <div className="relative h-[320px]">
@@ -223,7 +223,7 @@ const Profile = () => {
                   />
                 </PhotoView>
                 <div>
-                  {!previewCoverImg && (
+                  {!previewCoverImg && isProfileOwner && (
                     <div
                       className="absolute right-4 bottom-4 flex cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-(--gray200) p-2 text-[13px] font-bold text-(--textColor) hover:opacity-80"
                       onClick={handleDeleteBgCover}
@@ -231,10 +231,10 @@ const Profile = () => {
                       <DeleteIcon />
                     </div>
                   )}
-                  {!previewCoverImg && (
+                  {!previewCoverImg && isProfileOwner && (
                     <label htmlFor="bgCover">
                       <div className="absolute right-16 bottom-4 flex cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-(--gray200) p-2 text-[13px] font-bold text-(--textColor) hover:opacity-80">
-                        <PhotoCameraIcon /> {translate(language, 'update')}
+                        <PhotoCameraIcon />
                       </div>
                     </label>
                   )}
@@ -330,7 +330,7 @@ const Profile = () => {
           <div className="sticky bottom-5 flex-3">
             <StickyBox offsetTop={80} offsetBottom={20}>
               <div className="bg-background p-5 text-(--textColor) md:rounded-xl md:shadow-[0_0_4px_0px_rgba(0,0,0,0.2)]">
-                <h4 className="text-[16px] font-bold">
+                <h4 className="mb-1 text-[16px] font-bold">
                   {translate(language, 'information')}
                 </h4>
                 {isProfileOwner ? (
