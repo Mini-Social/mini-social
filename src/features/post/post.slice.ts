@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 import type { IPost } from '@/types/type';
-
+import type { IUserReactionType } from '@/types/user.type';
 // export interface IPost {
 //   id: string;
 //   content?: string;
@@ -39,10 +39,20 @@ import type { IPost } from '@/types/type';
 type initialStateType = {
   postSelect: IPost | null;
   selectPostId: string;
+  reactModel: {
+    open: boolean;
+    reactions: Record<string, number>;
+    userReactions: IUserReactionType[];
+  };
 };
 const initialState: initialStateType = {
   postSelect: null,
   selectPostId: '',
+  reactModel: {
+    open: false,
+    reactions: {},
+    userReactions: [],
+  },
 };
 
 export const postSlice = createSlice({
@@ -61,9 +71,31 @@ export const postSlice = createSlice({
     unSelectPost: state => {
       state.selectPostId = '';
     },
+    setReactModel: (
+      state,
+      action: PayloadAction<{
+        reactions: Record<string, number>;
+        userReactions: IUserReactionType[];
+      }>,
+    ) => {
+      state.reactModel = {
+        open: true,
+        reactions: action.payload.reactions,
+        userReactions: action.payload.userReactions,
+      };
+    },
+    closeReactModel: state => {
+      state.reactModel.open = false;
+    },
   },
 });
 
-export const { startEditPost, stopEditPost, selectPost, unSelectPost } =
-  postSlice.actions;
+export const {
+  startEditPost,
+  stopEditPost,
+  selectPost,
+  unSelectPost,
+  setReactModel,
+  closeReactModel,
+} = postSlice.actions;
 export default postSlice.reducer;

@@ -1,40 +1,68 @@
-import apiSlice from '@/app/api.slice';
-import type { IComment } from '@/types/comment.type';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-const commentApi = apiSlice.injectEndpoints({
-  endpoints: builder => ({
-    getCommentsByPostId: builder.query<
-      {
-        status: string;
-        length: number;
-        data: {
-          comments: IComment[];
-        };
-      },
-      string
-    >({
-      query: postId => ({
-        url: `comment/getComments/${postId}`,
-        credentials: 'include',
-      }),
-    }),
-    getCommentsReplies: builder.query<
-      {
-        status: string;
-        length: number;
-        data: {
-          repliesComments: IComment[];
-        };
-      },
-      string
-    >({
-      query: parentCommentId => ({
-        url: `comment/getCommentsReplies/${parentCommentId}`,
-        credentials: 'include',
-      }),
-    }),
+type initialStateType = {
+  isOpenEdit: string;
+  editCommentModel: {
+    commentId: string;
+    parentCommentId: string;
+    content: string;
+  };
+  deleteCommentId: {
+    commentId: string;
+    parentCommentId: string
+  }
+};
+const initialState: initialStateType = {
+  isOpenEdit: '',
+  editCommentModel: {
+    commentId: '',
+    parentCommentId: '',
+    content: '',
+  },
+  deleteCommentId: {
+    commentId: '',
+    parentCommentId: '',
+  }
+};
+const commentSlice = createSlice({
+  name: 'comment',
+  initialState,
+  reducers: () => ({
+    startOpenModel: (state, action: PayloadAction<string>) => {
+      state.isOpenEdit = action.payload;
+    },
+    startEditComment: (
+      state,
+      action: PayloadAction<{
+        postId: string;
+        commentId: string;
+        parentCommentId: string;
+        content: string;
+      }>,
+    ) => {
+      state.editCommentModel = {
+        ...action.payload,
+      };
+    },
+    closeEditComment: state => {
+      state.isOpenEdit = '';
+      state.editCommentModel = {
+        commentId: '',
+        parentCommentId: '',
+        content: '',
+      };
+    },
+    startDeleteComment: (state, action: PayloadAction<{commentId: string;
+    parentCommentId: string}>) => {
+        state.deleteCommentId.commentId = action.payload.commentId
+        state.deleteCommentId.parentCommentId = action.payload.parentCommentId
+    },
+    closeDeleteComment: (state) => {
+      state.deleteCommentId.commentId = ''
+      state.deleteCommentId.parentCommentId = ''
+    }
   }),
 });
-export const { useGetCommentsByPostIdQuery, useGetCommentsRepliesQuery } =
-  commentApi;
-export default commentApi.reducer;
+export const { startEditComment, closeEditComment, startOpenModel, startDeleteComment, closeDeleteComment } =
+  commentSlice.actions;
+export default commentSlice.reducer;

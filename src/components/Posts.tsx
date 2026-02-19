@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import ModelComment from '@/components/ModelComment';
-import ModelReaction from '@/components/ModelReaction';
+import ModelReactionWrapper from '@/components/ModelReactionWrapper';
 import Post from '@/components/Post';
 import type { RootState } from '@/store';
 import type { IPost } from '@/types/type';
@@ -16,7 +16,6 @@ interface Props {
 }
 const Posts = ({
   posts,
-  activeReaction,
   setActiveReaction,
   isProfileOwner,
   setOpenModel,
@@ -70,12 +69,8 @@ const Posts = ({
           setOpenModel={setOpenModel}
         />
       )}
-      {activeReaction === 'reaction-model' && (
-        <ModelReaction
-          activeReaction={activeReaction}
-          setActiveReaction={setActiveReaction}
-        />
-      )}
+
+      <ModelReactionWrapper />
     </>
   );
 };

@@ -4,8 +4,10 @@ import like from '@/assets/icons/like.svg';
 import love from '@/assets/icons/love.svg';
 import sad from '@/assets/icons/sad.svg';
 import wow from '@/assets/icons/wow.svg';
+import { useReactionCommentMutation } from '@/features/comment/comment.slice.api';
 import { useReactionPostMutation } from '@/features/post/post.api.slice';
 import type { errorResponseType2 } from '@/types/auth.type';
+import type { IComment } from '@/types/comment.type';
 import { type IPost, type ReactionType } from '@/types/type';
 
 const reactions = {
@@ -30,8 +32,10 @@ interface ReactionBarProps {
     }>
   >;
   post?: IPost;
+  comment?: IComment;
   isVisible: boolean;
   react?: string;
+  isPost?: boolean;
 }
 
 const ReactionsBar = ({
@@ -39,10 +43,13 @@ const ReactionsBar = ({
   setShowBar,
   setMyReaction,
   post,
+  comment,
   react,
   isVisible,
+  isPost,
 }: ReactionBarProps) => {
   const [reactionPost] = useReactionPostMutation();
+  const [reactionComment] = useReactionCommentMutation();
   const handleReaction = async (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     name: ReactionType,
@@ -51,19 +58,27 @@ const ReactionsBar = ({
     {
       const oldReact = react as Exclude<ReactionType, 'default'>;
       const newReact = name as Exclude<ReactionType, 'default'>;
-      if(setMyReaction && react){
+      if (setMyReaction && react) {
         setMyReaction(pre => ({
-        ...pre,
-        [react]: Math.max(0, pre[oldReact] - 1),
-        [newReact]: pre[newReact] + 1,
-      }));
+          ...pre,
+          [react]: Math.max(0, pre[oldReact] - 1),
+          [newReact]: pre[newReact] + 1,
+        }));
       }
-
       try {
-        await reactionPost({
-          postId: post ? post._id : '',
-          action: newReact,
-        }).unwrap();
+        if (isPost && post) {
+          await reactionPost({
+            postId: post._id,
+            action: newReact,
+          }).unwrap();
+        } else if (comment) {
+          await reactionComment({
+            postId: comment.postId,
+            action: newReact,
+            commentId: comment._id,
+            parentCommentId: comment.parentCommentId?._id,
+          }).unwrap();
+        }
       } catch (error) {
         const errorType = error as errorResponseType2;
         console.log(errorType.data.message);

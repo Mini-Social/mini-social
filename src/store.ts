@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import apiSlice from '@/app/api.slice';
 import authReducer from '@/features/auth/auth.slice';
+import commentReducer from '@/features/comment/comment.slice';
 import postReducer from '@/features/post/post.slice';
 
 export const store = configureStore({
@@ -10,6 +11,7 @@ export const store = configureStore({
     auth: authReducer,
     [apiSlice.reducerPath]: apiSlice.reducer,
     post: postReducer,
+    comment: commentReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware().concat(apiSlice.middleware),

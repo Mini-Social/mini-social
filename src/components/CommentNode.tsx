@@ -1,9 +1,16 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 
+import noAvatar from '@/assets/avatars/noavatar.png';
 import SendIcon from '@/assets/icons/send-message.png';
 import CommentItem from '@/components/CommentItem';
 import CommentTree from '@/components/CommentTree';
-import { useGetCommentsRepliesQuery } from '@/features/comment/comment.slice';
+import {
+  useAddCommentMutation,
+  useGetCommentsRepliesQuery,
+} from '@/features/comment/comment.slice.api';
+import type { RootState } from '@/store';
+import type { errorResponseType2 } from '@/types/auth.type';
 import type { IComment } from '@/types/comment.type';
 import { COMMENT_LAYOUT } from '@/utils/variable';
 
@@ -13,27 +20,69 @@ interface Props {
   depth: number;
   replyingId: string[];
   index: number;
-  handleOpenReply: (id: string) => void;
+  handleToggleReply: (id: string) => void;
 }
-
+const API_URL = import.meta.env.VITE_API_URL;
 const CommentNode = ({
   comment,
   comments,
   depth,
   replyingId,
-  handleOpenReply,
+  handleToggleReply,
   index,
 }: Props) => {
   const avatarSize = Math.max(24, 32 - depth * 4);
+  const postId = useSelector((state: RootState) => state.post.selectPostId);
   const [replies, setReplies] = useState<Record<string, boolean>>({});
   const { data } = useGetCommentsRepliesQuery(comment._id, {
-    skip: replies[comment._id],
+    skip: !replies[comment._id],
   });
+  const [addComment] = useAddCommentMutation();
+  const ownUser = useSelector((state: RootState) => state.auth.user);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [parentCommentId, setParentCommentId] = useState<string | null>(null);
   const ToggleReplies = (id: string) => {
     setReplies(pre => ({
       ...pre,
       [id]: true,
     }));
+  };
+  const handleReplyComment = async () => {
+    let content = '';
+    contentRef.current?.childNodes.forEach(node => {
+      if (node.nodeType === node.TEXT_NODE) {
+        content += node.textContent;
+      }
+    });
+    if (content) {
+      const cleanContent = content
+        .replace(/\u00A0/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      try {
+        await addComment({
+          postId,
+          content: cleanContent,
+          parentCommentId,
+        }).unwrap();
+        contentRef.current?.childNodes.forEach(node => {
+          if (node.nodeType === node.TEXT_NODE) {
+            node.textContent = ' ';
+          }
+        });
+        if (contentRef.current) {
+          contentRef.current.innerHTML = `
+      <span contentEditable="false"  class="inline-block bg-[#C2D6F7] text-[#080809] px-1">
+        ${comment.userId.firstName} ${comment.userId.lastName}
+      </span>&nbsp;`;
+        }
+        ToggleReplies(comment._id);
+        handleToggleReply(comment._id);
+      } catch (error) {
+        const errorType = error as errorResponseType2;
+        console.log(errorType.data.message);
+      }
+    }
   };
   return (
     <div key={comment._id}>
@@ -61,12 +110,13 @@ const CommentNode = ({
         >
           <CommentItem
             key={comment._id}
-            handleOpenReply={handleOpenReply}
+            handleToggleReply={handleToggleReply}
             comment={comment}
             avatarSize={avatarSize}
             depth={depth}
             replies={replies}
             toggleReplies={ToggleReplies}
+            setParentCommentId={(id: string | null) => setParentCommentId(id)}
           />
           {/* Đệ quy */}
           {(depth < 2
@@ -78,7 +128,7 @@ const CommentNode = ({
                   comments={data.data.repliesComments}
                   depth={depth + 1}
                   replyingId={replyingId}
-                  handleOpenReply={handleOpenReply}
+                  handleToggleReply={handleToggleReply}
                 />
               )}
             </>
@@ -119,7 +169,9 @@ const CommentNode = ({
           >
             <img
               src={
-                'https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg'
+                ownUser?.avatar
+                  ? API_URL + `/avatars/${ownUser.avatar}`
+                  : noAvatar
               }
               alt=""
               className="z-100 rounded-[50%]"
@@ -135,20 +187,20 @@ const CommentNode = ({
               <div
                 contentEditable="true"
                 className="h-auto w-full text-[16px] leading-5 break-all outline-none lg:text-[13px]"
+                ref={contentRef}
               >
-                <span
-                  contentEditable="false"
-                  className="inline-block bg-[#C2D6F7] px-1 text-[#080809]"
-                >
+                <span className="inline-block bg-[#C2D6F7] px-1 text-[#080809]">
                   {comment.userId.firstName} {comment.userId.lastName}
                 </span>
                 &nbsp;
               </div>
-              <img
-                src={SendIcon}
-                alt=""
-                className="ml-2.5 h-5 w-5 cursor-pointer self-end object-contain"
-              />
+              <div onClick={handleReplyComment}>
+                <img
+                  src={SendIcon}
+                  alt=""
+                  className="ml-2.5 h-5 w-5 cursor-pointer self-end object-contain"
+                />
+              </div>
             </div>
 
             <div></div>

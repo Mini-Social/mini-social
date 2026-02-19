@@ -30,3 +30,14 @@ export interface IUser {
   createdAt: Date;
   updatedAt: Date;
 }
+export interface IUserReactionType {
+  reactions: string;
+  reactionAt: Date;
+  userId: {
+    _id: string;
+    userName: string;
+    firstName: string;
+    lastName: string;
+    avatar: string;
+  };
+}

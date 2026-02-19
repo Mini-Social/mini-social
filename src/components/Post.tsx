@@ -1,3 +1,4 @@
+import CloseIcon from '@mui/icons-material/Close';
 import LockIcon from '@mui/icons-material/Lock';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import PeopleIcon from '@mui/icons-material/People';
@@ -128,11 +129,15 @@ const Post = ({
       className={`bg-background mb-2 md:mb-5 md:rounded-[10px] ${noShadow ? 'shadow-none' : 'md:shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)]'}`}
     >
       <ConfirmDeleteModal
+        title='Xóa bài viết'
+        desc='Hành động này không thể hoàn tác. Bài viết của bạn sẽ bị xóa vĩnh
+            viễn khỏi hệ thống.'
         isOpen={isOpenDeleteModel}
         onClose={setIsOpenDeleteModel}
         onConfirm={handleDeletePost}
-        postId={post._id}
+        Id={post._id}
       />
+
       <div className="item-center flex justify-between px-3 pt-3">
         <div className="flex items-center gap-3">
           <Link to={`/profile/${post.author.userName}`}>
@@ -190,20 +195,27 @@ const Post = ({
             </div>
           </div>
         </div>
-        <div className="relative">
-          <div onClick={() => setIsEdit(pre => !pre)} ref={dotRef}>
-            <MoreHorizIcon className="cursor-pointer self-center" />
-          </div>
-          {isEdit && (
-            <PostMenu
-              setIsEdit={setIsEdit}
-              dotRef={dotRef}
-              post={post}
-              setIsVisible={setIsVisible}
-              setOpenModel={setOpenModel}
-              setOpenDeleteModel={setIsOpenDeleteModel}
-            />
+        <div className="flex items-center justify-center gap-1">
+          {ownUser?._id === post.author._id && (
+            <div className="relative">
+              <div onClick={() => setIsEdit(pre => !pre)} ref={dotRef}>
+                <MoreHorizIcon className="cursor-pointer self-center" />
+              </div>
+              {isEdit && (
+                <PostMenu
+                  setIsEdit={setIsEdit}
+                  dotRef={dotRef}
+                  post={post}
+                  setIsVisible={setIsVisible}
+                  setOpenModel={setOpenModel}
+                  setOpenDeleteModel={setIsOpenDeleteModel}
+                />
+              )}
+            </div>
           )}
+          <div className="cursor-pointer">
+            <CloseIcon />
+          </div>
         </div>
       </div>
       <div className="mt-2">
@@ -257,6 +269,7 @@ const Post = ({
                 post={post}
                 isVisible={showBar}
                 react={react}
+                isPost
               />
             </div>
             <div

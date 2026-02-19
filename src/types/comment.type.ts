@@ -3,6 +3,7 @@ export interface IComment {
   _id: string;
   postId: string;
   userId: {
+    _id: string;
     firstName: string;
     lastName: string;
     userName: string;
@@ -10,7 +11,14 @@ export interface IComment {
   };
   content: string;
   image: string | null;
-  parentCommentId: IComment | null;
+  parentCommentId: {
+    _id: string;
+    userId: {
+      userName: string;
+      firstName: string;
+      lastName: string;
+    };
+  } | null;
   reactions: {
     like: number;
     love: number;
@@ -22,6 +30,7 @@ export interface IComment {
   userReactions: [
     {
       userId: {
+        _id: string;
         firstName: string;
         lastName: string;
         userName: string;

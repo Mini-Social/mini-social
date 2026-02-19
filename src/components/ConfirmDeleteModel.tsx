@@ -3,16 +3,20 @@ import { Trash2, AlertTriangle } from 'lucide-react';
 import type { SetStateAction } from 'react';
 
 interface Props {
+  title: string;
+  desc: string;
   isOpen: boolean;
-  postId: string;
+  Id: string;
   onClose: React.Dispatch<SetStateAction<boolean>>;
   onConfirm: (id: string) => void;
   isLoading?: boolean;
 }
 
 const ConfirmDeleteModal = ({
+  title,
+  desc,
   isOpen,
-  postId,
+  Id,
   onClose,
   onConfirm,
   isLoading,
@@ -22,7 +26,7 @@ const ConfirmDeleteModal = ({
   }
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-9999999999 flex items-center justify-center bg-black/20 p-4 backdrop-blur-sm">
       <div className="animate-in fade-in zoom-in w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all duration-200 dark:bg-zinc-900">
         {/* Header có icon cảnh báo */}
         <div className="p-6 text-center">
@@ -31,11 +35,14 @@ const ConfirmDeleteModal = ({
           </div>
 
           <h3 className="text-xl font-bold text-zinc-900 dark:text-white">
-            Xóa bài viết?
+            {
+              title
+            }
           </h3>
           <p className="mt-2 text-zinc-500 dark:text-zinc-400">
-            Hành động này không thể hoàn tác. Bài viết của bạn sẽ bị xóa vĩnh
-            viễn khỏi hệ thống.
+            {
+              desc
+            }
           </p>
         </div>
 
@@ -43,7 +50,7 @@ const ConfirmDeleteModal = ({
         <div className="flex flex-col gap-3 bg-zinc-50 px-6 py-4 sm:flex-row-reverse dark:bg-zinc-800/50">
           <button
             disabled={isLoading}
-            onClick={() => onConfirm(postId)}
+            onClick={() => onConfirm(Id)}
             className="flex w-full items-center justify-center gap-2 rounded-xl border-none! bg-red-600! px-6 py-2.5 font-semibold text-white! transition-colors hover:bg-red-700! disabled:opacity-50 sm:w-auto"
           >
             {isLoading ? (

@@ -2,24 +2,15 @@ import { useSelector } from 'react-redux';
 
 import UserReaction from '@/components/UserReaction';
 import type { RootState } from '@/store';
+import { type ReactionTypeNotDefault } from '@/types/type';
+import type { IUserReactionType } from '@/types/user.type';
 
-type ReactionType = 'like' | 'love' | 'haha' | 'wow' | 'sad' | 'angry';
-interface userReactionType {
-  reactions: string;
-  reactionAt: Date;
-  userId: {
-    _id: string;
-    userName: string;
-    firstName: string;
-    lastName: string;
-    avatar: string;
-  };
-}
 interface Props {
   active: string;
-  userReactions: userReactionType[];
+  userReactions: IUserReactionType[];
+  setActive: React.Dispatch<React.SetStateAction<string>>;
 }
-const UserReactions = ({ active, userReactions }: Props) => {
+const UserReactions = ({ active, userReactions, setActive }: Props) => {
   const friendIds = useSelector((state: RootState) => state.auth.user?.friends);
   const ownUser = useSelector((state: RootState) => state.auth.user);
   if (!userReactions) {
@@ -46,19 +37,19 @@ const UserReactions = ({ active, userReactions }: Props) => {
     }
     return 0;
   });
-
   return (
     <ul className="custom-scrollbar mt-2.5 h-full flex-1 overflow-y-auto">
       {sortedReactions.map(user => (
         <UserReaction
-          key={user.userId._id}
+          key={`${user.userId._id}-${user.reactions}`}
           id={user.userId._id}
           userName={user.userId.userName}
           avatar={user.userId.avatar}
           firstName={user.userId.firstName}
           lastName={user.userId.lastName}
-          react={user.reactions as ReactionType}
+          react={user.reactions as ReactionTypeNotDefault}
           isFriend={friendIds?.some(friend => friend._id === user.userId._id)}
+          setActive={setActive}
         />
       ))}
     </ul>

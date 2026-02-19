@@ -7,14 +7,15 @@ interface CommentTreeProps {
   comments: IComment[];
   depth?: number;
   replyingId: string[];
-  handleOpenReply: (id: string) => void;
+  handleToggleReply: (id: string) => void;
 }
 const CommentTree = ({
   comments,
   depth = 0,
   replyingId,
-  handleOpenReply,
+  handleToggleReply,
 }: CommentTreeProps) => {
+  console.log(comments);
   const ref = useRef<HTMLDivElement>(null);
   const autoFocus = () => {
     if (!ref.current) {
@@ -34,7 +35,7 @@ const CommentTree = ({
           comments={comments}
           depth={depth}
           replyingId={replyingId}
-          handleOpenReply={handleOpenReply}
+          handleToggleReply={handleToggleReply}
           index={index}
         />
       ))}

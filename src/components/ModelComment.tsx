@@ -1,13 +1,16 @@
 import CloseIcon from '@mui/icons-material/Close';
-import React, { useContext, useEffect, useState } from 'react';
+import SendIcon from '@mui/icons-material/Send';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import noAvatar from '@/assets/avatars/noavatar.png';
-import SendIcon from '@/assets/icons/send-message.png';
 import CommentTree from '@/components/CommentTree';
 import Post from '@/components/Post';
 import LanguageContext from '@/contexts/LanguageContext';
-import { useGetCommentsByPostIdQuery } from '@/features/comment/comment.slice';
+import {
+  useAddCommentMutation,
+  useGetCommentsByPostIdQuery,
+} from '@/features/comment/comment.slice.api';
 import { useGetDetailPostQuery } from '@/features/post/post.api.slice';
 import type { RootState } from '@/store';
 
@@ -28,10 +31,26 @@ const ModelComment = ({
   const ownUser = useSelector((state: RootState) => state.auth.user);
   const { data } = useGetDetailPostQuery(postId);
   const { data: commentData } = useGetCommentsByPostIdQuery(postId);
+  const [addComment] = useAddCommentMutation();
   const [replyingId, setReplyingId] = useState<string[]>([]);
-  const handleOpenReply = (id: string) => {
+  const [commentContent, setCommentContent] = useState<string>('');
+  const refScroll = useRef<HTMLDivElement>(null);
+  const handleToggleReply = (id: string) => {
     setReplyingId(pre => (pre.includes(id) ? pre : [...pre, id]));
   };
+  const handleSendComment = () => {
+    setCommentContent('');
+    addComment({
+      postId,
+      content: commentContent,
+      parentCommentId: null,
+    });
+  };
+  // useEffect(() => {
+  //   if(refScroll.current){
+  //     refScroll.current.scrollTop = refScroll.current.scrollHeight
+  //   }
+  // } , [commentData])
   useEffect(() => {
     if (isVisible) {
       document.body.style.paddingRight = '15px';
@@ -67,7 +86,10 @@ const ModelComment = ({
               <CloseIcon fontSize="small" className="cursor-pointer" />
             </div>
           </div>
-          <div className="no-scrollbar h-full w-full flex-1 overflow-x-hidden overflow-y-auto">
+          <div
+            className="no-scrollbar h-full w-full flex-1 overflow-y-auto"
+            ref={refScroll}
+          >
             {data?.data?.post && (
               <Post
                 post={data?.data.post}
@@ -80,7 +102,7 @@ const ModelComment = ({
             {commentData?.data && (
               <CommentTree
                 comments={commentData?.data.comments}
-                handleOpenReply={handleOpenReply}
+                handleToggleReply={handleToggleReply}
                 replyingId={replyingId}
               />
             )}
@@ -101,14 +123,20 @@ const ModelComment = ({
               <div className="flex w-full items-center justify-between rounded-[12px] bg-(--background-primary) px-2 py-1.5">
                 <textarea
                   contentEditable={false}
+                  value={commentContent}
+                  onChange={e => setCommentContent(e.target.value)}
                   className="no-scrollbar relative h-auto w-full resize-none bg-(--background-primary) text-[16px] leading-5 break-all outline-none placeholder:text-[13px] placeholder:text-[#808080] lg:text-[13px]"
                   placeholder={translate(language, 'writeComment') + '....'}
                 ></textarea>
-                <img
-                  src={SendIcon}
-                  alt=""
-                  className="ml-2.5 h-5 w-5 cursor-pointer self-end object-contain"
-                />
+                <button
+                  className="self-end border-none! bg-transparent! p-0!"
+                  onClick={handleSendComment}
+                  disabled={commentContent.length === 0}
+                >
+                  <SendIcon
+                    className={`${commentContent.length > 0 ? 'cursor-pointer text-blue-500' : 'cursor-not-allowed text-gray-400'}`}
+                  />
+                </button>
               </div>
 
               <div></div>

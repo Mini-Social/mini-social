@@ -7,7 +7,7 @@ import love from '@/assets/icons/love.svg';
 import sad from '@/assets/icons/sad.svg';
 import wow from '@/assets/icons/wow.svg';
 import LanguageContext from '@/contexts/LanguageContext';
-import { selectPost } from '@/features/post/post.slice';
+import { selectPost, setReactModel } from '@/features/post/post.slice';
 import { UseAppDispatch } from '@/store';
 import type { IPost } from '@/types/type';
 import { translateCount } from '@/utils/translateReaction';
@@ -34,7 +34,6 @@ const ReacionsPost = ({
   count,
   post,
   setIsVisible,
-  setActiveReaction,
   id,
   react,
   myReaction,
@@ -70,8 +69,12 @@ const ReacionsPost = ({
         <span
           className="cursor-pointer text-xs text-(--textColor2) hover:underline"
           onClick={() => {
-            setActiveReaction('reaction-model');
-            dispatch(selectPost(id));
+            dispatch(
+              setReactModel({
+                reactions: post.reactions,
+                userReactions: post.userReactions,
+              }),
+            );
           }}
         >
           {react !== 'default' ? (
