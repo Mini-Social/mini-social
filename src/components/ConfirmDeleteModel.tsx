@@ -35,15 +35,9 @@ const ConfirmDeleteModal = ({
           </div>
 
           <h3 className="text-xl font-bold text-zinc-900 dark:text-white">
-            {
-              title
-            }
+            {title}
           </h3>
-          <p className="mt-2 text-zinc-500 dark:text-zinc-400">
-            {
-              desc
-            }
-          </p>
+          <p className="mt-2 text-zinc-500 dark:text-zinc-400">{desc}</p>
         </div>
 
         {/* Nút bấm */}

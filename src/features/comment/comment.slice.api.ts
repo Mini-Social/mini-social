@@ -71,7 +71,7 @@ const commentApi = apiSlice.injectEndpoints({
     }),
     addComment: builder.mutation<
       { data: { comment: IComment } },
-      { postId: string; parentCommentId: string | null; content: string }
+      { postId: string; parentCommentId: string | null; replyToId: string | null, content: string }
     >({
       query: body => ({
         url: `comment/addComment/${body.postId}`,
@@ -253,12 +253,12 @@ const commentApi = apiSlice.injectEndpoints({
         }
       },
     }),
-     deleteComment: builder.mutation<
+    deleteComment: builder.mutation<
       { data: { comment: IComment } },
       {
-        commentId: string,
-        postId: string,
-        parentCommentId: string
+        commentId: string;
+        postId: string;
+        parentCommentId: string;
       }
     >({
       query: body => ({
@@ -312,7 +312,7 @@ const commentApi = apiSlice.injectEndpoints({
             );
           }
           if (parentCommentId) {
-            console.log(parentCommentId)
+            console.log(parentCommentId);
             dispatch(
               commentApi.util.updateQueryData(
                 'getCommentsReplies',
@@ -342,6 +342,6 @@ export const {
   useAddCommentMutation,
   useReactionCommentMutation,
   useUpdateCommentMutation,
-  useDeleteCommentMutation
+  useDeleteCommentMutation,
 } = commentApi;
 export default commentApi.reducer;

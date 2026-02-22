@@ -9,8 +9,8 @@ type initialStateType = {
   };
   deleteCommentId: {
     commentId: string;
-    parentCommentId: string
-  }
+    parentCommentId: string;
+  };
 };
 const initialState: initialStateType = {
   isOpenEdit: '',
@@ -22,7 +22,7 @@ const initialState: initialStateType = {
   deleteCommentId: {
     commentId: '',
     parentCommentId: '',
-  }
+  },
 };
 const commentSlice = createSlice({
   name: 'comment',
@@ -52,17 +52,24 @@ const commentSlice = createSlice({
         content: '',
       };
     },
-    startDeleteComment: (state, action: PayloadAction<{commentId: string;
-    parentCommentId: string}>) => {
-        state.deleteCommentId.commentId = action.payload.commentId
-        state.deleteCommentId.parentCommentId = action.payload.parentCommentId
+    startDeleteComment: (
+      state,
+      action: PayloadAction<{ commentId: string; parentCommentId: string }>,
+    ) => {
+      state.deleteCommentId.commentId = action.payload.commentId;
+      state.deleteCommentId.parentCommentId = action.payload.parentCommentId;
     },
-    closeDeleteComment: (state) => {
-      state.deleteCommentId.commentId = ''
-      state.deleteCommentId.parentCommentId = ''
-    }
+    closeDeleteComment: state => {
+      state.deleteCommentId.commentId = '';
+      state.deleteCommentId.parentCommentId = '';
+    },
   }),
 });
-export const { startEditComment, closeEditComment, startOpenModel, startDeleteComment, closeDeleteComment } =
-  commentSlice.actions;
+export const {
+  startEditComment,
+  closeEditComment,
+  startOpenModel,
+  startDeleteComment,
+  closeDeleteComment,
+} = commentSlice.actions;
 export default commentSlice.reducer;

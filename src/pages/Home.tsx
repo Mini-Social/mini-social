@@ -11,6 +11,9 @@ import type { RootState } from '@/store';
 
 const Home = () => {
   const [openModel, setOpenModel] = useState<string>('');
+  const openModelMessage = useSelector(
+    (state: RootState) => state.conversation.conversationId,
+  );
   const { data } = useGetPostsQuery();
   const [activeReaction, setActiveReaction] = useState<string | null>(null);
   const selectPost = useSelector((state: RootState) => state.post.postSelect);
@@ -35,9 +38,7 @@ const Home = () => {
           )}
         </div>
       </div>
-      {openModel === 'message-model' && (
-        <ModelMessage openModel={openModel} setOpenModel={setOpenModel} />
-      )}
+      {openModelMessage && <ModelMessage />}
     </>
   );
 };

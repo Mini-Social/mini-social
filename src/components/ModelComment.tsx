@@ -43,6 +43,7 @@ const ModelComment = ({
     addComment({
       postId,
       content: commentContent,
+      replyToId: null,
       parentCommentId: null,
     });
   };

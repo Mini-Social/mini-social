@@ -51,6 +51,9 @@ interface CommentItemProps {
   handleToggleReply: (id: string) => void;
   toggleReplies: (id: string) => void;
   setParentCommentId: (id: string | null) => void;
+  setReplyTarget?: React.Dispatch<
+    React.SetStateAction<{ id: string; name: string }>
+  >;
 }
 const API_URL = import.meta.env.VITE_API_URL;
 const CommentItem = ({
@@ -61,10 +64,13 @@ const CommentItem = ({
   handleToggleReply,
   toggleReplies,
   setParentCommentId,
+  setReplyTarget,
 }: CommentItemProps) => {
   const ownUser = useSelector((state: RootState) => state.auth.user);
   const editCommentModel = useSelector((state: RootState) => state.comment);
-  const deleteCommentId = useSelector((state: RootState) => state.comment.deleteCommentId);
+  const deleteCommentId = useSelector(
+    (state: RootState) => state.comment.deleteCommentId,
+  );
   const dispatch = UseAppDispatch();
   const [reactionComment] = useReactionCommentMutation();
   const [updateComment] = useUpdateCommentMutation();
@@ -73,15 +79,15 @@ const CommentItem = ({
     (comment.userReactions.find(c => c.userId._id === ownUser?._id)
       ?.reactions as ReactionType) || 'default',
   );
-  const modelRef = useRef<HTMLDivElement>(null)
-  const dotRef = useRef<HTMLSpanElement>(null)
+  const modelRef = useRef<HTMLDivElement>(null);
+  const dotRef = useRef<HTMLSpanElement>(null);
   const [showBar, setShowBar] = useState(false);
   const LEFT = 28;
   const count = Object.values(comment.reactions).reduce(
     (acc, value) => acc + value,
     0,
   );
-  const isOwnComment = ownUser?._id === comment.userId._id
+  const isOwnComment = ownUser?._id === comment.userId._id;
   const [updateCommentContent, setUpdateCommentContent] = useState<string>(
     editCommentModel.editCommentModel.content,
   );
@@ -111,24 +117,31 @@ const CommentItem = ({
     }
   };
   const handleDeleteComment = () => {
-    dispatch(closeEditComment())
-    dispatch(closeDeleteComment())
+    dispatch(closeEditComment());
+    dispatch(closeDeleteComment());
     deleteComment({
-commentId: deleteCommentId.commentId, parentCommentId: deleteCommentId.parentCommentId, postId: comment.postId
-})
-  }
+      commentId: deleteCommentId.commentId,
+      parentCommentId: deleteCommentId.parentCommentId,
+      postId: comment.postId,
+    });
+  };
   useEffect(() => {
     setUpdateCommentContent(editCommentModel.editCommentModel.content);
   }, [editCommentModel.editCommentModel.content]);
   useEffect(() => {
     const handleListener = (e: PointerEvent) => {
-       if(modelRef.current && !modelRef.current.contains(e.target as Node) && dotRef.current && !dotRef.current.contains(e.target as Node)){
-          dispatch(closeEditComment())
+      if (
+        modelRef.current &&
+        !modelRef.current.contains(e.target as Node) &&
+        dotRef.current &&
+        !dotRef.current.contains(e.target as Node)
+      ) {
+        dispatch(closeEditComment());
       }
-    }
-    window.addEventListener('click', handleListener)
-    return () => window.removeEventListener('click', handleListener)
-  }, [modelRef, dispatch])
+    };
+    window.addEventListener('click', handleListener);
+    return () => window.removeEventListener('click', handleListener);
+  }, [modelRef, dispatch]);
   const languageContext = useContext(LanguageContext);
   if (!languageContext) {
     return null;
@@ -184,17 +197,18 @@ commentId: deleteCommentId.commentId, parentCommentId: deleteCommentId.parentCom
               </span>
             )}
 
-            <p>
+            <div>
               {depth > 0 &&
-                editCommentModel.editCommentModel.commentId !== comment._id && !comment.deleted &&(
+                editCommentModel.editCommentModel.commentId !== comment._id &&
+                !comment.deleted && (
                   <Link
                     to={`/profile/${comment.parentCommentId?.userId.userName}`}
                     className="text-inherit! hover:underline!"
                   >
                     <span className="font-bold hover:underline">
-                      {comment.parentCommentId?.userId.firstName +
+                      {comment.replyToId?.userId.firstName +
                         ' ' +
-                        comment.parentCommentId?.userId.lastName +
+                        comment.replyToId?.userId.lastName +
                         ' '}
                     </span>
                   </Link>
@@ -228,96 +242,112 @@ commentId: deleteCommentId.commentId, parentCommentId: deleteCommentId.parentCom
                   </button>
                 </div>
               ) : (
-                <span className={`wrap-break-word break-all ${comment.deleted ? 'text-gray-500' : '' }`}>
+                <span
+                  className={`wrap-break-word break-all ${comment.deleted ? 'text-gray-500' : ''}`}
+                >
                   {comment.content}
                 </span>
               )}
-            </p>
-          </div>
-          {isOwnComment && editCommentModel.editCommentModel.commentId !== comment._id && !comment.deleted &&  (
-            <div
-              className="relative flex h-6 w-6 cursor-pointer items-center justify-center rounded-[50%] text-[1rem] hover:bg-(--background-secondary)"
-              onClick={() => {
-                if (editCommentModel.isOpenEdit === comment._id) {
-                  dispatch(closeEditComment());
-                } else {
-                  dispatch(startOpenModel(comment._id));
-                }
-              }}
-            >
-              {editCommentModel.editCommentModel.commentId !== comment._id && (
-                <span ref={dotRef}>⋯</span>
-              )}
-              {editCommentModel.isOpenEdit === comment._id && (
-                <ModelCommentEdit comment={comment} ref={modelRef} />
-              )}
             </div>
-          )}
-        </div>
-        {editCommentModel.editCommentModel.commentId !== comment._id && !comment.deleted && (
-          <div className="ml-2 flex items-center gap-2.5 pt-0.75 text-[11px] font-medium text-[#65686c] lg:gap-4">
-            <span className="cursor-pointer hover:underline">
-              {FormatDate(comment.createdAt, false)}
-            </span>
-            <span
-              onClick={handleParentClick}
-              onMouseEnter={() => setShowBar(true)}
-              onMouseLeave={() => setShowBar(false)}
-              className={`group relative h-fit w-fit cursor-pointer font-bold hover:underline ${reactionStyle[react].color}`}
-            >
-              {reactionStyle[react].text}
-              <ReactionsBar
-                comment={comment}
-                setState={setReact}
-                setShowBar={setShowBar}
-                isVisible={showBar}
-              />
-            </span>
-            <span
-              className="cursor-pointer hover:underline"
-              onClick={() => {
-                handleToggleReply(comment._id);
-                if (depth >= 2 && comment.parentCommentId) {
-                  setParentCommentId(comment.parentCommentId._id);
-                } else {
-                  setParentCommentId(comment._id);
-                }
-              }}
-            >
-              {translate(language, 'reply')}
-            </span>
-            <div className="flex items-center">
-              <span
-                className="mr-0.5 cursor-pointer text-xs text-[#65686c] hover:underline"
+          </div>
+          {isOwnComment &&
+            editCommentModel.editCommentModel.commentId !== comment._id &&
+            !comment.deleted && (
+              <div
+                className="relative flex h-6 w-6 cursor-pointer items-center justify-center rounded-[50%] text-[1rem] hover:bg-(--background-secondary)"
                 onClick={() => {
-                  dispatch(
-                    setReactModel({
-                      reactions: comment.reactions,
-                      userReactions: comment.userReactions,
-                    }),
-                  );
+                  if (editCommentModel.isOpenEdit === comment._id) {
+                    dispatch(closeEditComment());
+                  } else {
+                    dispatch(startOpenModel(comment._id));
+                  }
                 }}
               >
-                {translateCount(count) !== '' && translateCount(count)}
+                {editCommentModel.editCommentModel.commentId !==
+                  comment._id && <span ref={dotRef}>⋯</span>}
+                {editCommentModel.isOpenEdit === comment._id && (
+                  <ModelCommentEdit comment={comment} ref={modelRef} />
+                )}
+              </div>
+            )}
+        </div>
+        {editCommentModel.editCommentModel.commentId !== comment._id &&
+          !comment.deleted && (
+            <div className="ml-2 flex items-center gap-2.5 pt-0.75 text-[11px] font-medium text-[#65686c] lg:gap-4">
+              <span className="cursor-pointer hover:underline">
+                {FormatDate(comment.createdAt, false)}
+              </span>
+              <span
+                onClick={handleParentClick}
+                onMouseEnter={() => setShowBar(true)}
+                onMouseLeave={() => setShowBar(false)}
+                className={`group relative h-fit w-fit cursor-pointer font-bold hover:underline ${reactionStyle[react].color}`}
+              >
+                {reactionStyle[react].text}
+                <ReactionsBar
+                  comment={comment}
+                  setState={setReact}
+                  setShowBar={setShowBar}
+                  isVisible={showBar}
+                />
+              </span>
+              <span
+                className="cursor-pointer hover:underline"
+                onClick={() => {
+                  const myName = `${comment.userId.firstName} ${comment.userId.lastName}`;
+                  if(depth < 2) {
+                    handleToggleReply(comment._id);
+                  }
+                  if (depth >= 1) {
+                    setParentCommentId(comment._id)
+                    console.log(setReplyTarget)
+                    setReplyTarget?.({
+                      id: comment._id,
+                      name: myName,
+                    });
+                  } else {
+                    setParentCommentId(comment._id)
+                    setReplyTarget?.({
+                      id: comment._id,
+                      name: myName,
+                    });
+                  }
+                }}
+              >
+                {translate(language, 'reply')}
               </span>
               <div className="flex items-center">
-                {commentEntries.slice(0, 3).map((name, index) => (
-                  <div
-                    key={index}
-                    className={`w-5 rounded-[50%] border-2 border-white ${index > 0 ? '-ml-1' : ''}`}
-                  >
-                    {' '}
-                    <img
-                      src={reaction[name as ReactionTypeNotDefault]}
-                      alt={name}
-                      className={`h-full w-full cursor-pointer`}
-                    />
-                  </div>
-                ))}
+                <span
+                  className="mr-0.5 cursor-pointer text-xs text-[#65686c] hover:underline"
+                  onClick={() => {
+                    dispatch(
+                      setReactModel({
+                        reactions: comment.reactions,
+                        userReactions: comment.userReactions,
+                      }),
+                    );
+                  }}
+                >
+                  {translateCount(count) !== '' && translateCount(count)}
+                </span>
+                <div className="flex items-center">
+                  {commentEntries.slice(0, 3).map((name, index) => (
+                    <div
+                      key={index}
+                      className={`w-5 rounded-[50%] border-2 border-white ${index > 0 ? '-ml-1' : ''}`}
+                    >
+                      {' '}
+                      <img
+                        src={reaction[name as ReactionTypeNotDefault]}
+                        alt={name}
+                        className={`h-full w-full cursor-pointer`}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
         {editCommentModel.editCommentModel.commentId === comment._id && (
           <span
             className="my-0.5 block cursor-pointer text-xs text-blue-500 hover:underline"
@@ -326,7 +356,7 @@ commentId: deleteCommentId.commentId, parentCommentId: deleteCommentId.parentCom
             Hủy
           </span>
         )}
-        {comment.replyCount > 0 && depth < 2 && !replies[comment._id] && (
+        {comment.replyCount > 0 && !replies[comment._id] && depth < 2 && (
           <>
             <div
               className="absolute h-6 w-6 rounded-bl-[12px] border-b border-l border-gray-300"
@@ -356,16 +386,16 @@ commentId: deleteCommentId.commentId, parentCommentId: deleteCommentId.parentCom
         )}
       </div>
       <ConfirmDeleteModal
-              title='Xóa bình luận'
-              desc='Hành động này không thể hoàn tác. Bình luận của bạn sẽ bị xóa vĩnh
-            viễn khỏi hệ thống.'
-              isOpen={deleteCommentId.commentId !== ''}
-              Id={comment._id}
-              onClose={() => {
-                dispatch(closeDeleteComment())
-              }}
-              onConfirm={handleDeleteComment}
-            />
+        title="Xóa bình luận"
+        desc="Hành động này không thể hoàn tác. Bình luận của bạn sẽ bị xóa vĩnh
+            viễn khỏi hệ thống."
+        isOpen={deleteCommentId.commentId !== ''}
+        Id={comment._id}
+        onClose={() => {
+          dispatch(closeDeleteComment());
+        }}
+        onConfirm={handleDeleteComment}
+      />
     </div>
   );
 };

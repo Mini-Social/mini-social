@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import noAvatar from '@/assets/avatars/noavatar.png';
@@ -21,6 +21,9 @@ interface Props {
   replyingId: string[];
   index: number;
   handleToggleReply: (id: string) => void;
+  setGlobalReplyTarget?: React.Dispatch<
+    React.SetStateAction<{ id: string; name: string }>
+  >;
 }
 const API_URL = import.meta.env.VITE_API_URL;
 const CommentNode = ({
@@ -29,13 +32,18 @@ const CommentNode = ({
   depth,
   replyingId,
   handleToggleReply,
+  setGlobalReplyTarget,
   index,
 }: Props) => {
   const avatarSize = Math.max(24, 32 - depth * 4);
   const postId = useSelector((state: RootState) => state.post.selectPostId);
   const [replies, setReplies] = useState<Record<string, boolean>>({});
   const { data } = useGetCommentsRepliesQuery(comment._id, {
-    skip: !replies[comment._id],
+    skip: !(depth >= 2 || replies[comment._id]),
+  });
+  const [replyTarget, setReplyTarget] = useState({
+    id: comment._id,
+    name: `${comment.userId.firstName} ${comment.userId.lastName}`,
   });
   const [addComment] = useAddCommentMutation();
   const ownUser = useSelector((state: RootState) => state.auth.user);
@@ -64,16 +72,22 @@ const CommentNode = ({
           postId,
           content: cleanContent,
           parentCommentId,
+          replyToId: replyTarget.id
         }).unwrap();
         contentRef.current?.childNodes.forEach(node => {
           if (node.nodeType === node.TEXT_NODE) {
             node.textContent = ' ';
           }
         });
+        const originalName = `${comment.userId.firstName} ${comment.userId.lastName}`;
+        setReplyTarget({
+          id: comment._id,
+          name: originalName
+        });
         if (contentRef.current) {
           contentRef.current.innerHTML = `
       <span contentEditable="false"  class="inline-block bg-[#C2D6F7] text-[#080809] px-1">
-        ${comment.userId.firstName} ${comment.userId.lastName}
+        ${originalName}
       </span>&nbsp;`;
         }
         ToggleReplies(comment._id);
@@ -84,6 +98,14 @@ const CommentNode = ({
       }
     }
   };
+  useEffect(() => {
+    if (contentRef.current) {
+      const span = contentRef.current.querySelector('span');
+      if (span) {
+        span.innerText = replyTarget.name;
+      }
+    }
+  }, [replyTarget.name]);
   return (
     <div key={comment._id}>
       <div className="relative">
@@ -117,6 +139,7 @@ const CommentNode = ({
             replies={replies}
             toggleReplies={ToggleReplies}
             setParentCommentId={(id: string | null) => setParentCommentId(id)}
+            setReplyTarget={depth >= 2 ? setGlobalReplyTarget : setReplyTarget}
           />
           {/* Đệ quy */}
           {(depth < 2
@@ -129,6 +152,7 @@ const CommentNode = ({
                   depth={depth + 1}
                   replyingId={replyingId}
                   handleToggleReply={handleToggleReply}
+                  setReplyTarget={depth === 1 ? setReplyTarget : setGlobalReplyTarget}
                 />
               )}
             </>
@@ -186,11 +210,12 @@ const CommentNode = ({
             >
               <div
                 contentEditable="true"
+                suppressContentEditableWarning={true}
                 className="h-auto w-full text-[16px] leading-5 break-all outline-none lg:text-[13px]"
                 ref={contentRef}
               >
                 <span className="inline-block bg-[#C2D6F7] px-1 text-[#080809]">
-                  {comment.userId.firstName} {comment.userId.lastName}
+                  {replyTarget.name}
                 </span>
                 &nbsp;
               </div>

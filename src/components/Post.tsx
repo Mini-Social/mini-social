@@ -129,9 +129,9 @@ const Post = ({
       className={`bg-background mb-2 md:mb-5 md:rounded-[10px] ${noShadow ? 'shadow-none' : 'md:shadow-[0px_0px_5px_1px_rgba(0_0_0/0.2)]'}`}
     >
       <ConfirmDeleteModal
-        title='Xóa bài viết'
-        desc='Hành động này không thể hoàn tác. Bài viết của bạn sẽ bị xóa vĩnh
-            viễn khỏi hệ thống.'
+        title="Xóa bài viết"
+        desc="Hành động này không thể hoàn tác. Bài viết của bạn sẽ bị xóa vĩnh
+            viễn khỏi hệ thống."
         isOpen={isOpenDeleteModel}
         onClose={setIsOpenDeleteModel}
         onConfirm={handleDeletePost}

@@ -9,6 +9,7 @@ import VideocamIcon from '@mui/icons-material/Videocam';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useContext } from 'react';
+import { useSelector } from 'react-redux';
 import TextareaAutosize from 'react-textarea-autosize';
 
 import noAvatar from '@/assets/avatars/noavatar.png';
@@ -16,28 +17,11 @@ import SendIcon from '@/assets/icons/send-message.png';
 import Messages from '@/components/Messages';
 import { DarkModeContext } from '@/contexts/DarkModeContext';
 import LanguageContext from '@/contexts/LanguageContext';
+import { closeConversation } from '@/features/conversation/conversation.slice';
+import { useGetMessagesQuery } from '@/features/conversation/conversation.slice.api';
+import { UseAppDispatch, type RootState } from '@/store';
 import { FormatDate } from '@/utils/formatDate';
 
-const user = {
-  _id: '65a8ef88e9b1a12f9c000111',
-  firstName: 'Khiêm',
-  lastName: 'Ngô Gia',
-  userName: 'khiemngo99',
-  email: 'khiem.ngo@example.com',
-  password: 'hashed_password_123', // Thực tế sẽ là chuỗi đã mã hóa
-  avatar: 'https://i.pravatar.cc/150?img=60',
-  bio: 'Đam mê lập trình và chơi bóng rổ 🏀',
-  gender: 'Male',
-  phone: '0901234567',
-  birthDate: '1999-05-20T00:00:00.000Z',
-  role: 'User',
-  friends: ['65a8ef99e9b1a12f9c000222', '65a8ef66e9b1a12f9c000444'],
-  isOnline: true,
-  lastOnline: '2026-01-17T17:30:00.000',
-  deleted: false,
-  createdAt: '2025-10-01T08:00:00.000Z',
-  updatedAt: '2026-01-17T17:30:00.000Z',
-};
 // {
 //   _id: '65a8ef99e9b1a12f9c000222',
 //   firstName: 'Anh',
@@ -218,11 +202,14 @@ const user = {
 //   createdAt: '2025-12-20T22:00:00.000Z',
 //   updatedAt: '2026-01-17T17:34:30.000Z'
 // }
-interface Props {
-  setOpenModel: React.Dispatch<React.SetStateAction<string>>;
-  openModel: string;
-}
-const ModelMessage = ({ setOpenModel }: Props) => {
+
+const ModelMessage = () => {
+  const conversationId = useSelector(
+    (state: RootState) => state.conversation.conversationId,
+  );
+  const user = useSelector((state: RootState) => state.auth.user);
+  const { data } = useGetMessagesQuery(conversationId);
+
   const [isOpenEmoj, setIsOpenEmoj] = useState<boolean>(false);
   const [content, setContent] = useState<string>('');
   const [preview, setPreview] = useState<string[]>([]);
@@ -305,12 +292,17 @@ const ModelMessage = ({ setOpenModel }: Props) => {
   };
   const darkModeContext = useContext(DarkModeContext);
   const languageContext = useContext(LanguageContext);
+  const dispatch = UseAppDispatch();
   if (!darkModeContext) {
     return null;
   }
   if (!languageContext) {
     return null;
   }
+  if (!user) {
+    return null;
+  }
+  console.log(data?.conversation);
   const { language, translate } = languageContext;
   const { darkMode } = darkModeContext;
   return (
@@ -323,21 +315,26 @@ const ModelMessage = ({ setOpenModel }: Props) => {
               <div className="relative h-8 w-8 shrink-0 rounded-[50%]">
                 <img
                   className="h-full w-full rounded-[50%]"
-                  src={user.avatar || noAvatar}
+                  src={data?.conversation.avatar || noAvatar}
                   alt=""
                 />
-                {user.isOnline && (
+                {data?.conversation.members[1].isOnline && (
                   <div className="absolute right-0 bottom-0 h-3 w-3 rounded-[50%] border-2 border-white bg-[#24832c]"></div>
                 )}
               </div>
               <div className="flex h-full flex-col">
                 <span className="font-medium">
-                  {user.firstName} {user.lastName}
+                  {data?.conversation.type === 'group'
+                    ? data.conversation.groupName
+                    : data?.conversation.members[1].firstName +
+                      ' ' +
+                      data?.conversation.members[1].lastName}
                 </span>
                 <span className="text-xs text-gray-500">
-                  {!user.isOnline
+                  {data?.conversation.members[1].isOnline
                     ? translate(language, 'online')
-                    : `${translate(language, 'online')} ${FormatDate(user.lastOnline, true)}`}
+                    : data?.conversation.members[1].lastOnline &&
+                      `${translate(language, 'online')} ${FormatDate(data?.conversation.members[1].lastOnline, true)}`}
                 </span>
               </div>
             </div>
@@ -368,7 +365,9 @@ const ModelMessage = ({ setOpenModel }: Props) => {
               </div>
               <div
                 className="cursor-pointer rounded-[50%] p-1 hover:bg-(--hoverColor)"
-                onClick={() => setOpenModel('')}
+                onClick={() => {
+                  dispatch(closeConversation());
+                }}
               >
                 <CloseIcon
                   style={{

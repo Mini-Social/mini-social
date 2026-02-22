@@ -14,6 +14,16 @@ export interface IComment {
   parentCommentId: {
     _id: string;
     userId: {
+      _id: string,
+      userName: string;
+      firstName: string;
+      lastName: string;
+    };
+  } | null;
+  replyToId: {
+    _id: string;
+    userId: {
+      _id: string,
       userName: string;
       firstName: string;
       lastName: string;

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import CommentNode from '@/components/CommentNode';
 import type { IComment } from '@/types/comment.type';
@@ -8,14 +8,17 @@ interface CommentTreeProps {
   depth?: number;
   replyingId: string[];
   handleToggleReply: (id: string) => void;
+  setReplyTarget?: React.Dispatch<
+    React.SetStateAction<{ id: string; name: string }>
+  >;
 }
 const CommentTree = ({
   comments,
   depth = 0,
   replyingId,
   handleToggleReply,
+  setReplyTarget,
 }: CommentTreeProps) => {
-  console.log(comments);
   const ref = useRef<HTMLDivElement>(null);
   const autoFocus = () => {
     if (!ref.current) {
@@ -37,6 +40,7 @@ const CommentTree = ({
           replyingId={replyingId}
           handleToggleReply={handleToggleReply}
           index={index}
+          setGlobalReplyTarget={setReplyTarget}
         />
       ))}
     </>
