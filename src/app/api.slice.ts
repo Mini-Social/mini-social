@@ -10,7 +10,7 @@ const apiSlice = createApi({
     'FriendRequest',
     'Friends',
   ],
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:8080/v1/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: `${import.meta.env.VITE_BASE_URL || 'http://localhost:8080'}/v1/` }),
   endpoints: () => ({}),
 });
 
