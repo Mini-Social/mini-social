@@ -13,7 +13,9 @@ const Conversations = ({
   active: string;
   setOpen: React.Dispatch<React.SetStateAction<string>>;
 }) => {
-  const { data } = useGetConversationsQuery();
+  const { data } = useGetConversationsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
   const conversations = data?.data.conversations;
   const myId = useSelector((state: RootState) => state.auth.user?._id);
   const languageContext = useContext(LanguageContext);
@@ -39,27 +41,41 @@ const Conversations = ({
       return convo.type === 'group';
     }
   });
+  if (
+    filterConversations.filter(convo => convo.lastMessage !== '').length === 0
+  ) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className="text-gray-500">Không có cuộc trò chuyện nào</p>
+      </div>
+    );
+  }
   return (
     <>
       <div className="xs:no-scrollbar custom-scrollbar flex flex-1 flex-col overflow-y-auto">
-        {filterConversations.map(convo => (
-          <Conversation
-            key={convo._id}
-            _id={convo._id}
-            members={convo.members}
-            avatar={convo.avatar}
-            groupName={convo.groupName}
-            lastMessage={convo.lastMessage}
-            lastMessageAt={convo.lastMessageAt}
-            lastSenderId={
-              convo.lastSenderId._id === myId ? 'You' : convo.lastSenderId._id
-            }
-            unReadCount={
-              convo.unReadCount.find(item => item.userId === myId)?.count || 0
-            }
-            setOpen={setOpen}
-          />
-        ))}
+        {filterConversations
+          .filter(convo => convo.lastMessage !== '')
+          .map(convo => (
+            <Conversation
+              key={convo._id}
+              _id={convo._id}
+              convo={convo}
+              members={convo.members}
+              avatar={convo.avatar}
+              groupName={convo.groupName}
+              lastMessage={convo.lastMessage}
+              lastMessageAt={convo.lastMessageAt}
+              lastSenderId={
+                convo.lastSenderId?._id === myId
+                  ? 'You'
+                  : convo.lastSenderId?._id
+              }
+              unReadCount={
+                convo.unReadCount.find(item => item.userId === myId)?.count || 0
+              }
+              setOpen={setOpen}
+            />
+          ))}
       </div>
     </>
   );

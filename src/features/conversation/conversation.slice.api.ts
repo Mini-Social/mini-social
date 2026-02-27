@@ -18,6 +18,12 @@ const conversationApi = apiSlice.injectEndpoints({
         url: `conversation`,
         credentials: 'include',
       }),
+      providesTags: [
+        {
+          type: 'Messages' as const,
+          id: 'LIST',
+        },
+      ],
     }),
     getMessages: build.query<
       {
@@ -33,8 +39,26 @@ const conversationApi = apiSlice.injectEndpoints({
         credentials: 'include',
       }),
     }),
+    createPrivateConversation: build.mutation<
+      {
+        status: string;
+        data: {
+          conversation: IConversation;
+        };
+      },
+      string
+    >({
+      query: userId => ({
+        url: `conversation/createPrivate/${userId}`,
+        method: 'POST',
+        credentials: 'include',
+      }),
+    }),
   }),
 });
 
-export const { useGetConversationsQuery, useGetMessagesQuery } =
-  conversationApi;
+export const {
+  useGetConversationsQuery,
+  useGetMessagesQuery,
+  useCreatePrivateConversationMutation,
+} = conversationApi;

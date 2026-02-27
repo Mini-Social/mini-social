@@ -103,6 +103,7 @@ export const translations = {
     account: 'Tài khoản',
     language: 'Ngôn ngữ',
     vietnamese: 'Tiếng việt',
+    cancelAddFriend: 'Hủy lời mời',
   },
   en: {
     event: 'Events',
@@ -208,6 +209,8 @@ export const translations = {
     account: 'Account',
     language: 'Language',
     vietnamese: 'Vietnamese',
+    cancel2: 'Cancel',
+    cancelAddFriend: 'Cancel invite',
   },
 };
 

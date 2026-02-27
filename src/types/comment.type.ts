@@ -14,7 +14,7 @@ export interface IComment {
   parentCommentId: {
     _id: string;
     userId: {
-      _id: string,
+      _id: string;
       userName: string;
       firstName: string;
       lastName: string;
@@ -23,7 +23,7 @@ export interface IComment {
   replyToId: {
     _id: string;
     userId: {
-      _id: string,
+      _id: string;
       userName: string;
       firstName: string;
       lastName: string;

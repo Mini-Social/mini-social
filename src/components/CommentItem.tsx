@@ -295,18 +295,18 @@ const CommentItem = ({
                 className="cursor-pointer hover:underline"
                 onClick={() => {
                   const myName = `${comment.userId.firstName} ${comment.userId.lastName}`;
-                  if(depth < 2) {
+                  if (depth < 2) {
                     handleToggleReply(comment._id);
                   }
                   if (depth >= 1) {
-                    setParentCommentId(comment._id)
-                    console.log(setReplyTarget)
+                    setParentCommentId(comment._id);
+                    console.log(setReplyTarget);
                     setReplyTarget?.({
                       id: comment._id,
                       name: myName,
                     });
                   } else {
-                    setParentCommentId(comment._id)
+                    setParentCommentId(comment._id);
                     setReplyTarget?.({
                       id: comment._id,
                       name: myName,

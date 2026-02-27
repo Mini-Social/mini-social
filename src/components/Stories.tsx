@@ -77,7 +77,7 @@ const Stories = () => {
               className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
             />
             <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
-              Nguyễn Công Hiệp
+              Comming soon
             </span>
           </div>
         </div>
@@ -96,7 +96,7 @@ const Stories = () => {
               className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
             />
             <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
-              Nguyễn Công Hiệp
+              Comming soon
             </span>
           </div>
         </div>
@@ -115,7 +115,7 @@ const Stories = () => {
               className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
             />
             <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
-              Nguyễn Công Hiệp
+              Comming soon
             </span>
           </div>
         </div>
@@ -134,7 +134,7 @@ const Stories = () => {
               className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
             />
             <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
-              Nguyễn Công Hiệp
+              Comming soon
             </span>
           </div>
         </div>
@@ -153,7 +153,7 @@ const Stories = () => {
               className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
             />
             <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
-              Nguyễn Công Hiệp
+              Comming soon
             </span>
           </div>
         </div>
@@ -172,7 +172,7 @@ const Stories = () => {
               className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
             />
             <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
-              Nguyễn Công Hiệp
+              Comming soon
             </span>
           </div>
         </div>
@@ -191,7 +191,7 @@ const Stories = () => {
               className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
             />
             <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
-              Nguyễn Công Hiệp
+              Comming soon
             </span>
           </div>
         </div>
@@ -210,7 +210,7 @@ const Stories = () => {
               className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
             />
             <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
-              Nguyễn Công Hiệp
+              Comming soon
             </span>
           </div>
         </div>
@@ -229,7 +229,7 @@ const Stories = () => {
               className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
             />
             <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
-              Nguyễn Công Hiệp
+              Comming soon
             </span>
           </div>
         </div>
@@ -248,7 +248,7 @@ const Stories = () => {
               className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
             />
             <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
-              Nguyễn Công Hiệp
+              Comming soon
             </span>
           </div>
         </div>
@@ -267,7 +267,7 @@ const Stories = () => {
               className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
             />
             <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
-              Nguyễn Công Hiệp
+              Comming soon
             </span>
           </div>
         </div>
@@ -286,7 +286,7 @@ const Stories = () => {
               className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
             />
             <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
-              Nguyễn Công Hiệp
+              Comming soon
             </span>
           </div>
         </div>
@@ -305,7 +305,7 @@ const Stories = () => {
               className="h-full w-full cursor-pointer rounded-[10px] bg-cover object-cover"
             />
             <span className="absolute bottom-0 block p-2.5 text-xs font-medium text-white">
-              Nguyễn Công Hiệp
+              Comming soon
             </span>
           </div>
         </div>

@@ -4,12 +4,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
 import RemoveIcon from '@mui/icons-material/Remove';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import TextareaAutosize from 'react-textarea-autosize';
 
 import noAvatar from '@/assets/avatars/noavatar.png';
@@ -18,8 +18,15 @@ import Messages from '@/components/Messages';
 import { DarkModeContext } from '@/contexts/DarkModeContext';
 import LanguageContext from '@/contexts/LanguageContext';
 import { closeConversation } from '@/features/conversation/conversation.slice';
-import { useGetMessagesQuery } from '@/features/conversation/conversation.slice.api';
+import {
+  useGetMessagesQuery,
+  useSeenMessageMutation,
+  useSendPrivateMessageMutation,
+} from '@/features/message/message.slice.api';
+import { socket } from '@/socket';
 import { UseAppDispatch, type RootState } from '@/store';
+import type { errorResponseType2 } from '@/types/auth.type';
+import type { IMessage } from '@/types/message.type';
 import { FormatDate } from '@/utils/formatDate';
 
 // {
@@ -202,14 +209,17 @@ import { FormatDate } from '@/utils/formatDate';
 //   createdAt: '2025-12-20T22:00:00.000Z',
 //   updatedAt: '2026-01-17T17:34:30.000Z'
 // }
-
+const API_URL = import.meta.env.VITE_API_URL;
 const ModelMessage = () => {
   const conversationId = useSelector(
     (state: RootState) => state.conversation.conversationId,
   );
+  const [sendPrivateMessage] = useSendPrivateMessageMutation();
   const user = useSelector((state: RootState) => state.auth.user);
-  const { data } = useGetMessagesQuery(conversationId);
-
+  const { data } = useGetMessagesQuery(conversationId, {
+    refetchOnMountOrArgChange: true,
+  });
+  const [seenMessage] = useSeenMessageMutation();
   const [isOpenEmoj, setIsOpenEmoj] = useState<boolean>(false);
   const [content, setContent] = useState<string>('');
   const [preview, setPreview] = useState<string[]>([]);
@@ -217,7 +227,59 @@ const ModelMessage = () => {
   const ref = useRef<HTMLDivElement>(null);
   const emojRef = useRef<HTMLDivElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [lastClicked, setLastClicked] = useState<string | null>(null);
+  const [arrivalMessage, setArrivalMessage] = useState<IMessage | null>(null);
+  const [messages, setMessages] = useState<IMessage[]>([]);
+  const timeoutTyping = useRef<number | null>(null);
+  const [displayTime, setDisplayTime] = useState<string>('');
+  const [online, setOnline] = useState<{
+    isOnline: boolean;
+    offlineTime: Date | null;
+  }>();
+  useEffect(() => {
+    if (data && user?._id) {
+      const otherUser = data.conversation.members.find(m => m._id !== user._id);
+      if (otherUser) {
+        setOnline({
+          isOnline: Boolean(otherUser.isOnline),
+          offlineTime: otherUser.lastOnline,
+        });
+      }
+    }
+    const handleStatusChange = (
+      users: { userId: string; socketId: string }[],
+    ) => {
+      const otherUser = data?.conversation.members.find(
+        m => m._id !== user?._id,
+      );
+      if (otherUser && otherUser.lastOnline) {
+        const isCurrentlyOnline = users.some(u => u.userId === otherUser._id);
+        setOnline({
+          isOnline: isCurrentlyOnline,
+          offlineTime: isCurrentlyOnline ? null : new Date(),
+        });
+        setDisplayTime(FormatDate(new Date(), true));
+      }
+    };
 
+    socket.on('getUser', handleStatusChange);
+    return () => {
+      socket.off('getUser', handleStatusChange);
+    };
+  }, [data, user?._id]);
+  useEffect(() => {
+    if (data && user?._id) {
+      const update = () => {
+        if (online?.offlineTime) {
+          setDisplayTime(FormatDate(online.offlineTime, true));
+        }
+      };
+      update();
+      const interval = setInterval(update, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [data, user?._id, online]);
   useEffect(() => {
     const maybeHandler = (event: MouseEvent) => {
       const target = event.target as Node;
@@ -263,9 +325,68 @@ const ModelMessage = () => {
       textAreaRef.current.focus();
     }
   };
-  const handleSubmitForm = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.dir(selectedImage);
+  const handleSubmitForm = async (
+    e?: FormEvent<HTMLFormElement>,
+    type?: string,
+  ) => {
+    e?.preventDefault();
+    if (!data) {
+      return null;
+    }
+    let text = '';
+    const actionType = type || lastClicked;
+    const formData = new FormData();
+    const otherUser = data.conversation.members.find(m => m._id !== user?._id);
+    if (otherUser) {
+      formData.append('receiver', otherUser._id);
+    }
+    if (actionType === 'content') {
+      if (selectedImage.length > 0) {
+        selectedImage.forEach(image => {
+          formData.append('images', image);
+        });
+      }
+      formData.append('content', content);
+      text = content;
+    } else if (actionType === 'icon') {
+      formData.append('content', '👍');
+      text = '👍';
+    }
+
+    formData.append('conversationId', conversationId);
+    try {
+      const { data } = await sendPrivateMessage(formData).unwrap();
+      if (data && user) {
+        const newMessage = {
+          _id: data.message._id,
+          conversationId,
+          sender: {
+            _id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            avatar: user.avatar || null,
+          },
+          content: text,
+          readBy: data.message.readBy,
+          images: data.message.images,
+          createdAt: data.message.createdAt,
+          updatedAt: data.message.updatedAt,
+        };
+        setMessages(pre => [...pre, newMessage]);
+        socket.emit('sendMessage', {
+          receiverId: otherUser?._id,
+          messageData: newMessage,
+        });
+        setContent('');
+        setPreview([]);
+        setSelectedImages([]);
+        scrollToBottom();
+        socket.emit('cancelTyping', { receiverId: otherUser?._id });
+      }
+    } catch (error: unknown) {
+      const errorType = error as errorResponseType2;
+      console.log(errorType.data.message);
+    }
   };
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (preview.length > 0) {
@@ -275,6 +396,7 @@ const ModelMessage = () => {
       setSelectedImages(files);
       const urls = files.map(url => URL.createObjectURL(url));
       setPreview(urls);
+      textAreaRef.current?.focus();
     }
   };
   const handleRemoveImage = (indexToRemove: number) => {
@@ -290,6 +412,57 @@ const ModelMessage = () => {
       setPreview(pre => pre.concat(urls));
     }
   };
+  const scrollToBottom = () => {
+    contentRef?.current?.scrollTo({
+      top: contentRef.current.scrollHeight,
+    });
+  };
+  useEffect(() => {
+    const getMessage = ({ messageData }: { messageData: IMessage }) => {
+      setArrivalMessage(messageData);
+      if (conversationId === messageData.conversationId) {
+        seenMessage(messageData.conversationId);
+        if (user) {
+          socket.emit('markMessageAsRead', {
+            conversationId: messageData.conversationId,
+            receiver: messageData,
+            sender: messageData.sender._id,
+          });
+        }
+      }
+    };
+    socket.on('getMessage', getMessage);
+    return () => {
+      socket.off('getMessage', getMessage);
+    };
+  }, [conversationId, seenMessage, user]);
+  useEffect(() => {
+    if (data?.messages) {
+      setMessages(data.messages);
+    }
+  }, [data?.messages]);
+  useEffect(() => {
+    if (arrivalMessage) {
+      setMessages(prev => {
+        const isExisted = prev.some(msg => msg._id === arrivalMessage._id);
+        if (isExisted) {
+          return prev;
+        }
+        return [...prev, arrivalMessage];
+      });
+    }
+  }, [arrivalMessage]);
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+  useEffect(
+    () => () => {
+      if (timeoutTyping.current) {
+        clearTimeout(timeoutTyping.current);
+      }
+    },
+    [],
+  );
   const darkModeContext = useContext(DarkModeContext);
   const languageContext = useContext(LanguageContext);
   const dispatch = UseAppDispatch();
@@ -302,7 +475,28 @@ const ModelMessage = () => {
   if (!user) {
     return null;
   }
-  console.log(data?.conversation);
+  if (!data) {
+    return null;
+  }
+  if (!conversationId) {
+    return null;
+  }
+  const otherUser = data.conversation.members.find(m => m._id !== user._id);
+  if (!otherUser) {
+    return null;
+  }
+
+  const handleInputContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(e.target.value);
+    socket.emit('typing', { receiverId: otherUser?._id });
+    if (timeoutTyping.current) {
+      clearTimeout(timeoutTyping.current);
+    }
+    timeoutTyping.current = setTimeout(() => {
+      socket.emit('cancelTyping', { receiverId: otherUser?._id });
+    }, 2000);
+  };
+
   const { language, translate } = languageContext;
   const { darkMode } = darkModeContext;
   return (
@@ -312,29 +506,35 @@ const ModelMessage = () => {
           {/* Header */}
           <div className="flex flex-1 items-center justify-between border-b p-1.5">
             <div className="flex items-center gap-2.5">
-              <div className="relative h-8 w-8 shrink-0 rounded-[50%]">
-                <img
-                  className="h-full w-full rounded-[50%]"
-                  src={data?.conversation.avatar || noAvatar}
-                  alt=""
-                />
-                {data?.conversation.members[1].isOnline && (
-                  <div className="absolute right-0 bottom-0 h-3 w-3 rounded-[50%] border-2 border-white bg-[#24832c]"></div>
-                )}
-              </div>
+              <Link to={`/profile/${otherUser?.userName}`}>
+                <div className="relative h-8 w-8 shrink-0 rounded-[50%]">
+                  <img
+                    className="h-full w-full rounded-[50%] object-cover"
+                    src={
+                      otherUser.avatar
+                        ? API_URL + `avatars/${otherUser.avatar}`
+                        : noAvatar
+                    }
+                    alt=""
+                  />
+                  {online?.isOnline &&
+                    user.friends.some(f => f._id === otherUser._id) && (
+                      <div className="absolute right-0 bottom-0 h-3 w-3 rounded-[50%] border-2 border-white bg-[#24832c]"></div>
+                    )}
+                </div>
+              </Link>
               <div className="flex h-full flex-col">
                 <span className="font-medium">
                   {data?.conversation.type === 'group'
                     ? data.conversation.groupName
-                    : data?.conversation.members[1].firstName +
-                      ' ' +
-                      data?.conversation.members[1].lastName}
+                    : otherUser.firstName + ' ' + otherUser.lastName}
                 </span>
                 <span className="text-xs text-gray-500">
-                  {data?.conversation.members[1].isOnline
-                    ? translate(language, 'online')
-                    : data?.conversation.members[1].lastOnline &&
-                      `${translate(language, 'online')} ${FormatDate(data?.conversation.members[1].lastOnline, true)}`}
+                  {online?.isOnline
+                    ? user.friends.some(f => f._id === otherUser._id) &&
+                      translate(language, 'online')
+                    : user.friends.some(f => f._id === otherUser._id) &&
+                      `${translate(language, 'online')} ${displayTime}`}
                 </span>
               </div>
             </div>
@@ -379,8 +579,24 @@ const ModelMessage = () => {
           </div>
 
           {/* Body */}
-          <div className="custom-scrollbar flex-10 overflow-y-auto">
-            <Messages />
+          <div
+            className="custom-scrollbar relative flex-10 overflow-y-auto"
+            ref={contentRef}
+          >
+            {messages && (
+              <Messages
+                scrollToBottom={scrollToBottom}
+                messages={messages}
+                avatar={otherUser.avatar}
+                name={
+                  data.conversation.type === 'group' &&
+                  data.conversation.groupName
+                    ? data.conversation.groupName
+                    : otherUser.firstName + ' ' + otherUser.lastName
+                }
+                otherUserId={otherUser._id}
+              />
+            )}
           </div>
           {/* Footer */}
           {isOpenEmoj && (
@@ -468,7 +684,18 @@ const ModelMessage = () => {
                       name="content"
                       className="custom-scrollbar h-auto w-full resize-none bg-transparent text-[16px] outline-none placeholder:text-[13px] placeholder:text-[#808080] lg:text-[13px]"
                       value={content}
-                      onChange={e => setContent(e.target.value)}
+                      onChange={handleInputContent}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                          if (
+                            content.trim().length > 0 ||
+                            selectedImage.length > 0
+                          ) {
+                            e.preventDefault();
+                            handleSubmitForm(undefined, 'content');
+                          }
+                        }
+                      }}
                     />
                     <div
                       className="cursor-pointer self-end rounded-[50%] hover:bg-gray-200"
@@ -487,6 +714,7 @@ const ModelMessage = () => {
                   <button
                     type="submit"
                     className="bg-background! border-none! p-0! hover:border-none!"
+                    onClick={() => setLastClicked('content')}
                   >
                     {' '}
                     <div className="rounded-[50%] p-2 hover:bg-(--hover-color)">
@@ -501,14 +729,10 @@ const ModelMessage = () => {
                   <button
                     type="submit"
                     className="bg-background! border-none! p-0! hover:border-none!"
+                    onClick={() => setLastClicked('icon')}
                   >
-                    <div className="cursor-pointer rounded-[50%] p-2 hover:bg-(--hover-color)">
-                      <ThumbUpIcon
-                        fontSize="small"
-                        style={{
-                          color: '#006AE9',
-                        }}
-                      />
+                    <div className="cursor-pointer rounded-[50%] p-2 text-[17px] hover:bg-(--hover-color)">
+                      👍
                     </div>
                   </button>
                 )}

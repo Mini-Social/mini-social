@@ -1,77 +1,79 @@
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+
+import noAvatar from '@/assets/avatars/noavatar.png';
 import MessageItem from '@/components/MessageItem';
 import TypingIndicaptor from '@/components/TypingIndicaptor';
-import { type Message } from '@/types/type';
+import { socket } from '@/socket';
+import type { RootState } from '@/store';
+import type { IMessage } from '@/types/message.type';
 
-const messages: Message[] = [
-  {
-    _id: '65a8f300e9b1a12f9c001236',
-    conversationId: '65a8f0a9e9b1a12f9c009999',
-    sender: '65a8ef88e9b1a12f9c000111',
-    content: 'Hello!',
-    readBy: ['65a8ef88e9b1a12f9c000111'],
-    images: [],
-    createdAt: '2026-01-15T06:30:00.000Z',
-    updatedAt: '2026-01-15T06:30:00.000Z',
-  },
-  {
-    _id: '65a8f310e9b1a12f9c001237',
-    conversationId: '65a8f0a9e9b1a12f9c009999',
-    sender: '65a8ef99e9b1a12f9c000222',
-    content: 'Chào bạn 👋',
-    readBy: ['65a8ef88e9b1a12f9c000111'],
-    images: [],
-    createdAt: '2026-01-15T06:31:10.000Z',
-    updatedAt: '2026-01-15T06:31:10.000Z',
-  },
-  {
-    _id: '65a8f320e9b1a12f9c001238',
-    conversationId: '65a8f0a9e9b1a12f9c009999',
-    sender: '65a8ef88e9b1a12f9c000111',
-    content: '',
-    readBy: ['65a8ef99e9b1a12f9c000222'],
-    images: [
-      'https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600',
-      'https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600',
-    ],
-    createdAt: '2026-01-15T06:32:45.000Z',
-    updatedAt: '2026-01-15T06:32:45.000Z',
-  },
-  {
-    _id: '65a8f320e9b1a12f9c001239',
-    conversationId: '65a8f0a9e9b1a12f9c009999',
-    sender: '65a8ef99e9b1a12f9c000222',
-    content: 'Hello nhé',
-    readBy: ['65a8ef88e9b1a12f9c000111'],
-    images: [
-      'https://taoanhdep.com/wp-content/uploads/2023/09/taoanhthe-1-350x265.jpg',
-      'https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600',
-    ],
-    createdAt: '2026-01-15T06:32:45.000Z',
-    updatedAt: '2026-01-15T06:32:45.000Z',
-  },
-];
-const Messages = () => {
-  const userId = '65a8ef99e9b1a12f9c000222';
-  const otherUserId = '65a8ef88e9b1a12f9c000111';
+const API_URL = import.meta.env.VITE_API_URL;
+const Messages = ({
+  messages,
+  avatar,
+  name,
+  otherUserId,
+  scrollToBottom,
+}: {
+  messages: IMessage[];
+  avatar: string;
+  name: string;
+  otherUserId: string | undefined;
+  scrollToBottom: () => void;
+}) => {
+  const userId = useSelector((state: RootState) => state.auth.user?._id);
+  const [isTyping, setIsTyping] = useState<boolean>(false);
+  useEffect(() => {
+    const onTyping = () => {
+      setIsTyping(true);
+    };
+    const onCancelTyping = () => {
+      setIsTyping(false);
+    };
+    socket.on('cancelTyping', onCancelTyping);
+    socket.on('typing', onTyping);
+
+    return () => {
+      socket.off('cancelTyping', onCancelTyping);
+      socket.off('typing', onTyping);
+    };
+  }, []);
   return (
     <>
+      <div className="my-10 flex justify-center">
+        <div className="flex flex-col items-center">
+          <img
+            src={avatar ? API_URL + `avatars/${avatar}` : noAvatar}
+            alt=""
+            className="h-15 w-15 rounded-full object-cover"
+          />
+          <span className="text-[17px]">{name}</span>
+          <span className="text-xs text-gray-500">
+            Bắt đầu cuộc trò chuyện ngay.
+          </span>
+        </div>
+      </div>
       {messages.map((message, index) => {
-        const isOwn = message.sender === userId;
+        const isOwn = message.sender._id === userId;
+
         return (
           <MessageItem
             key={message._id}
             isOwn={isOwn}
             content={message.content}
             createdAt={message.createdAt}
+            avatar={avatar}
             images={message.images}
             isLast={index === messages.length - 1}
-            isRead={message.readBy.includes(otherUserId)}
+            isRead={message.readBy.some(m => m._id === otherUserId)}
+            scrollToBottom={scrollToBottom}
           />
         );
       })}
 
       {/* Typing */}
-      <TypingIndicaptor />
+      {isTyping && <TypingIndicaptor />}
     </>
   );
 };

@@ -13,6 +13,7 @@ export interface IConversation {
     _id: string;
     firstName: string;
     lastName: string;
+    userName: string;
     avatar: string;
     isOnline: string;
     lastOnline: Date | null;
@@ -21,6 +22,7 @@ export interface IConversation {
     _id: string;
     firstName: string;
     lastName: string;
+    userName: string;
     avatar: string;
     isOnline: string;
   }[];
@@ -28,6 +30,7 @@ export interface IConversation {
     _id: string;
     firstName: string;
     lastName: string;
+    userName: string;
     avatar: string;
     isOnline: string;
   };

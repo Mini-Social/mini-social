@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import ModelCreatePost from '@/components/ModelCreatePost';
-import ModelMessage from '@/components/ModelMessage';
 import Posts from '@/components/Posts';
 import Share from '@/components/Share';
 import Stories from '@/components/Stories';
@@ -11,9 +10,6 @@ import type { RootState } from '@/store';
 
 const Home = () => {
   const [openModel, setOpenModel] = useState<string>('');
-  const openModelMessage = useSelector(
-    (state: RootState) => state.conversation.conversationId,
-  );
   const { data } = useGetPostsQuery();
   const [activeReaction, setActiveReaction] = useState<string | null>(null);
   const selectPost = useSelector((state: RootState) => state.post.postSelect);
@@ -38,7 +34,6 @@ const Home = () => {
           )}
         </div>
       </div>
-      {openModelMessage && <ModelMessage />}
     </>
   );
 };

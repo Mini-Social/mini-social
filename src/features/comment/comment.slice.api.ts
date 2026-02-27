@@ -71,7 +71,12 @@ const commentApi = apiSlice.injectEndpoints({
     }),
     addComment: builder.mutation<
       { data: { comment: IComment } },
-      { postId: string; parentCommentId: string | null; replyToId: string | null, content: string }
+      {
+        postId: string;
+        parentCommentId: string | null;
+        replyToId: string | null;
+        content: string;
+      }
     >({
       query: body => ({
         url: `comment/addComment/${body.postId}`,

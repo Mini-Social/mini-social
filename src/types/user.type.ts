@@ -15,15 +15,13 @@ export interface IUser {
   phone: string | null;
   birthDate: string | null;
   role: 'Admin' | 'User';
-  friends: [
-    {
-      _id: string;
-      userName: string;
-      firstName: string;
-      lastName: string;
-      avatar: string;
-    },
-  ];
+  friends: {
+    _id: string;
+    userName: string;
+    firstName: string;
+    lastName: string;
+    avatar: string;
+  }[];
   isOnline: boolean;
   lastOnline: Date | null;
   deleted: boolean;

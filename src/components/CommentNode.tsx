@@ -72,7 +72,7 @@ const CommentNode = ({
           postId,
           content: cleanContent,
           parentCommentId,
-          replyToId: replyTarget.id
+          replyToId: replyTarget.id,
         }).unwrap();
         contentRef.current?.childNodes.forEach(node => {
           if (node.nodeType === node.TEXT_NODE) {
@@ -82,7 +82,7 @@ const CommentNode = ({
         const originalName = `${comment.userId.firstName} ${comment.userId.lastName}`;
         setReplyTarget({
           id: comment._id,
-          name: originalName
+          name: originalName,
         });
         if (contentRef.current) {
           contentRef.current.innerHTML = `
@@ -152,7 +152,9 @@ const CommentNode = ({
                   depth={depth + 1}
                   replyingId={replyingId}
                   handleToggleReply={handleToggleReply}
-                  setReplyTarget={depth === 1 ? setReplyTarget : setGlobalReplyTarget}
+                  setReplyTarget={
+                    depth === 1 ? setReplyTarget : setGlobalReplyTarget
+                  }
                 />
               )}
             </>

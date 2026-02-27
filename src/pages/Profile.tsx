@@ -2,10 +2,12 @@ import ChatIcon from '@mui/icons-material/Chat';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import OpenWithIcon from '@mui/icons-material/OpenWith';
+import PersonIcon from '@mui/icons-material/Person';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import PublicIcon from '@mui/icons-material/Public';
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
@@ -23,14 +25,26 @@ import Posts from '@/components/Posts';
 import Share from '@/components/Share';
 import LanguageContext from '@/contexts/LanguageContext';
 import { setCredential } from '@/features/auth/auth.slice';
+import { startConversation } from '@/features/conversation/conversation.slice';
+import { useCreatePrivateConversationMutation } from '@/features/conversation/conversation.slice.api';
+import {
+  useAcceptFriendRequestMutation,
+  useCancelFriendRequestMutation,
+  useGetFriendRequestsQuery,
+  useGetSentFriendRequestsQuery,
+  useRejectFriendRequestMutation,
+  useSendFriendRequestMutation,
+} from '@/features/friendRequest/friendRequest.slice.api';
 import { useGetPostByUserIdQuery } from '@/features/post/post.api.slice';
 import {
   useGetUserByUserNameQuery,
   useUpdateProfileMutation,
 } from '@/features/user/user.api.slice';
 import type { translations } from '@/language/language';
+import { socket } from '@/socket';
 import type { RootState } from '@/store';
 import { UseAppDispatch } from '@/store';
+import type { IFriendRequest } from '@/types/friendRequest.type';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const Profile = () => {
@@ -39,8 +53,10 @@ const Profile = () => {
   const dispatch = UseAppDispatch();
   const { userName } = useParams();
 
-  const { data } = useGetUserByUserNameQuery(userName!);
+  const { data, refetch: refetchUser } = useGetUserByUserNameQuery(userName!);
   const [updateProfile] = useUpdateProfileMutation();
+
+  const [createConversation] = useCreatePrivateConversationMutation();
   const user = data?.data;
   const { data: posts } = useGetPostByUserIdQuery(user?._id ?? '', {
     skip: !user?._id,
@@ -60,6 +76,64 @@ const Profile = () => {
   const startY = useRef<number>(0);
   const startPos = useRef<number>(0);
   const [openModel, setOpenModel] = useState<string>('');
+  const [sendFriendRequest] = useSendFriendRequestMutation();
+  const [cancelFriendRequest] = useCancelFriendRequestMutation();
+  const { data: friendRequests } = useGetSentFriendRequestsQuery();
+  const { data: receivedRequests, refetch: refetchReceivedRequests } =
+    useGetFriendRequestsQuery(undefined, {
+      refetchOnMountOrArgChange: true,
+    });
+  const [acceptFriendRequest] = useAcceptFriendRequestMutation();
+  const [rejectFriendRequest] = useRejectFriendRequestMutation();
+  const [friendRequest, setFriendRequest] = useState<IFriendRequest[]>([]);
+  const [receivedRequest, setReceivedRequest] = useState<IFriendRequest[]>([]);
+  const params = useParams();
+  useEffect(() => {
+    setFriendRequest(friendRequests?.data ?? []);
+  }, [friendRequests]);
+  useEffect(() => {
+    setReceivedRequest(receivedRequests?.data ?? []);
+  }, [receivedRequests]);
+  useEffect(() => {
+    socket.on('sendFriendRequest', (requestData: IFriendRequest) => {
+      setReceivedRequest(prev => [...prev, requestData]);
+    });
+    socket.on('cancelFriendRequest', requestId => {
+      setReceivedRequest(prev => prev.filter(fr => fr._id !== requestId));
+    });
+    socket.on(
+      'acceptFriendRequest',
+      ({ requestData }: { requestData: IFriendRequest }) => {
+        if (requestData && ownUser) {
+          const newFriend =
+            requestData.sender._id === ownUser._id
+              ? requestData.receiver
+              : requestData.sender;
+
+          dispatch(
+            setCredential({
+              ...ownUser,
+              friends: [
+                ...(ownUser.friends || []),
+                {
+                  _id: newFriend._id,
+                  userName: newFriend.userName,
+                  firstName: newFriend.firstName,
+                  lastName: newFriend.lastName,
+                  avatar: newFriend.avatar ?? '',
+                },
+              ],
+            }),
+          );
+          refetchUser();
+        }
+      },
+    );
+    socket.on('rejectFriendRequest', requestId => {
+      setFriendRequest(prev => prev.filter(fr => fr._id !== requestId));
+      setReceivedRequest(prev => prev.filter(fr => fr._id !== requestId));
+    });
+  }, [dispatch, ownUser, refetchUser]);
   const handleUpdateBio = () => {
     setEdit(false);
     updateProfile({ bio });
@@ -124,6 +198,7 @@ const Profile = () => {
   if (!languageContext) {
     return null;
   }
+  console.log(ownUser?.friends);
   const { language, translate } = languageContext;
   return (
     <>
@@ -315,14 +390,126 @@ const Profile = () => {
           </span>
           {!isProfileOwner && (
             <div className="mt-2 flex gap-2">
-              <button className="flex cursor-pointer items-center gap-1 bg-(--buttonColor2)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!">
+              <button
+                className="flex cursor-pointer items-center gap-1 bg-(--buttonColor2)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!"
+                onClick={async () => {
+                  const res = await createConversation(
+                    user?._id || '',
+                  ).unwrap();
+                  if (res.data) {
+                    dispatch(startConversation(res.data.conversation._id));
+                  }
+                }}
+              >
                 <ChatIcon fontSize="small" />
                 <span>{translate(language, 'message')}</span>
               </button>
-              <button className="bg-primary! text-primary-foreground! flex cursor-pointer items-center gap-1 text-[13px]! font-bold! hover:border-transparent! hover:opacity-80!">
-                <PersonAddIcon fontSize="small" />
-                <span>{translate(language, 'addFriend')}</span>
-              </button>
+              {ownUser?.friends.some(fr => fr._id === user?._id) && (
+                <div className="flex gap-2">
+                  <button className="bg-primary! flex cursor-pointer items-center gap-1 text-[13px]! font-bold! text-white! hover:border-transparent! hover:opacity-80!">
+                    <PersonIcon fontSize="small" />
+                    <span>Bạn bè</span>
+                  </button>
+                  {/* <button
+                  className="flex cursor-pointer items-center gap-1 bg-(--buttonColor2)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!"
+
+                >
+                  <PersonRemoveIcon fontSize="small" />
+                  <span>Hủy kết bạn</span>
+                </button> */}
+                </div>
+              )}
+              {friendRequest.find(fr => fr.receiver._id === user?._id)
+                ? !receivedRequest.some(
+                    fr => fr.sender.userName === params.userName,
+                  ) &&
+                  !ownUser?.friends.some(fr => fr._id === user?._id) && (
+                    <button
+                      className="flex cursor-pointer items-center gap-1 bg-(--buttonColor2)! text-[13px]! font-bold! text-(--textColor)! hover:border-transparent! hover:opacity-80!"
+                      onClick={async () => {
+                        const requestId = friendRequest.find(
+                          fr => fr.receiver._id === user?._id,
+                        )?._id;
+                        if (!requestId) {
+                          return;
+                        }
+                        setFriendRequest(
+                          friendRequest.filter(fr => fr._id !== requestId),
+                        );
+                        const res =
+                          await cancelFriendRequest(requestId).unwrap();
+                        socket.emit('cancelFriendRequest', res.data);
+                      }}
+                    >
+                      <PersonRemoveIcon fontSize="small" />
+                      <span>{translate(language, 'cancelAddFriend')}</span>
+                    </button>
+                  )
+                : !receivedRequest.some(
+                    fr => fr.sender.userName === params.userName,
+                  ) &&
+                  !ownUser?.friends.some(fr => fr._id === user?._id) && (
+                    <button
+                      className="bg-primary! text-primary-foreground! flex cursor-pointer items-center gap-1 text-[13px]! font-bold! hover:border-transparent! hover:opacity-80!"
+                      onClick={async () => {
+                        const res = await sendFriendRequest(
+                          user?._id || '',
+                        ).unwrap();
+                        setFriendRequest([...friendRequest, res.data]);
+                        socket.emit('sendFriendRequest', {
+                          requestData: res.data,
+                        });
+                      }}
+                    >
+                      <PersonAddIcon fontSize="small" />
+                      <span>{translate(language, 'addFriend')}</span>
+                    </button>
+                  )}
+              {receivedRequest.some(
+                fr => fr.sender.userName === params.userName,
+              ) && (
+                <div className="">
+                  <button
+                    className="mr-2 flex-1 rounded-md border-none! bg-[#4e4f50]! py-1.5 text-xs font-bold text-gray-200! transition hover:bg-[#5e5f60]!"
+                    onClick={e => {
+                      e.preventDefault();
+                      const req = receivedRequest.find(
+                        fr => fr.sender.userName === params.userName,
+                      );
+                      if (!req) {
+                        return;
+                      }
+                      rejectFriendRequest(req._id);
+                      refetchReceivedRequests();
+                      socket.emit('rejectFriendRequest', req);
+                    }}
+                  >
+                    Xóa
+                  </button>
+                  <button
+                    className="mr-2 flex-1 rounded-md border-none! bg-blue-600! py-1.5 text-xs font-bold text-white! transition hover:bg-blue-500!"
+                    onClick={async e => {
+                      e.preventDefault();
+                      const req = receivedRequest.find(
+                        fr => fr.sender.userName === params.userName,
+                      );
+                      if (!req) {
+                        return;
+                      }
+                      const res = await acceptFriendRequest(req._id).unwrap();
+                      refetchReceivedRequests();
+                      setReceivedRequest(
+                        receivedRequest.filter(fr => fr._id !== req._id),
+                      );
+                      socket.emit('acceptFriendRequest', {
+                        requestData: res.data,
+                      });
+                    }}
+                  >
+                    Xác nhận
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -520,7 +707,11 @@ const Profile = () => {
                       >
                         <div className="aspect-square h-full w-full">
                           <img
-                            src={friend.avatar || noAvatar}
+                            src={
+                              friend.avatar
+                                ? API_URL + '/avatars/' + friend.avatar
+                                : noAvatar
+                            }
                             alt=""
                             className="h-full w-full cursor-pointer rounded-[8px] object-cover object-center"
                           />

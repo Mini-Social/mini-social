@@ -1,10 +1,11 @@
 export interface IMessage {
+  _id: string;
   conversationId: string;
   sender: {
     _id: string;
     firstName: string;
     lastName: string;
-    avatar: string;
+    avatar: string | null;
   };
   content: string;
   readBy: {
@@ -15,5 +16,5 @@ export interface IMessage {
   }[];
   images: string[];
   createdAt: Date;
-  updateAt: Date;
+  updatedAt: Date;
 }

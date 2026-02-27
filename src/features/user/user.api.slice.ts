@@ -65,6 +65,37 @@ const useApi = apiSlice.injectEndpoints({
       // type: 'User' as const, id: 'LIST'
       // }]
     }),
+    getSuggestion: build.query<
+      {
+        message: string;
+        data: IUser[];
+      },
+      void
+    >({
+      query: () => ({
+        url: `user/getSuggestion`,
+        credentials: 'include',
+      }),
+    }),
+    getFriendsList: build.query<
+      {
+        message: string;
+        data: {
+          _id: string;
+          userName: string;
+          firstName: string;
+          lastName: string;
+          avatar: string;
+        }[];
+      },
+      void
+    >({
+      query: () => ({
+        url: `user/getFriendsList`,
+        credentials: 'include',
+      }),
+      providesTags: ['Friends'],
+    }),
   }),
 });
 export default useApi;
@@ -72,4 +103,6 @@ export const {
   useGetUserByUserNameQuery,
   useUpdateProfileMutation,
   useUpdatePasswordMutation,
+  useGetSuggestionQuery,
+  useGetFriendsListQuery,
 } = useApi;

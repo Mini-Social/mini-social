@@ -2,31 +2,60 @@ import ChatIcon from '@mui/icons-material/Chat';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import LightModeIcon from '@mui/icons-material/LightMode';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { useState, useContext, useRef } from 'react';
+import { useState, useContext, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import noAvatar from '@/assets/avatars/noavatar.png';
+import FriendRequestDropdown from '@/components/FriendRequestModal';
 import ModelConversation from '@/components/ModelConversation';
 import ModelSetting from '@/components/ModelSetting';
 import UserMenu from '@/components/UserMenu';
 import { DarkModeContext } from '@/contexts/DarkModeContext';
 import LanguageContext from '@/contexts/LanguageContext';
+import { useGetConversationsQuery } from '@/features/conversation/conversation.slice.api';
+import { socket } from '@/socket';
 import type { RootState } from '@/store';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const Navbar = () => {
   const { user, isAuthChecked } = useSelector((state: RootState) => state.auth);
+  const { data } = useGetConversationsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
+  const conversations = data?.data.conversations;
   const [open, setOpen] = useState<string>('');
   const darkModeContext = useContext(DarkModeContext);
   const languageContext = useContext(LanguageContext);
   const refIcon = useRef<HTMLDivElement>(null);
   const refUserMenu = useRef<HTMLDivElement>(null);
+  const [count, setCount] = useState<number>(0);
+  useEffect(() => {
+    const totalUnReadCount =
+      conversations?.reduce((acc, conv) => {
+        const count =
+          conv.unReadCount.find(item => item.userId === user?._id)?.count || 0;
+        return acc + count;
+      }, 0) || 0;
+    const setUnReadCount = () => {
+      setCount(totalUnReadCount);
+    };
+    setUnReadCount();
+  }, [conversations, user?._id]);
+
+  useEffect(() => {
+    socket.on('getMessage', () => {
+      setCount(pre => pre + 1);
+    });
+  }, []);
   if (!darkModeContext || !isAuthChecked || !languageContext) {
     return null;
   }
+  if (!conversations) {
+    return null;
+  }
+
   const { darkMode, toggleDarkMode } = darkModeContext;
   const { language, translate } = languageContext;
   return (
@@ -75,6 +104,8 @@ const Navbar = () => {
           </div>
           {/* Right */}
           <div className="flex items-center gap-1.5">
+            <FriendRequestDropdown />
+
             <div
               className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-(--gray200)"
               ref={refIcon}
@@ -88,16 +119,18 @@ const Navbar = () => {
                   color: open === 'conversation' ? 'blue' : 'var(--foreground)',
                 }}
               />
-              <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-[50%] bg-red-500 text-[12px] font-bold text-white">
-                5
-              </span>
+              {count > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-[50%] bg-red-500 text-[12px] font-bold text-white">
+                  {count}
+                </span>
+              )}
             </div>
-            <div className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-(--gray200)">
+            {/* <div className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-(--gray200)">
               <NotificationsIcon className="cursor-pointer" />
               <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-[50%] bg-red-500 text-[12px] font-bold text-white">
                 1
               </span>
-            </div>
+            </div> */}
             <div
               className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full"
               ref={refUserMenu}
