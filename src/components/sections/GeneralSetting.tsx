@@ -42,10 +42,10 @@ const GeneralSetting = () => {
         </select>
       </div>
 
-      <label className="flex items-center gap-2">
+      {/* <label className="flex items-center gap-2">
         <input type="checkbox" checked />
         {translate(language, 'autoPlayVideo')}
-      </label>
+      </label> */}
 
       <button className="rounded bg-blue-500! px-4 py-2 text-white">
         {translate(language, 'save')}{' '}

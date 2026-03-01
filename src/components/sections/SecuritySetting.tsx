@@ -29,9 +29,8 @@ const SecuritySetting = ({ setIsOpen }: Props) => {
   });
   const handleSubmitForm = async (data: z.infer<typeof passwordSchema>) => {
     try {
-      const res = await updatePassword(data).unwrap();
+      await updatePassword(data).unwrap();
       setIsOpen('');
-      toast.success(res.message);
     } catch (error: unknown) {
       const typeError = error as errorResponseType2;
       toast.error(typeError.data.message);
@@ -54,7 +53,7 @@ const SecuritySetting = ({ setIsOpen }: Props) => {
       className="space-y-4"
     >
       <h3 className="text-lg font-semibold">
-        {translate(language, 'security')}
+        {translate(language, 'changePassword')}
       </h3>
 
       <input

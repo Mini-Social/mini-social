@@ -117,7 +117,7 @@ const ModelConversation = ({ open, setOpen, refIcon }: Props) => {
           <ConversationTabFilter active={active} setActive={setActive} />
         )}
         {!showContacts && <Conversations active={active} setOpen={setOpen} />}
-        {showContacts && <Contacts search={search} />}
+        {showContacts && <Contacts search={search} setOpen={setOpen} />}
       </div>
     </div>
   );

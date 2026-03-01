@@ -26,6 +26,7 @@ import {
   useUpdateCommentMutation,
 } from '@/features/comment/comment.slice.api';
 import { setReactModel } from '@/features/post/post.slice';
+import { translations } from '@/language/language';
 import type { RootState } from '@/store';
 import { UseAppDispatch } from '@/store';
 import type { IComment } from '@/types/comment.type';
@@ -81,6 +82,7 @@ const CommentItem = ({
   );
   const modelRef = useRef<HTMLDivElement>(null);
   const dotRef = useRef<HTMLSpanElement>(null);
+  const commentRef = useRef<HTMLDivElement>(null);
   const [showBar, setShowBar] = useState(false);
   const LEFT = 28;
   const count = Object.values(comment.reactions).reduce(
@@ -142,6 +144,26 @@ const CommentItem = ({
     window.addEventListener('click', handleListener);
     return () => window.removeEventListener('click', handleListener);
   }, [modelRef, dispatch]);
+
+  useEffect(() => {
+    if (comment && commentRef.current) {
+      setTimeout(() => {
+        commentRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        });
+      }, 100);
+    }
+  }, [comment]);
+  const focusAndShowCaret = (el: HTMLElement) => {
+    el.focus();
+    const range = document.createRange();
+    const sel = window.getSelection();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    sel?.removeAllRanges();
+    sel?.addRange(range);
+  };
   const languageContext = useContext(LanguageContext);
   if (!languageContext) {
     return null;
@@ -149,6 +171,7 @@ const CommentItem = ({
   const { language, translate } = languageContext;
   return (
     <div
+      ref={commentRef}
       className={`relative flex w-full flex-1 items-start gap-2.5 pt-1`}
       style={{
         paddingLeft: COMMENT_LAYOUT.paddingLeft,
@@ -218,27 +241,43 @@ const CommentItem = ({
                   <TextareaAutosize
                     value={updateCommentContent}
                     className="no-scrollbar relative h-auto w-full resize-none bg-(--background-primary) text-[16px] leading-5 break-all outline-none placeholder:text-[13px] placeholder:text-[#808080] lg:text-[13px]"
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (updateCommentContent.trim().length > 0) {
+                          dispatch(closeEditComment());
+                          updateComment({
+                            content: updateCommentContent.trim(),
+                            postId: comment.postId,
+                            commentId: comment._id,
+                            parentCommentId: String(
+                              comment.parentCommentId?._id,
+                            ),
+                          });
+                        }
+                      }
+                    }}
                     onChange={e => {
                       setUpdateCommentContent(e.target.value);
                     }}
                     placeholder={translate(language, 'writeComment') + '....'}
                   />
-                  <button className="self-end border-none! bg-transparent! p-0!">
-                    <div
-                      onClick={() => {
-                        dispatch(closeEditComment());
-                        updateComment({
-                          content: updateCommentContent,
-                          postId: comment.postId,
-                          commentId: comment._id,
-                          parentCommentId: String(comment.parentCommentId?._id),
-                        });
-                      }}
-                    >
-                      <SendIcon
-                        className={`${editCommentModel.editCommentModel.content.length > 0 ? 'cursor-pointer text-blue-500' : 'cursor-not-allowed text-gray-400'}`}
-                      />
-                    </div>
+                  <button
+                    className="self-end border-none! bg-transparent! p-0!"
+                    onClick={() => {
+                      dispatch(closeEditComment());
+                      updateComment({
+                        content: updateCommentContent.trim(),
+                        postId: comment.postId,
+                        commentId: comment._id,
+                        parentCommentId: String(comment.parentCommentId?._id),
+                      });
+                    }}
+                    disabled={updateCommentContent.trim().length === 0}
+                  >
+                    <SendIcon
+                      className={`${updateCommentContent.trim().length > 0 ? 'cursor-pointer text-blue-500' : 'cursor-not-allowed text-gray-400'}`}
+                    />
                   </button>
                 </div>
               ) : (
@@ -283,7 +322,12 @@ const CommentItem = ({
                 onMouseLeave={() => setShowBar(false)}
                 className={`group relative h-fit w-fit cursor-pointer font-bold hover:underline ${reactionStyle[react].color}`}
               >
-                {reactionStyle[react].text}
+                {translate(
+                  language,
+                  reactionStyle[
+                    react
+                  ].text.toLowerCase() as keyof typeof translations.vi,
+                )}
                 <ReactionsBar
                   comment={comment}
                   setState={setReact}
@@ -300,7 +344,6 @@ const CommentItem = ({
                   }
                   if (depth >= 1) {
                     setParentCommentId(comment._id);
-                    console.log(setReplyTarget);
                     setReplyTarget?.({
                       id: comment._id,
                       name: myName,
@@ -312,6 +355,29 @@ const CommentItem = ({
                       name: myName,
                     });
                   }
+                  const targetId =
+                    depth >= 2
+                      ? comment.parentCommentId?._id || comment._id
+                      : comment._id;
+                  setTimeout(() => {
+                    const inputSection = document.getElementById(
+                      `reply-input-${targetId}`,
+                    );
+                    if (inputSection) {
+                      inputSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center',
+                      });
+                      const editable = inputSection.querySelector(
+                        '[contenteditable="true"]',
+                      ) as HTMLElement;
+                      if (editable) {
+                        setTimeout(() => {
+                          focusAndShowCaret(editable);
+                        }, 300);
+                      }
+                    }
+                  }, 100);
                 }}
               >
                 {translate(language, 'reply')}

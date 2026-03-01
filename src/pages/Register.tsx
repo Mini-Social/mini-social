@@ -24,7 +24,6 @@ const Register = () => {
     try {
       await dispatch(signUpThunk(data)).unwrap();
       navigate('/');
-      toast.success('Register successfully!');
     } catch (error: unknown) {
       const typeError = error as errorResponseType;
       toast.error(typeError.message);

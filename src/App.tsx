@@ -7,7 +7,7 @@ import { checkAuth } from '@/features/auth/auth.api.slice';
 import AppRouter from '@/routes';
 import { UseAppDispatch } from '@/store';
 
-console.log(import.meta.env)
+console.log(import.meta.env.VITE_BASE_URL);
 const App = () => {
   const dispatch = UseAppDispatch();
   useEffect(() => {

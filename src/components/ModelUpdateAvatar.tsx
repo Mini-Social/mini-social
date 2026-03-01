@@ -1,8 +1,8 @@
 import CloseIcon from '@mui/icons-material/Close';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import React, { useState, type ChangeEvent } from 'react';
-import { toast } from 'react-toastify';
 
+import Spinner from '@/components/Spinner';
 import { setCredential } from '@/features/auth/auth.slice';
 import { useUpdateProfileMutation } from '@/features/user/user.api.slice';
 import { UseAppDispatch } from '@/store';
@@ -22,7 +22,7 @@ const ModelUpdateAvatar = ({
   currentAvatar,
   selectFile,
 }: Props) => {
-  const [updateProfile] = useUpdateProfileMutation();
+  const [updateProfile, { isLoading }] = useUpdateProfileMutation();
   const dispatch = UseAppDispatch();
   const [selectedFile, setSelectedFile] = useState<File | null>(selectFile);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -51,10 +51,9 @@ const ModelUpdateAvatar = ({
         dispatch(setCredential(res.data));
       }
       handleCancel();
-      toast.success('Update avatar successfully!');
     }
   };
-
+  console.log(isLoading)
   if (!isVisible) {
     return null;
   }
@@ -105,15 +104,18 @@ const ModelUpdateAvatar = ({
               Cancel
             </button>
             <button
-              disabled={!selectedFile}
+              disabled={!selectedFile || isLoading}
               onClick={handleUpload}
-              className={`flex-1 rounded-xl px-4 py-2 font-medium! text-white! transition-all ${
-                selectedFile
+              className={`flex-1 flex items-center justify-center gap-1 rounded-xl px-4 py-2 font-medium! text-white! transition-all ${
+                selectedFile || isLoading
                   ? 'bg-blue-600! hover:bg-blue-700!'
                   : 'cursor-not-allowed! bg-blue-300!'
               }`}
             >
               Save Change
+              {
+                isLoading && <Spinner />
+              }
             </button>
           </div>
         </div>

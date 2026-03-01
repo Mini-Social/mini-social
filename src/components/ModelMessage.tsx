@@ -1,10 +1,7 @@
 import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
-import CallIcon from '@mui/icons-material/Call';
 import CloseIcon from '@mui/icons-material/Close';
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
-import RemoveIcon from '@mui/icons-material/Remove';
-import VideocamIcon from '@mui/icons-material/Videocam';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useContext } from 'react';
@@ -347,7 +344,7 @@ const ModelMessage = () => {
         });
       }
       formData.append('content', content);
-      text = content;
+      text = content.trim();
     } else if (actionType === 'icon') {
       formData.append('content', '👍');
       text = '👍';
@@ -366,7 +363,7 @@ const ModelMessage = () => {
             lastName: user.lastName,
             avatar: user.avatar || null,
           },
-          content: text,
+          content: text.trim(),
           readBy: data.message.readBy,
           images: data.message.images,
           createdAt: data.message.createdAt,
@@ -540,29 +537,6 @@ const ModelMessage = () => {
             </div>
 
             <div className="flex items-center">
-              <div className="cursor-pointer rounded-[50%] p-1 hover:bg-(--hoverColor)">
-                <CallIcon
-                  fontSize="small"
-                  style={{
-                    color: '#C261F2',
-                  }}
-                />
-              </div>
-              <div className="cursor-pointer rounded-[50%] p-1 hover:bg-(--hoverColor)">
-                <VideocamIcon
-                  fontSize="small"
-                  style={{
-                    color: '#C261F2',
-                  }}
-                />
-              </div>
-              <div className="cursor-pointer rounded-[50%] p-1 hover:bg-(--hoverColor)">
-                <RemoveIcon
-                  style={{
-                    color: '#C261F2',
-                  }}
-                />
-              </div>
               <div
                 className="cursor-pointer rounded-[50%] p-1 hover:bg-(--hoverColor)"
                 onClick={() => {

@@ -1,4 +1,3 @@
-import CloseIcon from '@mui/icons-material/Close';
 import LockIcon from '@mui/icons-material/Lock';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import PeopleIcon from '@mui/icons-material/People';
@@ -45,7 +44,7 @@ const Post = ({
   setActiveReaction,
   setOpenModel,
 }: PostProps) => {
-  const [deletePost] = useDeletePostMutation();
+  const [deletePost, { isLoading: isDeleting }] = useDeletePostMutation();
   const [reactionPost] = useReactionPostMutation();
   const ownUser = useSelector((state: RootState) => state.auth.user);
   const dispatch = UseAppDispatch();
@@ -104,10 +103,9 @@ const Post = ({
   const handleDeletePost = async (id: string) => {
     try {
       await deletePost(id).unwrap();
-      toast.success('Delete post successfully!');
     } catch (error) {
       const errorType = error as errorResponseType2;
-      toast.success(errorType.data.message);
+      toast.error(errorType.data.message);
     }
   };
   useEffect(() => {
@@ -135,6 +133,7 @@ const Post = ({
         isOpen={isOpenDeleteModel}
         onClose={setIsOpenDeleteModel}
         onConfirm={handleDeletePost}
+        isLoading={isDeleting}
         Id={post._id}
       />
 
@@ -213,9 +212,9 @@ const Post = ({
               )}
             </div>
           )}
-          <div className="cursor-pointer">
+          {/* <div className="cursor-pointer">
             <CloseIcon />
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="mt-2">

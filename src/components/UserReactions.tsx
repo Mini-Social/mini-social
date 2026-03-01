@@ -22,9 +22,14 @@ const UserReactions = ({ active, userReactions, setActive }: Props) => {
       : userReactions.filter(user => user.reactions === active);
 
   const sortedReactions = [...filteredReactions].sort((a, b) => {
-    const isAOwn = a.userId._id === ownUser?._id;
-    if (isAOwn) {
+    const aId = a.userId._id;
+    const bId = b.userId._id;
+    const myId = ownUser?._id;
+    if (aId === myId) {
       return -1;
+    }
+    if (bId === myId) {
+      return 1;
     }
     const isAFriend = friendIds?.some(friend => friend._id === a.userId._id);
     const isBFriend = friendIds?.some(friend => friend._id === b.userId._id);

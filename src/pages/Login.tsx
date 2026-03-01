@@ -31,7 +31,6 @@ const Login = () => {
     try {
       await dispatch(signInThunk(data)).unwrap();
       navigate('/');
-      toast.success('Login successfully!');
     } catch (error: unknown) {
       const errorType = error as errorResponseType;
       toast.error(errorType.message);

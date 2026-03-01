@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import noAvatar from '@/assets/avatars/noavatar.png';
 import FriendRequestDropdown from '@/components/FriendRequestModal';
 import ModelConversation from '@/components/ModelConversation';
+import ModelSearch from '@/components/ModelSearch';
 import ModelSetting from '@/components/ModelSetting';
 import UserMenu from '@/components/UserMenu';
 import { DarkModeContext } from '@/contexts/DarkModeContext';
@@ -31,6 +32,26 @@ const Navbar = () => {
   const refIcon = useRef<HTMLDivElement>(null);
   const refUserMenu = useRef<HTMLDivElement>(null);
   const [count, setCount] = useState<number>(0);
+  const [isOpenSearch, setIsOpenSearch] = useState<boolean>(false)
+  const searchRef = useRef<HTMLDivElement>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+const [results, setResults] = useState([]);
+
+useEffect(() => {
+  const setState = () => {
+    setResults([]);
+  }
+  if (!searchTerm.trim()) {
+    setState()
+    return;
+  }
+
+  const delayDebounceFn = setTimeout(async () => {
+    console.log("Đang gọi API với từ khóa:", searchTerm);
+  }, 500);
+
+  return () => clearTimeout(delayDebounceFn);
+}, [searchTerm]);
   useEffect(() => {
     const totalUnReadCount =
       conversations?.reduce((acc, conv) => {
@@ -49,13 +70,24 @@ const Navbar = () => {
       setCount(pre => pre + 1);
     });
   }, []);
+
+useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      setIsOpenSearch(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, []);
   if (!darkModeContext || !isAuthChecked || !languageContext) {
     return null;
   }
   if (!conversations) {
     return null;
   }
-
+ console.log(results)
   const { darkMode, toggleDarkMode } = darkModeContext;
   const { language, translate } = languageContext;
   return (
@@ -66,18 +98,20 @@ const Navbar = () => {
       <div className="border-b-border bg-background sticky top-0 z-99 border-b px-5 py-2.5">
         <div className="flex h-12.5 items-center justify-between">
           {/* Left */}
-          <div className="flex items-center gap-7.5">
+          <div className="flex items-center gap-2 md:gap-4 lg:gap-6">
             <Link to="/">
               <span className="cursor-pointer text-xl font-bold text-(--logoColor)">
                 XuanSocial
               </span>
             </Link>
-            <div className="hidden md:block">
-              <HomeOutlinedIcon
-                className="cursor-pointer"
-                onClick={() => setOpen('home')}
-              />
-            </div>
+            <Link to={'/'} className="text-inherit!">
+              <div className="hidden md:block">
+                <HomeOutlinedIcon
+                  className="cursor-pointer"
+                  onClick={() => setOpen('home')}
+                />
+              </div>
+            </Link>
             <div className="">
               {darkMode ? (
                 <LightModeIcon
@@ -92,13 +126,16 @@ const Navbar = () => {
               )}
             </div>
             <form action="">
-              <div className="border-border flex items-center gap-2.5 rounded-[5px] border p-1.25">
+              <div ref={searchRef} className="relative z-99999 border-border flex items-center justify-center gap-2.5 rounded-[9999px] border p-1.5">
                 <SearchOutlinedIcon />
                 <input
                   type="text"
                   placeholder={translate(language, 'search')}
-                  className="h-full w-0 bg-transparent outline-none md:w-[200px] lg:w-[300px] xl:w-125"
+                  className="h-full w-0 hidden md:block bg-transparent outline-none md:w-[200px] lg:w-[300px] xl:w-125"
+                  onFocus={() => setIsOpenSearch(true)}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
+                <ModelSearch open={isOpenSearch}/>
               </div>
             </form>
           </div>

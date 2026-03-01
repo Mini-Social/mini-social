@@ -1,7 +1,6 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { useContext, useState } from 'react';
 import PhoneInput from 'react-phone-input-2';
-import { toast } from 'react-toastify';
 
 import LanguageContext from '@/contexts/LanguageContext';
 import { useUpdateProfileMutation } from '@/features/user/user.api.slice';
@@ -135,7 +134,6 @@ const ModelUserInformation = ({
 
     updateProfile(finalData);
     setIsVisible(false);
-    toast.success('Update your profile successfully!');
   };
   {
     const languageContext = useContext(LanguageContext);

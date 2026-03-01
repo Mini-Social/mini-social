@@ -104,6 +104,13 @@ export const translations = {
     language: 'Ngôn ngữ',
     vietnamese: 'Tiếng việt',
     cancelAddFriend: 'Hủy lời mời',
+    changePassword: 'Đổi mật khẩu',
+    noInformation: 'Chưa có thông tin giới thiệu.',
+    noPost: 'Chưa có bài viết.',
+    noFriend: 'Chưa có bạn bè.',
+    noConversation: 'Chưa có cuộc hội thoại.',
+    noContact: 'Chưa có liên hệ nào.',
+    noSearch: 'Không có tìm kiếm nào gần đây.'
   },
   en: {
     event: 'Events',
@@ -211,6 +218,13 @@ export const translations = {
     vietnamese: 'Vietnamese',
     cancel2: 'Cancel',
     cancelAddFriend: 'Cancel invite',
+    changePassword: 'Change password',
+    noInformation: 'No information',
+    noPost: 'There are no posts',
+    noFriend: 'No friends',
+    noConversation: 'No conversation',
+    noContact: 'No contact',
+    noSearch: 'No recent searches'
   },
 };
 

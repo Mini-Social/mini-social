@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import noAvatar from '@/assets/avatars/noavatar.png';
 import CommentTree from '@/components/CommentTree';
 import Post from '@/components/Post';
+import PostSkeleton from '@/components/PostSkeleton';
 import LanguageContext from '@/contexts/LanguageContext';
 import {
   useAddCommentMutation,
@@ -29,7 +30,7 @@ const ModelComment = ({
 }: ModelCommentProps) => {
   const postId = useSelector((state: RootState) => state.post.selectPostId);
   const ownUser = useSelector((state: RootState) => state.auth.user);
-  const { data } = useGetDetailPostQuery(postId);
+  const { data, isFetching } = useGetDetailPostQuery(postId);
   const { data: commentData } = useGetCommentsByPostIdQuery(postId);
   const [addComment] = useAddCommentMutation();
   const [replyingId, setReplyingId] = useState<string[]>([]);
@@ -39,13 +40,13 @@ const ModelComment = ({
     setReplyingId(pre => (pre.includes(id) ? pre : [...pre, id]));
   };
   const handleSendComment = () => {
-    setCommentContent('');
     addComment({
       postId,
-      content: commentContent,
+      content: commentContent.trim(),
       replyToId: null,
       parentCommentId: null,
     });
+    setCommentContent('');
   };
   // useEffect(() => {
   //   if(refScroll.current){
@@ -71,15 +72,17 @@ const ModelComment = ({
   }
   const { language, translate } = languageContext;
   return (
-    <div className="pointer-events-auto fixed inset-0 z-9999 bg-gray-500/50 shadow-[0px_0px_1px_1px_rgba(0_0_0/0.2)]">
+    <div className="pointer-events-auto fixed inset-0 z-999 bg-gray-500/50 shadow-[0px_0px_1px_1px_rgba(0_0_0/0.2)]">
       <div className="flex h-full w-full items-center justify-center">
         <div className="bg-background relative flex h-dvh w-full flex-col rounded-2xl p-2 md:h-[95vh] md:w-[80%] lg:w-[50%]">
           <div className="border-b--border bg-background flex h-15 w-full items-center justify-between border-b p-2">
             <span></span>
-            <span className="text-[1rem] font-bold text-(--textColor2)">
-              {translate(language, 'article')}{' '}
-              {`${data?.data?.post.author.firstName + ' ' + data?.data?.post.author.lastName}`}
-            </span>
+            {data && (
+              <span className="text-[1rem] font-bold text-(--textColor2)">
+                {translate(language, 'article')}{' '}
+                {`${data.data.post.author.firstName + ' ' + data.data.post.author.lastName}`}
+              </span>
+            )}
             <div
               className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-[50%] bg-(--closeColor) hover:opacity-80"
               onClick={() => setIsVisible(false)}
@@ -91,7 +94,7 @@ const ModelComment = ({
             className="no-scrollbar h-full w-full flex-1 overflow-y-auto"
             ref={refScroll}
           >
-            {data?.data?.post && (
+            {data?.data.post && (
               <Post
                 post={data?.data.post}
                 setIsVisible={setIsVisible}
@@ -100,6 +103,7 @@ const ModelComment = ({
                 noShadow
               />
             )}
+            {isFetching && !data && <PostSkeleton />}
             {commentData?.data && (
               <CommentTree
                 comments={commentData?.data.comments}
@@ -126,20 +130,27 @@ const ModelComment = ({
                   contentEditable={false}
                   value={commentContent}
                   onChange={e => setCommentContent(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      if (commentContent.trim().length > 0) {
+                        handleSendComment();
+                      }
+                    }
+                  }}
                   className="no-scrollbar relative h-auto w-full resize-none bg-(--background-primary) text-[16px] leading-5 break-all outline-none placeholder:text-[13px] placeholder:text-[#808080] lg:text-[13px]"
                   placeholder={translate(language, 'writeComment') + '....'}
                 ></textarea>
                 <button
                   className="self-end border-none! bg-transparent! p-0!"
                   onClick={handleSendComment}
-                  disabled={commentContent.length === 0}
+                  disabled={commentContent.trim().length === 0}
                 >
                   <SendIcon
-                    className={`${commentContent.length > 0 ? 'cursor-pointer text-blue-500' : 'cursor-not-allowed text-gray-400'}`}
+                    className={`${commentContent.trim().length > 0 ? 'cursor-pointer text-blue-500' : 'cursor-not-allowed text-gray-400'}`}
                   />
                 </button>
               </div>
-
               <div></div>
             </div>
           </div>

@@ -233,7 +233,6 @@ const RightBar = () => {
                   const res = await createPrivateConversation(u._id).unwrap();
                   if (res.data.conversation) {
                     seenMessage(res.data.conversation._id);
-                    console.log(user);
                     dispatch(startConversation(res.data.conversation._id));
                     dispatch(
                       setCredential({

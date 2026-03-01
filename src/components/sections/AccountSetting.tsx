@@ -36,7 +36,6 @@ const AccountSetting = () => {
       if (res.data) {
         dispatch(setCredential(res.data));
       }
-      toast.success(`Update ${key} successfully!`);
       setEditingField(null);
     } catch (error: unknown) {
       const fieldError = error as errorResponseType2;

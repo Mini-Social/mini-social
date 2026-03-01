@@ -21,8 +21,7 @@ const UserMenu = ({ user, setOpen, refUserMenu }: IUserMenuProps) => {
   const dispatch = UseAppDispatch();
   const handleLogout = async () => {
     try {
-      const res = await dispatch(logOut()).unwrap();
-      toast.success(res.message);
+      await dispatch(logOut()).unwrap();
     } catch (error) {
       const err = error as { status: string; message: string };
       toast.error(err.message);
