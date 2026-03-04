@@ -669,7 +669,7 @@ const Profile = () => {
                             <span className="font-bold">
                               {translate(language, 'phone') + ':'}{' '}
                             </span>
-                            <span>{user.phone}</span>
+                            <span>0{user.phone.slice(user.phone.length - 9)}</span>
                           </div>
                         )}
                         {user?.relationship && (

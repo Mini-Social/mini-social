@@ -110,7 +110,8 @@ export const translations = {
     noFriend: 'Chưa có bạn bè.',
     noConversation: 'Chưa có cuộc hội thoại.',
     noContact: 'Chưa có liên hệ nào.',
-    noSearch: 'Không có tìm kiếm nào gần đây.'
+    noSearchRecently: 'Không có tìm kiếm nào gần đây.',
+    noSearch: 'Không có tìm kiếm nào.'
   },
   en: {
     event: 'Events',
@@ -224,7 +225,8 @@ export const translations = {
     noFriend: 'No friends',
     noConversation: 'No conversation',
     noContact: 'No contact',
-    noSearch: 'No recent searches'
+    noSearchRecently: 'No recent searches',
+    noSearch: 'No searches'
   },
 };
 

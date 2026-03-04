@@ -16,6 +16,7 @@ import UserMenu from '@/components/UserMenu';
 import { DarkModeContext } from '@/contexts/DarkModeContext';
 import LanguageContext from '@/contexts/LanguageContext';
 import { useGetConversationsQuery } from '@/features/conversation/conversation.slice.api';
+import { useGetSearchUsersQuery } from '@/features/user/user.api.slice';
 import { socket } from '@/socket';
 import type { RootState } from '@/store';
 
@@ -25,6 +26,11 @@ const Navbar = () => {
   const { data } = useGetConversationsQuery(undefined, {
     refetchOnMountOrArgChange: true,
   });
+   const [isOpenSearch, setIsOpenSearch] = useState<boolean>(false)
+   const [searchTerm, setSearchTerm] = useState('');
+  // const { data: searchResults } = useGetSearchUsersQuery(searchTerm, {
+  //   skip: !isOpenSearch || searchTerm.length === 0,
+  // });
   const conversations = data?.data.conversations;
   const [open, setOpen] = useState<string>('');
   const darkModeContext = useContext(DarkModeContext);
@@ -32,26 +38,20 @@ const Navbar = () => {
   const refIcon = useRef<HTMLDivElement>(null);
   const refUserMenu = useRef<HTMLDivElement>(null);
   const [count, setCount] = useState<number>(0);
-  const [isOpenSearch, setIsOpenSearch] = useState<boolean>(false)
   const searchRef = useRef<HTMLDivElement>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-const [results, setResults] = useState([]);
+  const [debouncedSearch, setDebouncedSearch] = useState('');
 
 useEffect(() => {
-  const setState = () => {
-    setResults([]);
-  }
-  if (!searchTerm.trim()) {
-    setState()
-    return;
-  }
-
-  const delayDebounceFn = setTimeout(async () => {
-    console.log("Đang gọi API với từ khóa:", searchTerm);
+  const handler = setTimeout(() => {
+    setDebouncedSearch(searchTerm);
   }, 500);
 
-  return () => clearTimeout(delayDebounceFn);
+  return () => clearTimeout(handler);
 }, [searchTerm]);
+
+const { data: searchResults } = useGetSearchUsersQuery(debouncedSearch, {
+  skip: !isOpenSearch || debouncedSearch.trim().length === 0,
+});
   useEffect(() => {
     const totalUnReadCount =
       conversations?.reduce((acc, conv) => {
@@ -87,7 +87,6 @@ useEffect(() => {
   if (!conversations) {
     return null;
   }
- console.log(results)
   const { darkMode, toggleDarkMode } = darkModeContext;
   const { language, translate } = languageContext;
   return (
@@ -99,7 +98,9 @@ useEffect(() => {
         <div className="flex h-12.5 items-center justify-between">
           {/* Left */}
           <div className="flex items-center gap-2 md:gap-4 lg:gap-6">
-            <Link to="/">
+            {
+              !isOpenSearch && <>
+              <Link to="/">
               <span className="cursor-pointer text-xl font-bold text-(--logoColor)">
                 XuanSocial
               </span>
@@ -125,19 +126,24 @@ useEffect(() => {
                 />
               )}
             </div>
-            <form action="">
+              </>
+            }
               <div ref={searchRef} className="relative z-99999 border-border flex items-center justify-center gap-2.5 rounded-[9999px] border p-1.5">
-                <SearchOutlinedIcon />
+                <div onClick={() => {
+                  setIsOpenSearch(true)
+                }}>
+                  <SearchOutlinedIcon />
+                </div>
                 <input
                   type="text"
                   placeholder={translate(language, 'search')}
-                  className="h-full w-0 hidden md:block bg-transparent outline-none md:w-[200px] lg:w-[300px] xl:w-125"
+                  className={`${isOpenSearch ? 'opacity-100 w-full' : 'opacity-0 w-0 hidden md:block md:opacity-100'} h-full md:block bg-transparent transition-opacity duration-1000 outline-none md:w-[250px] lg:w-[300px] xl:w-125`}
                   onFocus={() => setIsOpenSearch(true)}
                   onChange={(e) => setSearchTerm(e.target.value)}
+                  value={searchTerm}
                 />
-                <ModelSearch open={isOpenSearch}/>
+                <ModelSearch open={isOpenSearch} setOpen={setIsOpenSearch} setSearchTerm={setSearchTerm} searchTerm={searchTerm} searchUserData={searchResults?.data || []}/>
               </div>
-            </form>
           </div>
           {/* Right */}
           <div className="flex items-center gap-1.5">

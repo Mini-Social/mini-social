@@ -84,7 +84,7 @@ const ModelUserInformation = ({
     }));
   };
 
-  const handleUpdateProfile = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleUpdateProfile = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const provinceName = provincesData.find(
       p => p.code === Number(formData.province),
@@ -95,9 +95,6 @@ const ModelUserInformation = ({
     const wardName = wardsData?.find(
       w => w.code === Number(formData.ward),
     )?.name;
-    const phone = formData.phone.phoneWithdialCode.slice(
-      formData.phone.dialCode.length,
-    );
     const isFullAddress = provinceName && districtName && wardName;
 
     if (formData.province !== 'default') {
@@ -126,13 +123,16 @@ const ModelUserInformation = ({
 
     const finalData = {
       address: `${isFullAddress ? wardName + ', ' + districtName + ', ' + provinceName : ''}`,
-      gender: formData.gender || '',
-      birthDate,
-      phone: phone || '',
-      relationship: formData.relationship || '',
+      gender: formData.gender || null,
+      birthDate: birthDate || null,
+      phone: (formData.phone.phoneWithdialCode.slice(formData.phone.dialCode.length).startsWith('0') ? formData.phone.dialCode +  formData.phone.phoneWithdialCode.slice(formData.phone.dialCode.length + 1) : formData.phone.phoneWithdialCode) || null,
+      relationship: formData.relationship || null,
     };
-
-    updateProfile(finalData);
+    try {
+      await updateProfile(finalData).unwrap();
+    } catch (error) {
+       console.log(error)
+    }
     setIsVisible(false);
   };
   {
@@ -353,6 +353,9 @@ const ModelUserInformation = ({
                       },
                     }));
                   }}
+                  prefix="+"
+                  alwaysDefaultMask={false}
+                  disableCountryCode={false}
                 />
               </div>
 

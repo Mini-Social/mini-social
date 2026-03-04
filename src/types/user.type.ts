@@ -25,6 +25,13 @@ export interface IUser {
   isOnline: boolean;
   lastOnline: Date | null;
   deleted: boolean;
+  searchedUser: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    userName: string;
+    avatar: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }

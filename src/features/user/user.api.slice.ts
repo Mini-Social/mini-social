@@ -106,24 +106,43 @@ const useApi = apiSlice.injectEndpoints({
           avatar: string;
         }[];
       },
-      void
+      string
     >({
-      query: () => ({
-        url: `user/getSearchUsers`,
+      query: (query) => ({
+        url: `user/searchUsers?q=${query}`,
         credentials: 'include',
       }),
     }),
-    addToHistory: build.mutation<{ message: string }, object>({
-      query: body => ({
+    getHistory: build.query<
+      {
+        data: {
+          searchedUser: {
+             _id: string;
+          userName: string;
+          firstName: string;
+          lastName: string;
+          avatar: string;
+          }
+        }[];
+      },
+      void
+    >({
+      query: () => ({
+        url: `user/getHistory`,
+        credentials: 'include',
+      }),
+    }),
+    addToHistory: build.mutation<{ message: string }, string>({
+      query: (searchedUserId) => ({
         url: 'user/addToHistory',
         method: 'POST',
-        body,
+        body: {searchedUserId},
         credentials: 'include',
       })
     }),
     removeHistory: build.mutation<{ message: string }, string>({
       query: (id) => ({
-        url: `user/addToHistory/${id}` ,
+        url: `user/removeHistory/${id}` ,
         method: 'DELETE',
         credentials: 'include',
       })
@@ -138,5 +157,7 @@ export const {
   useGetSuggestionQuery,
   useGetFriendsListQuery,
   useGetSearchUsersQuery,
-  useAddToHistoryMutation
+  useAddToHistoryMutation,
+  useRemoveHistoryMutation,
+  useGetHistoryQuery
 } = useApi;
